@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、绕过WAF的方法 大小写绕过  简单编码绕过  注释绕过：   如?id=1 uni//on sele//ct 1,2,3 #   分隔重写绕过：  适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况">
+<meta name="description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念背景介绍 ​    结构化查询语言（Structured Query Language，缩写：SQL），是一种特殊的编程语言，用于数据库中的标准数据查询语言。1986年10月，美国国家标准学会对SQL进行规范后，以此作为关系式数据库管理系统的标准语言（ANSI X3. 135-1986），1987年得到国际标准组织的支持">
 <meta name="keywords" content="Web安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="常见Web漏洞类型">
 <meta property="og:url" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/index.html">
 <meta property="og:site_name" content="SKI12">
-<meta property="og:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、绕过WAF的方法 大小写绕过  简单编码绕过  注释绕过：   如?id=1 uni//on sele//ct 1,2,3 #   分隔重写绕过：  适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况">
+<meta property="og:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念背景介绍 ​    结构化查询语言（Structured Query Language，缩写：SQL），是一种特殊的编程语言，用于数据库中的标准数据查询语言。1986年10月，美国国家标准学会对SQL进行规范后，以此作为关系式数据库管理系统的标准语言（ANSI X3. 135-1986），1987年得到国际标准组织的支持">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/1.png">
 <meta property="og:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/3.png">
 <meta property="og:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/4.png">
 <meta property="og:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/5.png">
 <meta property="og:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/2.png">
-<meta property="og:updated_time" content="2019-01-30T15:36:39.040Z">
+<meta property="og:updated_time" content="2019-01-30T16:03:32.753Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常见Web漏洞类型">
-<meta name="twitter:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、绕过WAF的方法 大小写绕过  简单编码绕过  注释绕过：   如?id=1 uni//on sele//ct 1,2,3 #   分隔重写绕过：  适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况">
+<meta name="twitter:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念背景介绍 ​    结构化查询语言（Structured Query Language，缩写：SQL），是一种特殊的编程语言，用于数据库中的标准数据查询语言。1986年10月，美国国家标准学会对SQL进行规范后，以此作为关系式数据库管理系统的标准语言（ANSI X3. 135-1986），1987年得到国际标准组织的支持">
 <meta name="twitter:image" content="http://yoursite.com/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/1.png">
 
 
@@ -396,7 +396,52 @@
 
       
         <p>这里小结一下常见的Web漏洞类型，待完善。</p>
-<h1 id="SQL注入与SQL盲注"><a href="#SQL注入与SQL盲注" class="headerlink" title="SQL注入与SQL盲注"></a>SQL注入与SQL盲注</h1><h2 id="一、绕过WAF的方法"><a href="#一、绕过WAF的方法" class="headerlink" title="一、绕过WAF的方法"></a>一、绕过WAF的方法</h2><ol>
+<h1 id="SQL注入与SQL盲注"><a href="#SQL注入与SQL盲注" class="headerlink" title="SQL注入与SQL盲注"></a>SQL注入与SQL盲注</h1><h2 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>背景介绍</strong></p>
+<p>​    结构化查询语言（Structured Query Language，缩写：SQL），是一种特殊的编程语言，用于数据库中的标准数据查询语言。1986年10月，美国国家标准学会对SQL进行规范后，以此作为关系式数据库管理系统的标准语言（ANSI X3. 135-1986），1987年得到国际标准组织的支持下成为国际标准。不过各种通行的数据库系统在其实践过程中都对SQL规范作了某些编改和扩充。所以，实际上不同数据库系统之间的SQL不能完全相互通用。</p>
+<hr>
+<p><strong>漏洞定义</strong></p>
+<p>　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进行攻击。</p>
+<hr>
+<p><strong>成因</strong></p>
+<p>　　针对SQL注入的攻击行为可描述为通过在用户可控参数中注入SQL语法，破坏原有SQL结构，达到编写程序时意料之外结果的攻击行为。其成因可以归结为以下两个原因叠加造成的：</p>
+<ol>
+<li>程序编写者在处理应用程序和数据库交互时，使用字符串拼接的方式构造SQL语句</li>
+<li>未对用户可控参数进行足够的过滤便将参数内容拼接进入到SQL语句中</li>
+</ol>
+<hr>
+<p><strong>攻击方式</strong></p>
+<p>　　SQL注入的攻击方式根据应用程序处理数据库返回内容的不同，可以分为基于报错的注入、基于布尔的注入和盲注。</p>
+<p>​    基于报错的注入：数据库查询返回结果并没有在页面中显示，但是应用程序将数据库报错信息打印到了页面中，所以攻击者可以构造数据库报错语句，从报错信息中获取想要获得的内容</p>
+<p>​    如注入各种符号以及组合： ‘  “  (  %</p>
+<p>​    基于布尔的注入：攻击者可以直接在当前界面内容中获取想要获得的内容</p>
+<p>​    如注入：1’ and ‘1’=’1和1’ and ‘1’=’2 </p>
+<p>​    相当于 1’ and ‘1和1’ and ‘0</p>
+<p>​    当返回的结果不同时即有漏洞</p>
+<p>　　盲注：数据库查询结果无法从直观页面中获取，攻击者通过使用数据库逻辑或使数据库库执行延时等方法获取想要获得的内容</p>
+<p>​    判断盲注的常见用法：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1’ and 1=1 <span class="comment">#</span></span><br><span class="line">1’ and 1=2 <span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p>​    判断这两种不同的输入是否有不一样的显示，如果一个正常一个通用的错误提示或者啥也不显示，则几乎可以确定是含有SQL注入漏洞的。</p>
+<p>​    基于布尔的注入代码示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli-labs-master/Less-1/?id=1' and 1=1 <span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<p>​    基于报错的注入代码示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli-labs-master/Less-1/?id=1' and 1=0 union <span class="keyword">select</span> <span class="number">1</span>,<span class="keyword">count</span>(*),<span class="keyword">concat</span>((<span class="keyword">select</span> email_id <span class="keyword">from</span> emails <span class="keyword">where</span> <span class="keyword">id</span>=<span class="number">5</span>),<span class="number">0x2a</span>,<span class="keyword">floor</span>(<span class="keyword">rand</span>(<span class="number">0</span>)*<span class="number">2</span>))x <span class="keyword">from</span> <span class="keyword">users</span> <span class="keyword">group</span> <span class="keyword">by</span> x<span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<p>​    盲注代码示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli-labs-master/Less-1/?id=1' and (<span class="keyword">select</span> <span class="keyword">substr</span>(email_id,<span class="number">1</span>,<span class="number">1</span>) <span class="keyword">from</span> emails <span class="keyword">where</span> <span class="keyword">id</span>=<span class="number">3</span>) &gt; <span class="string">'a'</span> <span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p><strong>几个常用的函数</strong></p>
+<p>​    user()返回当前数据库连接使用的用户；</p>
+<p>​    database()返回当前数据库连接使用的数据库；</p>
+<p>​    version()返回当前数据库的版本；</p>
+<p>​    concat或者concat-ws函数可以将这些函数进行组合使用并显示出来。concat函数中，将其中的参数直接连接起来产生新的字符串。而在concat_ws函数中，第一个参数是用于作为分隔符将后面各个参数的内容分隔开来再进行相应的连接产生新的字符串。以其常用的例子为例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">concat_ws(char(32,58,32),user(),database(),version())</span><br></pre></td></tr></table></figure>
+<p>​    其中char()函数为将里面的参数转化为相应的字符，其中32为空格，58为冒号(:)，通过这样的方式可以绕过一些简单的过滤机制。</p>
+<hr>
+<p><strong>几个常用的全局函数</strong></p>
+<p>​    @@datadir  @@hostname  @@VERSION  @@version_compile_os</p>
+<hr>
+<p><strong>危害</strong></p>
+<p>　　攻击者利用SQL注入漏洞，可以获取数据库中的多种信息（例如：管理员后台密码），从而脱取数据库中内容（脱库）。在特别情况下还可以修改数据库内容或者插入内容到数据库，如果数据库权限分配存在问题，或者数据库本身存在缺陷，那么攻击者可以通过SQL注入漏洞直接获取webshell或者服务器系统权限。</p>
+<h2 id="二、绕过WAF的方法"><a href="#二、绕过WAF的方法" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h2><ol>
 <li><p>大小写绕过</p>
 </li>
 <li><p>简单编码绕过</p>
@@ -455,7 +500,7 @@
 <p>11.缓冲区溢出绕过：</p>
 <p>如id=1 and (select 1)=(Select 0xAAAAAAAAAAAAAAAAAAAAA)+UnIoN+SeLeCT+1,2,version(),4,5,database(),user(),8,9,10 #</p>
 <p>其中 A 越多越好，一般要求 1000 个以上。</p>
-<h2 id="二、检测方法"><a href="#二、检测方法" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>1、基于报错的检测方法：</p>
+<h2 id="三、检测方法"><a href="#三、检测方法" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>1、基于报错的检测方法：</p>
 <p>使用各种符号以及组合： ‘  “  (  %</p>
 <p>如直接在URL后添加单引号看是否报错index.php?id=1’</p>
 <p>2、基于布尔的检测：</p>
@@ -469,7 +514,7 @@
 <p>1’ and 1=1 #  </p>
 <p>1’ and 1=2 #  </p>
 <p>判断这两种不同的输入是否有不一样的显示，如果一个正常一个通用的错误提示或者啥也不显示，则几乎可以确定是含有SQL注入漏洞的。</p>
-<h2 id="三、防御方法"><a href="#三、防御方法" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>关键是对所有用户的输入进行严格的检查过滤、对数据库配置使用最小权限原则。</p>
+<h2 id="四、防御方法"><a href="#四、防御方法" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>关键是对所有用户的输入进行严格的检查过滤、对数据库配置使用最小权限原则。</p>
 <p>常用的修复方案：</p>
 <p>（1）所有的查询语句都使用数据库提供的参数化查询接口，参数化的语句使用参数而不是将用户输入变量嵌入到 SQL 语句中。</p>
 <p>（2）过滤危险的 SQL 语句关键字。</p>
@@ -544,10 +589,10 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">cross-domain-policy</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">allow-access-from</span> <span class="attr">domain</span>=<span class="string">"*"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">cross-domain-policy</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>相关代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> flash.net.*; </span><br><span class="line">var _l = new URLLoader(new URLRequest(“http://目标站点/<span class="string">"));</span></span><br><span class="line"><span class="string">_l.addEventListener(Event.COMPLETE,function()&#123;text1.text = _l.data&#125;);</span></span><br><span class="line"><span class="string">_l.load();</span></span><br></pre></td></tr></table></figure>
-<h2 id="二、检测方法-1"><a href="#二、检测方法-1" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>最简单的方法就是抓取一个正常请求的数据包，去掉 Referer 字段后再重新提交，如果该提交还有效，那么基本上可以确定存在 CSRF 漏洞。</p>
+<h2 id="二、检测方法"><a href="#二、检测方法" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>最简单的方法就是抓取一个正常请求的数据包，去掉 Referer 字段后再重新提交，如果该提交还有效，那么基本上可以确定存在 CSRF 漏洞。</p>
 <p>一些专门针对 CSRF 漏洞进行检测的工具，如CSRFTester，CSRF Request Builder 等。</p>
 <p>以 CSRFTester 工具为例，CSRF 漏洞检测工具的测试原理如下：使用 CSRFTester 进行测试时，首先需要抓取我们在浏览器中访问过的所有链接以及所有的表单等信息，然后通过在 CSRFTester 中修改相应的表单等信息，重新提交，这相当于一次伪造客户端请求。如果修改后的测试请求成功被网站服务器接受，则说明存在CSRF 漏洞，当然此款工具也可以被用来进行 CSRF 攻击。</p>
-<h2 id="三、防御方法-1"><a href="#三、防御方法-1" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、 服务端的防御：主要有 5 种策略：验证 HTTP的Referer字段、在请求地址中添加 token 并验证、在 HTTP 头中自定义属性并验证、使用POST替代GET等。</p>
+<h2 id="三、防御方法"><a href="#三、防御方法" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、 服务端的防御：主要有 5 种策略：验证 HTTP的Referer字段、在请求地址中添加 token 并验证、在 HTTP 头中自定义属性并验证、使用POST替代GET等。</p>
 <p>（1）、验证 HTTP的Referer字段，在 HTTP 头的Referer字段记录了该 HTTP 请求的来源地址。顺便解决了非法盗链、站外提交等问题。在通常情况下，访问一个安全受限页面的请求必须来自于同一个网站。</p>
 <p>（2）、在请求地址中添加 token 并验证，可以在 HTTP请求中以参数的形式加入一个随机产生的 token，并在服务器端建立一个拦截器来验证这个token，如果请求中没有 token 或者 token 内容不正确，则认为可能是 CSRF 攻击而拒绝该请求。抵御 CSRF 攻击的关键在于：在请求中加入攻击者所不能伪造的信息，并且该信息不存在于 Cookie 之中。</p>
 <p>（3）、在 HTTP 头中自定义属性并验证，也是使用 token 并进行验证，但并不是把 token以参数的形式置于 HTTP 请求而是放到 HTTP 头中自定义的属性里。通过XMLHttpRequest 这个类，可以一次性给所有该类请求加上 csrftoken 这个 HTTP 头属性，并把token 值放入其中。这样解决了前一种方法在请求中加入 token 的不便，同时，通过这个类请求的地址不会被记录到浏览器的地址栏，也不用担心 token 会通过 Referer 泄露到其他网站。</p>
@@ -630,8 +675,8 @@
 <p>IIS的asp 解析漏洞：IIS自身的漏洞</p>
 <p>Nginx的%00 解析漏洞：Nginx自身的漏洞</p>
 <p>php-cgi的默认配置漏洞：这类以CGI 形式调用php的web 应用程序主要出现在IIS和Nginx；而Apache 通常是以module 的形式去调用php，所以很少出现该类型漏洞。</p>
-<h2 id="三、检测方法"><a href="#三、检测方法" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>简单点的方法就是直接上传各种类型的文件，再通过Burpsuite修改各个可以绕过的检测内容来检测。</p>
-<h2 id="四、防御方法"><a href="#四、防御方法" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>简单的防御方法为：获取文件扩展名进行白名单对比，然后对文件进行重命名。当然若存在解析漏洞等容易被绕过，具体点的防御方法如下：</p>
+<h2 id="三、检测方法-1"><a href="#三、检测方法-1" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>简单点的方法就是直接上传各种类型的文件，再通过Burpsuite修改各个可以绕过的检测内容来检测。</p>
+<h2 id="四、防御方法-1"><a href="#四、防御方法-1" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>简单的防御方法为：获取文件扩展名进行白名单对比，然后对文件进行重命名。当然若存在解析漏洞等容易被绕过，具体点的防御方法如下：</p>
 <p>1、客户端JavaScript检测：通常为检测文件扩展名)</p>
 <p>2、服务端MIME 类型检测：检测Content-Type内容)</p>
 <p>3、服务端目录路径检测：检测跟path参数相关的内容</p>
@@ -702,10 +747,10 @@
 <p><a href="http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log" target="_blank" rel="noopener">http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log</a></p>
 <p>PHP内置的协议：</p>
 <p><img src="/2019/01/30/常见Web漏洞类型/常见Web漏洞的检测与防御方法/2.png" alt="php伪协议"></p>
-<h2 id="二、检测方法-2"><a href="#二、检测方法-2" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>找到有包含函数的页面，对函数内容进行替换查看结果；</p>
+<h2 id="二、检测方法-1"><a href="#二、检测方法-1" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>找到有包含函数的页面，对函数内容进行替换查看结果；</p>
 <p>可以使用工具来代替手工的过程，如Kadimus、Burpsuite的插件LFI scanner checks等；</p>
 <p>白盒测试时，可以在源代码中查看allow_url_fopen、allow_url_include等敏感函数是否开启。</p>
-<h2 id="三、防御方法-2"><a href="#三、防御方法-2" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、严格判断包含中的参数是否外部可控。</p>
+<h2 id="三、防御方法-1"><a href="#三、防御方法-1" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、严格判断包含中的参数是否外部可控。</p>
 <p>2、路径限制，限制被包含的文件只能在某一个文件夹内，特别是一定要禁止目录跳转字符，如：“../”。</p>
 <p>3、基于白名单的包含文件验证，验证被包含的文件是否在白名单中。</p>
 <p>4、尽量不要使用动态包含，可以在需要包含的页面固定写好，如：“include(“head.php”)”。</p>
@@ -725,8 +770,8 @@
 <p>1、 验证码不过期，没有及时销毁会话导致验证码复用</p>
 <p>2、 没有进行非空判断</p>
 <p>3、 产生的验证码问题集内的答案非常有限</p>
-<h2 id="三、检测方法-1"><a href="#三、检测方法-1" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>简单的方法，先是手工登录几次，查看是否出现验证码以及验证码是否失效，然后再通过Burpsuite来进一步测试。</p>
-<h2 id="四、防御方法-1"><a href="#四、防御方法-1" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、 强制要求输入验证码，否则必须实施 IP 策略。注意不要被 X-Forwarded-For（用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段） 绕过了。</p>
+<h2 id="三、检测方法-2"><a href="#三、检测方法-2" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>简单的方法，先是手工登录几次，查看是否出现验证码以及验证码是否失效，然后再通过Burpsuite来进一步测试。</p>
+<h2 id="四、防御方法-2"><a href="#四、防御方法-2" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、 强制要求输入验证码，否则必须实施 IP 策略。注意不要被 X-Forwarded-For（用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段） 绕过了。</p>
 <p>2、 验证码只能用一次，用完立即过期。</p>
 <p>3、 验证码强度增强，使用扭曲、变形、干扰线条、干扰背景色、变换字体等。</p>
 <p>4、 大网站最好统一安全验证码，各处使用同一个验证码接口。</p>
@@ -749,9 +794,9 @@
 <p>防御方法：将dl函数加入disable_function中禁用。</p>
 <p>使用PHP突破Disable_functions执行Linux命令：linux 的 webshell 管理员禁用了exec，system，passthru，popen，shell_exec等等 PHP 执行命令函数，导致不能执行命令，php 提供了一个扩展模块功能，使用 dl 函数能包含一个扩展模块。类似.so或者想windows下的 dll 文件。可以自定义函数来调用 linux 命令而无视Disable_functions的限制。</p>
 <p>在PHP中使用create_function()创建匿名函数，如果没有严格对参数传递进行过滤，攻击者可以构造特殊字符串传递给 create_function()执行任意命令。</p>
-<h2 id="三、检测方法-2"><a href="#三、检测方法-2" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>基于黑盒的测试：简单点就是直接手工在输入内容之后添加各种分号或其它可以绕过的符号再添加命令，最后查看返回结果判断。</p>
+<h2 id="三、检测方法-3"><a href="#三、检测方法-3" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>基于黑盒的测试：简单点就是直接手工在输入内容之后添加各种分号或其它可以绕过的符号再添加命令，最后查看返回结果判断。</p>
 <p>基于白盒的测试：查看源代码，搜索与执行PHP代码的函数如eval、assert和执行系统命令的函数如system、passthru等。</p>
-<h2 id="四、防御方法-2"><a href="#四、防御方法-2" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、尽量不要执行外部的应用程序或命令。</p>
+<h2 id="四、防御方法-3"><a href="#四、防御方法-3" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、尽量不要执行外部的应用程序或命令。</p>
 <p>2、使用自定义函数或函数库实现外部应用程序或命令的功能。</p>
 <p>3、在执行 system、eval 等命令执行功能的函数前，确定参数内容。</p>
 <p>4、使用 escapeshellarg ()函数和escapeshellcmd()函数处理相关用户输入的内容。escapeshellarg() 函数会将任何引起参数或命令结束的字符进行转义，如单引号“’”会被转义为“\’”，双引号“””会被转义为“\””，分号“ ;”会被转义为“\;”，这样 escapeshellarg 会将参数内容限制在一对单引号或双引号里面，转义参数中所包含的单引号或双引号，使其无法对当前执行进行截断，实现防范命令注入攻击的目的。escapeshellcmd()函数会转义内容中的所有shell元字符来进行防御，这些元字符包括：# $ ; , \ ‘ | ? * ~ &lt; &gt; ^ ( ) [ ] { } </p>
@@ -760,8 +805,8 @@
 <p>主要使用的破解工具Hydra、Bruter、X-scan</p>
 <p>2、B/S架构暴力破解：</p>
 <p>使用Burpsuite镜像表单爆破</p>
-<h2 id="二、检测方法-3"><a href="#二、检测方法-3" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>简单粗暴的方法，直接使用Burpsuite进行暴力破解，看看有没有什么防暴破的机制即可。</p>
-<h2 id="三、防御方法-3"><a href="#三、防御方法-3" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、设置复杂的密码</p>
+<h2 id="二、检测方法-2"><a href="#二、检测方法-2" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>简单粗暴的方法，直接使用Burpsuite进行暴力破解，看看有没有什么防暴破的机制即可。</p>
+<h2 id="三、防御方法-2"><a href="#三、防御方法-2" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、设置复杂的密码</p>
 <p>2、采用验证码机制，同时可防范CSRF攻击</p>
 <p>3、登陆日志，限制登录次数</p>
 <p>4、调用sleep()函数，当登录失败时停止一段时间才允许再次登录，如DVWA的High级的防暴破机制</p>
@@ -984,7 +1029,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL注入与SQL盲注"><span class="nav-text">SQL注入与SQL盲注</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、绕过WAF的方法"><span class="nav-text">一、绕过WAF的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XSS（跨站脚本）"><span class="nav-text">XSS（跨站脚本）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、检测方法"><span class="nav-text">一、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、防御方法"><span class="nav-text">二、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CSRF（跨站请求伪造）"><span class="nav-text">CSRF（跨站请求伪造）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、CSRF攻击获取数据的方法"><span class="nav-text">一、CSRF攻击获取数据的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法-1"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法-1"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件上传漏洞"><span class="nav-text">文件上传漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、文件上传攻击分类"><span class="nav-text">一、文件上传攻击分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、上传文件中的解析攻击"><span class="nav-text">二、上传文件中的解析攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件包含漏洞"><span class="nav-text">文件包含漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、文件包含漏洞的利用技巧"><span class="nav-text">一、文件包含漏洞的利用技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法-2"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法-2"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不安全的验证码"><span class="nav-text">不安全的验证码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、原理过程"><span class="nav-text">一、原理过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、验证码的安全问题"><span class="nav-text">二、验证码的安全问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-1"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-1"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#命令注入漏洞"><span class="nav-text">命令注入漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、PHP与命令执行漏洞相关的函数"><span class="nav-text">一、PHP与命令执行漏洞相关的函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绕过disable-functions的方法"><span class="nav-text">二、绕过disable_functions的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-2"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-2"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#暴力破解"><span class="nav-text">暴力破解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、暴力破解分类"><span class="nav-text">一、暴力破解分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法-3"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法-3"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码注入"><span class="nav-text">代码注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSRF"><span class="nav-text">SSRF</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XML注入"><span class="nav-text">XML注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XPath注入"><span class="nav-text">XPath注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LDAP注入"><span class="nav-text">LDAP注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CRLF注入"><span class="nav-text">CRLF注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#URL不安全重定向"><span class="nav-text">URL不安全重定向</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#点击劫持"><span class="nav-text">点击劫持</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTML5安全"><span class="nav-text">HTML5安全</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反序列化漏洞"><span class="nav-text">反序列化漏洞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Web缓存攻击"><span class="nav-text">Web缓存攻击</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL注入与SQL盲注"><span class="nav-text">SQL注入与SQL盲注</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绕过WAF的方法"><span class="nav-text">二、绕过WAF的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XSS（跨站脚本）"><span class="nav-text">XSS（跨站脚本）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、检测方法"><span class="nav-text">一、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、防御方法"><span class="nav-text">二、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CSRF（跨站请求伪造）"><span class="nav-text">CSRF（跨站请求伪造）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、CSRF攻击获取数据的方法"><span class="nav-text">一、CSRF攻击获取数据的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件上传漏洞"><span class="nav-text">文件上传漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、文件上传攻击分类"><span class="nav-text">一、文件上传攻击分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、上传文件中的解析攻击"><span class="nav-text">二、上传文件中的解析攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-1"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-1"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件包含漏洞"><span class="nav-text">文件包含漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、文件包含漏洞的利用技巧"><span class="nav-text">一、文件包含漏洞的利用技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法-1"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法-1"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不安全的验证码"><span class="nav-text">不安全的验证码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、原理过程"><span class="nav-text">一、原理过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、验证码的安全问题"><span class="nav-text">二、验证码的安全问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-2"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-2"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#命令注入漏洞"><span class="nav-text">命令注入漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、PHP与命令执行漏洞相关的函数"><span class="nav-text">一、PHP与命令执行漏洞相关的函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绕过disable-functions的方法"><span class="nav-text">二、绕过disable_functions的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-3"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-3"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#暴力破解"><span class="nav-text">暴力破解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、暴力破解分类"><span class="nav-text">一、暴力破解分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法-2"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法-2"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码注入"><span class="nav-text">代码注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSRF"><span class="nav-text">SSRF</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XML注入"><span class="nav-text">XML注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XPath注入"><span class="nav-text">XPath注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LDAP注入"><span class="nav-text">LDAP注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CRLF注入"><span class="nav-text">CRLF注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#URL不安全重定向"><span class="nav-text">URL不安全重定向</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#点击劫持"><span class="nav-text">点击劫持</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTML5安全"><span class="nav-text">HTML5安全</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反序列化漏洞"><span class="nav-text">反序列化漏洞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Web缓存攻击"><span class="nav-text">Web缓存攻击</span></a></li></ol></div>
             
 
           </div>
