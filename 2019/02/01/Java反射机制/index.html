@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="PHP,">
+  <meta name="keywords" content="Java,">
 
 
 
@@ -79,34 +79,22 @@
 
 
 
-<meta name="description" content="基本概念PHP伪协议在CTF中经常使用到，这里写个简单的Demo小结一下，主要对file://、php://filter、php://input、data://、zip://、compress.bzip2://、compress.zlib://、phar://等协议进行简单的Demo介绍分析。 简单说一下，file://用于访问本地文件系统读取本地文件；php://访问各个输入/输出流（I/O s">
-<meta name="keywords" content="PHP">
+<meta name="description" content="基本概念反射机制定义：Java反射机制是在运行状态时，对于任意一个类，都能够获取到这个类的所有属性和方法，对于任意一个对象，都能够调用它的任意一个方法和属性(包括私有的方法和属性)，这种动态获取的信息以及动态调用对象的方法的功能就称为java语言的反射机制。 通俗点讲，通过反射，该类对我们来说是完全透明的，想要获取任何东西都可以。 要使用反射机制，就必须要先获取到该类的字节码文件对象(.class">
+<meta name="keywords" content="Java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PHP伪协议">
-<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/31/PHP伪协议/index.html">
+<meta property="og:title" content="Java反射机制">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/02/01/Java反射机制/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="基本概念PHP伪协议在CTF中经常使用到，这里写个简单的Demo小结一下，主要对file://、php://filter、php://input、data://、zip://、compress.bzip2://、compress.zlib://、phar://等协议进行简单的Demo介绍分析。 简单说一下，file://用于访问本地文件系统读取本地文件；php://访问各个输入/输出流（I/O s">
+<meta property="og:description" content="基本概念反射机制定义：Java反射机制是在运行状态时，对于任意一个类，都能够获取到这个类的所有属性和方法，对于任意一个对象，都能够调用它的任意一个方法和属性(包括私有的方法和属性)，这种动态获取的信息以及动态调用对象的方法的功能就称为java语言的反射机制。 通俗点讲，通过反射，该类对我们来说是完全透明的，想要获取任何东西都可以。 要使用反射机制，就必须要先获取到该类的字节码文件对象(.class">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/1.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/2.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/3.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/4.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/5.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/6.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/7.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/8.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/9.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/10.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/11.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/12.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/13.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/14.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/15.png">
-<meta property="og:updated_time" content="2019-01-31T14:03:30.678Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/3.png">
+<meta property="og:updated_time" content="2019-02-01T14:41:47.143Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHP伪协议">
-<meta name="twitter:description" content="基本概念PHP伪协议在CTF中经常使用到，这里写个简单的Demo小结一下，主要对file://、php://filter、php://input、data://、zip://、compress.bzip2://、compress.zlib://、phar://等协议进行简单的Demo介绍分析。 简单说一下，file://用于访问本地文件系统读取本地文件；php://访问各个输入/输出流（I/O s">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/31/PHP伪协议/1.png">
+<meta name="twitter:title" content="Java反射机制">
+<meta name="twitter:description" content="基本概念反射机制定义：Java反射机制是在运行状态时，对于任意一个类，都能够获取到这个类的所有属性和方法，对于任意一个对象，都能够调用它的任意一个方法和属性(包括私有的方法和属性)，这种动态获取的信息以及动态调用对象的方法的功能就称为java语言的反射机制。 通俗点讲，通过反射，该类对我们来说是完全透明的，想要获取任何东西都可以。 要使用反射机制，就必须要先获取到该类的字节码文件对象(.class">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/1.png">
 
 
 
@@ -136,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="https://Mi1k7ea.github.com/2019/01/31/PHP伪协议/">
+  <link rel="canonical" href="https://Mi1k7ea.github.com/2019/02/01/Java反射机制/">
 
 
 
 
 
-  <title>PHP伪协议 | Mi1k7ea</title>
+  <title>Java反射机制 | Mi1k7ea</title>
   
 
 
@@ -311,7 +299,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://Mi1k7ea.github.com/2019/01/31/PHP伪协议/">
+    <link itemprop="mainEntityOfPage" href="https://Mi1k7ea.github.com/2019/02/01/Java反射机制/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mi1k7ea">
@@ -328,7 +316,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">PHP伪协议</h1>
+          <h1 class="post-title" itemprop="name headline">Java反射机制</h1>
         
 
         <div class="post-meta">
@@ -340,8 +328,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-31T21:24:25+08:00">
-                2019-01-31
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-01T20:57:24+08:00">
+                2019-02-01
               </time>
             
 
@@ -363,8 +351,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/PHP/" itemprop="url" rel="index">
-                    <span itemprop="name">PHP</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -405,70 +393,57 @@
       
 
       
-        <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>PHP伪协议在CTF中经常使用到，这里写个简单的Demo小结一下，主要对file://、php://filter、php://input、data://、zip://、compress.bzip2://、compress.zlib://、phar://等协议进行简单的Demo介绍分析。</p>
-<p>简单说一下，file://用于访问本地文件系统读取本地文件；php://访问各个输入/输出流（I/O streams），其中php://filter用于读取文件内容，php://input可以访问请求的原始数据的只读流、同时可将post请求中的数据作为PHP代码执行；zip://，bzip2://，zlib://均属于压缩流，可以访问压缩文件中的子文件，更重要的是不需要指定后缀名；data://即写入数据；phar://即PHP归档。</p>
+        <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p><strong>反射机制定义：</strong>Java反射机制是在运行状态时，对于任意一个类，都能够获取到这个类的所有属性和方法，对于任意一个对象，都能够调用它的任意一个方法和属性(包括私有的方法和属性)，这种动态获取的信息以及动态调用对象的方法的功能就称为java语言的反射机制。</p>
+<p>通俗点讲，通过反射，该类对我们来说是完全透明的，想要获取任何东西都可以。</p>
+<p>要使用反射机制，就必须要先获取到该类的字节码文件对象(.class)，通过字节码文件对象，就能够通过该类中的方法获取到我们想要的所有信息(方法，属性，类名，父类名，实现的所有接口等等)，每一个类对应着一个字节码文件也就对应着一个Class类型的对象，也就是字节码文件对象。</p>
 <hr>
-<h1 id="简单文件包含Demo代码"><a href="#简单文件包含Demo代码" class="headerlink" title="简单文件包含Demo代码"></a>简单文件包含Demo代码</h1><p>demo.php</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="keyword">echo</span> <span class="string">'&lt;h3&gt;Hi, just a test for php pseudo protocol. :)&lt;/h3&gt;'</span>;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">'&lt;p&gt;u can input a param called "file" by GET method.&lt;/p&gt;'</span>;</span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">"file"</span>]))&#123;</span><br><span class="line">		@<span class="keyword">include</span>($_GET[<span class="string">"file"</span>]);</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>正常访问，提示可以通过GET传入一个file参数包含文件：</p>
-<p><img src="/2019/01/31/PHP伪协议/1.png" alt="文件包含Demo"></p>
+<h1 id="反射机制相关类库"><a href="#反射机制相关类库" class="headerlink" title="反射机制相关类库"></a>反射机制相关类库</h1><p>在Java中，Class类和java.lang.reflect类库一起构成了对反射机制的支持。其中最常使用到的类是Constructor，Field，Method，而这三个类都继承了一个接口java.lang.reflect.Member。下面列举介绍一下java.lang.reflect类库中的类：</p>
+<ul>
+<li>AccessibleObject：Field，Method，和Constructor对象的基类。提供了将反射的对象标记为在使用时取消默认Java语言访问控制检查的能力。</li>
+<li>Array：提供了动态创建和访问Java数组的方法。</li>
+<li>Constructor：提供关于类的单个构造方法的信息以及对它的访问权限。</li>
+<li>Field： 提供有关类或接口的单个字段的信息，以及对它的动态访问权限。反射的字段可能是一个类（静态）字段或实例字段。</li>
+<li>Method： 提供关于类或接口上单独某个方法（以及如何访问该方法）的信息。所反映的方法可能是类方法或实例方法（包括抽象方法）。</li>
+<li>Modifier： 类提供了 static 方法和常量，对类和成员访问修饰符进行解码。修饰符集被表示为整数，用不同的位位置 (bit position) 表示不同的修饰符。该类的字段均是int类型的变量。 </li>
+<li>Proxy： 提供用于创建动态代理类和实例的静态方法，它还是由这些方法创建的所有动态代理类的超类。</li>
+<li>ReflectPermission：反射操作的 Permission 类。ReflectPermission 是一种指定权限，没有动作。当前定义的唯一名称是 suppressAccessChecks，它允许取消由反射对象在其使用点上执行的标准 Java 语言访问检查 - 对于 public、default（包）访问、protected、private 成员。</li>
+</ul>
+<p>当要使用反射机制去探查一个类的内部时，还可以调用getFields()，getMethods()和getConstructors()等很便利的方法。对于反射机制，和RTTI（Run-Time Type Information，运行时类型信息）的区别就在于，RTTI是在编译时打开和检查.class文件，而反射机制是在运行时打开和检查.class文件。</p>
 <hr>
-<h1 id="file-协议"><a href="#file-协议" class="headerlink" title="file://协议"></a>file://协议</h1><p>file://协议用于访问本地文件系统，在CTF中通常用来读取本地文件且不受allow_url_fopen与allow_url_include的影响。</p>
-<p>注意：该协议的路径只能输入绝对路径，输入相对路径是不生效的。</p>
-<p>先输入一个文本文件，可以读到该文件内容，比如CTF经常遇到的flag：</p>
-<p><img src="/2019/01/31/PHP伪协议/2.png" alt="file://读取txt文件"></p>
-<p>输入php或JS文件，file://协议会执行该PHP文件里的代码而不是显示该内容，因而该协议不适用于获取文件内容源代码（而常用php://filter伪协议）：</p>
-<p><img src="/2019/01/31/PHP伪协议/3.png" alt="file://读取php文件"></p>
-<p><img src="/2019/01/31/PHP伪协议/4.png" alt="file://读取js文件"></p>
+<h1 id="获取类名称"><a href="#获取类名称" class="headerlink" title="获取类名称"></a>获取类名称</h1><p>通过反射机制获取类名称有三种方法：</p>
+<p>1、Class clz = Class.forName(“com.test.User”);</p>
+<p>2、Class clz = com.test.User.class;</p>
+<p>3、User u = new User();  Class clz = u.getClass();</p>
+<p>Demo示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class clz1 = Class.forName(<span class="string">"java.lang.Runtime"</span>);</span><br><span class="line">            System.out.println(<span class="string">"方法一："</span>);</span><br><span class="line">            System.out.println(clz1.getName());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">            System.out.println(<span class="string">"forName出错"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Class clz2 = java.lang.ProcessBuilder.class;</span><br><span class="line">        System.out.println(<span class="string">"方法二："</span>);</span><br><span class="line">        System.out.println(clz2.getName());</span><br><span class="line"></span><br><span class="line">        java.lang.String s = <span class="string">""</span>;</span><br><span class="line">        Class clz3 = s.getClass();</span><br><span class="line">        System.out.println(<span class="string">"方法三："</span>);</span><br><span class="line">        System.out.println(clz3.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可从运行结果中看到分别获取了不同类名称：</p>
+<p><img src="/2019/02/01/Java反射机制/1.png" alt="获取类名称"></p>
 <hr>
-<h1 id="php-协议"><a href="#php-协议" class="headerlink" title="php://协议"></a>php://协议</h1><p>php://访问各个输入/输出流（I/O streams），在CTF中经常使用的是php://filter和php://input，php://filter用于读取源码，php://input用于执行php代码。</p>
-<p>不需要开启allow_url_fopen，仅php://input、php://stdin、 php://memory和php://temp需要开启allow_url_include。</p>
-<h2 id="php-filter协议"><a href="#php-filter协议" class="headerlink" title="php://filter协议"></a>php://filter协议</h2><p>php://filter是一种元封装器，设计用于数据流打开时的筛选过滤应用。在CTF中主要用于读取文件内容。不需要开启allow_url_fopen和allow_url_include。</p>
-<p>查看之前的test.js文件与PHP文件：</p>
-<p><img src="/2019/01/31/PHP伪协议/5.png" alt="php://filter读取js文件"></p>
-<p><img src="/2019/01/31/PHP伪协议/6.png" alt="php://filter读取php文件"></p>
+<h1 id="创建对象"><a href="#创建对象" class="headerlink" title="创建对象"></a>创建对象</h1><p>通过Class创建对象：</p>
+<p>Class clz = Class.forName(“com.test.User”);</p>
+<p>User u = (User)clz.newInstane();//调用无参构造函数</p>
+<p>Demo示例：</p>
+<p>Uset.class定义User类，包含用户名和年龄：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</span><br><span class="line">                <span class="string">"name='"</span> + name + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", age="</span> + age +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>test.class中调用newInstane()创建对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Class clz = User.class;</span><br><span class="line">        User user = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            user = (User)clz.newInstance();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InstantiationException e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        user.setName(<span class="string">"Mi1k7ea"</span>);</span><br><span class="line">        user.setAge(<span class="number">6</span>);</span><br><span class="line">        System.out.println(user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从结果可看到创建了新的User类对象并成功赋值：</p>
+<p><img src="/2019/02/01/Java反射机制/2.png" alt="创建对象"></p>
 <hr>
-<h2 id="php-input协议"><a href="#php-input协议" class="headerlink" title="php://input协议"></a>php://input协议</h2><p>php://input可以访问请求的原始数据的只读流，在CTF中多用于执行php代码。</p>
-<p>不需要开启allow_url_fopen和allow_url_include。</p>
-<p><img src="/2019/01/31/PHP伪协议/7.png" alt="php://input写入phpinfo"></p>
-<p><img src="/2019/01/31/PHP伪协议/8.png" alt="php://input写入system"></p>
+<h1 id="获取类对象属性"><a href="#获取类对象属性" class="headerlink" title="获取类对象属性"></a>获取类对象属性</h1><p>这里的属性指的是类定义的组成元素，如修饰符、方法名、成员变量等。</p>
+<p><strong>获取所有的属性：</strong></p>
+<p>Class clz = Class.forName(“com.test.User”);</p>
+<p>Field [] fields = clz.getDeclaredFields();</p>
+<p><strong>获取特定属性：</strong></p>
+<p>Class clz = Class.forName(“com.test.User”);</p>
+<p>Field [] fields = clz.getDeclaredField(“xxx”);//xxx为指定属性名</p>
+<p>Demo示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class clz = Class.forName(<span class="string">"User"</span>);</span><br><span class="line">            User user = (User)clz.newInstance();</span><br><span class="line">            Field[] fields = clz.getDeclaredFields();</span><br><span class="line">            System.out.println(<span class="string">"User类所有的属性："</span>);</span><br><span class="line">            <span class="keyword">for</span> (Field f : fields) &#123;</span><br><span class="line">                System.out.println(f);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Field field = clz.getDeclaredField(<span class="string">"name"</span>);</span><br><span class="line">            field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            field.set(user, <span class="string">"Mi1k7ea"</span>);</span><br><span class="line">            System.out.println(<span class="string">"\n修改的User类对象的name值为："</span>);</span><br><span class="line">            System.out.println(field.get(user));</span><br><span class="line">            System.out.println(<span class="string">"修改属性后的User类对象："</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">            System.out.println(<span class="string">"forName出错"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可从结果看到调用获取了getDeclaredFields()所有Runtime类的属性，包括修饰符、方法名、成员变量等，同时也调用getDeclaredField()获取了指定的属性：</p>
+<p><img src="/2019/02/01/Java反射机制/3.png" alt="获取类所有属性"></p>
 <hr>
-<h1 id="data-协议"><a href="#data-协议" class="headerlink" title="data://协议"></a>data://协议</h1><p>data://即数据，在CTF中主要用于写入代码并包含该代码到当前页面中。</p>
-<p>必须同时开启allow_url_fopen和allow_url_include。</p>
-<p>使用形式如下：</p>
-<p>data:text/plain;base64, \<script>alert(‘xss’)\</script></p>
-<p>data://text/plain;base64, \<script>alert(‘xss’)\</script></p>
-<p>data:text/plain;base64,PHNjcmlwdD5hbGVydCgneHNzJyk8L3NjcmlwdD4=</p>
-<p>data://text/plain;base64,PHNjcmlwdD5hbGVydCgneHNzJyk8L3NjcmlwdD4=</p>
-<p><img src="/2019/01/31/PHP伪协议/9.png" alt="data://协议写入phpinfo"></p>
-<p><img src="/2019/01/31/PHP伪协议/10.png" alt="data://协议写入js代码"></p>
-<hr>
-<h1 id="zip-、bzip2-、zlib-协议"><a href="#zip-、bzip2-、zlib-协议" class="headerlink" title="zip://、bzip2://、zlib://协议"></a>zip://、bzip2://、zlib://协议</h1><p>zip://、bzip2://、zlib://均属于压缩流，可以访问压缩文件中的子文件，更重要的是不需要指定后缀名。</p>
-<p>不需要开启allow_url_fopen和allow_url_include。</p>
-<h2 id="zip-协议"><a href="#zip-协议" class="headerlink" title="zip://协议"></a>zip://协议</h2><p>zip://压缩流，不需要开启allow_url_fopen和allow_url_include。</p>
-<p>使用方法：</p>
-<p>zip:// [压缩文件绝对路径]#[压缩文件内的子文件名]</p>
-<p>文件路径必须为绝对路径。</p>
-<p>上传一个包含PHP代码文件的zip包，只要zip://访问该协议即触发文件包含漏洞、将任意文本文件中的内容当作PHP代码执行：</p>
-<p><img src="/2019/01/31/PHP伪协议/11.png" alt="demo"></p>
-<p>当然可以修改上传的zip文件后缀名为其他如图片后缀，根据特定情况可绕过一些上传文件类型的限制：</p>
-<p><img src="/2019/01/31/PHP伪协议/12.png" alt="demo"></p>
-<hr>
-<h2 id="zlib-协议"><a href="#zlib-协议" class="headerlink" title="zlib://协议"></a>zlib://协议</h2><p>zlib://压缩流，不需要开启allow_url_fopen和allow_url_include。</p>
-<p>使用方法：</p>
-<p>compress.zlib://file</p>
-<p>文件无绝对路径限制。</p>
-<p><img src="/2019/01/31/PHP伪协议/13.png" alt="demo"></p>
-<p><img src="/2019/01/31/PHP伪协议/14.png" alt="demo"></p>
-<hr>
-<h2 id="bzip2-协议"><a href="#bzip2-协议" class="headerlink" title="bzip2://协议"></a>bzip2://协议</h2><p>bzip2://压缩流，不需要开启allow_url_fopen和allow_url_include。</p>
-<p>使用方法：</p>
-<p>compress.bzip2://file</p>
-<p>文件无绝对路径限制。</p>
-<p>可是这里怎么测试都不成功，通过phpinfo查看bzip2://是enable且文件类型和文件路径都进行尝试，PHP版本也换了几个，还是无法显示phpinfo信息，哪位知道原因的大佬请指点一下 : )</p>
-<hr>
-<h1 id="phar-协议"><a href="#phar-协议" class="headerlink" title="phar://协议"></a>phar://协议</h1><p>phar://即PHP归档，常用于解析phar文件内容，最近的CTF中多用于phar反序列化漏洞利用。反序列化漏洞具体的利用可参考<a href="https://blog.csdn.net/SKI_12/article/details/85551194" target="_blank" rel="noopener">https://blog.csdn.net/SKI_12/article/details/85551194</a></p>
-<p><img src="/2019/01/31/PHP伪协议/15.png" alt="demo"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.cnblogs.com/whgk/p/6122036.html" target="_blank" rel="noopener">Java中反射机制详解</a></p>
+<p><a href="https://www.cnblogs.com/AaronCui/p/4911123.html" target="_blank" rel="noopener">Java反射机制Reflection</a></p>
 
       
     </div>
@@ -489,7 +464,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://Mi1k7ea.github.com/2019/01/31/PHP伪协议/" title="PHP伪协议">https://Mi1k7ea.github.com/2019/01/31/PHP伪协议/</a>
+    <a href="https://Mi1k7ea.github.com/2019/02/01/Java反射机制/" title="Java反射机制">https://Mi1k7ea.github.com/2019/02/01/Java反射机制/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明：</strong>
@@ -504,7 +479,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/PHP/" rel="tag"><i class="fa fa-tag"></i> PHP</a>
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
           
         </div>
       
@@ -517,8 +492,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/01/30/常见Web漏洞类型/" rel="next" title="常见Web漏洞类型总结">
-                <i class="fa fa-chevron-left"></i> 常见Web漏洞类型总结
+              <a href="/2019/01/31/PHP伪协议/" rel="next" title="PHP伪协议">
+                <i class="fa fa-chevron-left"></i> PHP伪协议
               </a>
             
           </div>
@@ -526,10 +501,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/02/01/Java反射机制/" rel="prev" title="Java反射机制">
-                Java反射机制 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -681,7 +652,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单文件包含Demo代码"><span class="nav-text">简单文件包含Demo代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#file-协议"><span class="nav-text">file://协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#php-协议"><span class="nav-text">php://协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#php-filter协议"><span class="nav-text">php://filter协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#php-input协议"><span class="nav-text">php://input协议</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#data-协议"><span class="nav-text">data://协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zip-、bzip2-、zlib-协议"><span class="nav-text">zip://、bzip2://、zlib://协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#zip-协议"><span class="nav-text">zip://协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zlib-协议"><span class="nav-text">zlib://协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bzip2-协议"><span class="nav-text">bzip2://协议</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#phar-协议"><span class="nav-text">phar://协议</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反射机制相关类库"><span class="nav-text">反射机制相关类库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#获取类名称"><span class="nav-text">获取类名称</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建对象"><span class="nav-text">创建对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#获取类对象属性"><span class="nav-text">获取类对象属性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>
