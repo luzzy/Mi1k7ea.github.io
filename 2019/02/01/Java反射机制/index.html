@@ -90,7 +90,11 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/1.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/2.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/3.png">
-<meta property="og:updated_time" content="2019-02-01T14:41:47.143Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java反射机制/7.png">
+<meta property="og:updated_time" content="2019-02-02T13:16:52.750Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java反射机制">
 <meta name="twitter:description" content="基本概念反射机制定义：Java反射机制是在运行状态时，对于任意一个类，都能够获取到这个类的所有属性和方法，对于任意一个对象，都能够调用它的任意一个方法和属性(包括私有的方法和属性)，这种动态获取的信息以及动态调用对象的方法的功能就称为java语言的反射机制。 通俗点讲，通过反射，该类对我们来说是完全透明的，想要获取任何东西都可以。 要使用反射机制，就必须要先获取到该类的字节码文件对象(.class">
@@ -442,6 +446,22 @@
 <p>可从结果看到调用获取了getDeclaredFields()所有Runtime类的属性，包括修饰符、方法名、成员变量等，同时也调用getDeclaredField()获取了指定的属性：</p>
 <p><img src="/2019/02/01/Java反射机制/3.png" alt="获取类所有属性"></p>
 <hr>
+<h1 id="应用示例"><a href="#应用示例" class="headerlink" title="应用示例"></a>应用示例</h1><h2 id="1、利用反射，在泛型为int的arryaList集合中存放一个String类型的对象"><a href="#1、利用反射，在泛型为int的arryaList集合中存放一个String类型的对象" class="headerlink" title="1、利用反射，在泛型为int的arryaList集合中存放一个String类型的对象"></a>1、利用反射，在泛型为int的arryaList集合中存放一个String类型的对象</h2><p>原理：集合中的泛型只在编译器有效，而到了运行期时泛型则会失效。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line"></span><br><span class="line">        List&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">        list.add(<span class="number">1</span>);</span><br><span class="line">        list.add(<span class="number">2</span>);</span><br><span class="line"><span class="comment">//        list.add("Mi1k7ea");//在编译器中泛型生效，插入字符串对象会报错</span></span><br><span class="line">        Class clz = list.getClass();</span><br><span class="line">        Method method = clz.getMethod(<span class="string">"add"</span>, Object.class);</span><br><span class="line">        method.invoke(list, <span class="string">"Mi1k7ea"</span>);</span><br><span class="line">        System.out.println(list);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到成功将String类型对象放入泛型为int型的数组中：</p>
+<p><img src="/2019/02/01/Java反射机制/4.png" alt="示例1"></p>
+<hr>
+<h2 id="2、利用反射，简化编写Servlet的个数"><a href="#2、利用反射，简化编写Servlet的个数" class="headerlink" title="2、利用反射，简化编写Servlet的个数"></a>2、利用反射，简化编写Servlet的个数</h2><p>利用反射机制，在为程序添加新功能时可以无需逐个对应编写新的Servlet，提高开发效率和代码简洁性。主要有如下两个方式优化。</p>
+<p><strong>（1）、通过编写利用反射机制获取指定属性值的Servlet的方式</strong></p>
+<p>每次从页面传过来一个参数，method=”xxx”; 然后编写一个Servlet，获得其参数method的值，进行判断，如果是add，则调用add方法，如果是delete，则调用delete方法，这样就可以写在一个servlet中实现所有的功能了。</p>
+<p><img src="/2019/02/01/Java反射机制/5.png" alt="示例2"></p>
+<p><strong>（2）、通过Servlet的生命周期即service()实现反射机制来实现</strong></p>
+<p>编写一个通用的BaseServlet，继承于HttpServlet：</p>
+<p><img src="/2019/02/01/Java反射机制/6.png" alt="示例3"></p>
+<p>编写具体实现的方法Servlet类MyServlet001，继承于BaseServlet：</p>
+<p><img src="/2019/02/01/Java反射机制/7.png" alt="示例4"></p>
+<p>由Servlet的生命周期可知，在访问该Servlet时会调用service()方法，然而MyServlet001类中并无service()，因此会返回到父类BaseServlet中找到该service()方法，再获取参数从而知道需要调用的方法，因为方法的编写都在子类中，所以通过反射，获取到子类中对应的方法并运行，其中需要注意的是this这个参数在BaseServlet中的用法。</p>
+<hr>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.cnblogs.com/whgk/p/6122036.html" target="_blank" rel="noopener">Java中反射机制详解</a></p>
 <p><a href="https://www.cnblogs.com/AaronCui/p/4911123.html" target="_blank" rel="noopener">Java反射机制Reflection</a></p>
 
@@ -648,7 +668,7 @@
               <ul class="links-of-blogroll-list">
                 
                   <li class="links-of-blogroll-item">
-                    <a href="https://blog.csdn.net/ski_12/" title="Title" target="_blank">Title</a>
+                    <a href="https://blog.csdn.net/ski_12/" title="SKI12" target="_blank">SKI12</a>
                   </li>
                 
               </ul>
@@ -670,7 +690,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反射机制相关类库"><span class="nav-text">反射机制相关类库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#获取类名称"><span class="nav-text">获取类名称</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建对象"><span class="nav-text">创建对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#获取类对象属性"><span class="nav-text">获取类对象属性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反射机制相关类库"><span class="nav-text">反射机制相关类库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#获取类名称"><span class="nav-text">获取类名称</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建对象"><span class="nav-text">创建对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#获取类对象属性"><span class="nav-text">获取类对象属性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#应用示例"><span class="nav-text">应用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、利用反射，在泛型为int的arryaList集合中存放一个String类型的对象"><span class="nav-text">1、利用反射，在泛型为int的arryaList集合中存放一个String类型的对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、利用反射，简化编写Servlet的个数"><span class="nav-text">2、利用反射，简化编写Servlet的个数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>
