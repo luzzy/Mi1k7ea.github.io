@@ -1,403 +1,169 @@
 <!DOCTYPE html>
-
-
-
-  
-
-
-<html class="theme-next muse use-motion" lang="zh-CN">
+<html lang=zh>
 <head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#222">
-
-
-
-
-
-
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform">
-<meta http-equiv="Cache-Control" content="no-siteapp">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
-
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
-
-<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/pain.jpg?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/pain.jpg?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/pain.jpg?v=5.1.4">
-
-
-  <link rel="mask-icon" href="/images/pain.jpg?v=5.1.4" color="#222">
-
-
-
-
-
-  <meta name="keywords" content="Web安全,">
-
-
-
-
-
-
-
-
-
-
-<meta name="description" content="原文博客链接：https://SKI12.github.io 这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念漏洞定义 　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念漏洞定义 　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进行攻击。 成因 　　针对SQL注入的攻击行为可描述为通过在用户">
 <meta name="keywords" content="Web安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="常见Web漏洞类型总结">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="原文博客链接：https://SKI12.github.io 这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念漏洞定义 　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进">
+<meta property="og:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念漏洞定义 　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进行攻击。 成因 　　针对SQL注入的攻击行为可描述为通过在用户">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/1.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/3.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/4.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/5.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/2.png">
-<meta property="og:updated_time" content="2019-02-01T12:56:45.674Z">
+<meta property="og:updated_time" content="2019-02-08T14:36:33.701Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常见Web漏洞类型总结">
-<meta name="twitter:description" content="原文博客链接：https://SKI12.github.io 这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念漏洞定义 　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进">
+<meta name="twitter:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念漏洞定义 　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进行攻击。 成因 　　针对SQL注入的攻击行为可描述为通过在用户">
 <meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/1.png">
-
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Muse',
-    version: '5.1.4',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
-    fancybox: true,
-    tabs: true,
-    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    duoshuo: {
-      userId: '0',
-      author: 'Author'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-
-  <link rel="canonical" href="https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/">
-
-
-
-
-
-  <title>常见Web漏洞类型总结 | Mi1k7ea</title>
-  
-
-
-
-
-
-
-
-
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>常见Web漏洞类型总结</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
 </head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
-
-  
-  
+<body class="max-width mx-auto px3 ltr">
     
-  
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">文章</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/01/31/PHP伪协议/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/01/28/IA-32寄存器/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&text=常见Web漏洞类型总结"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&is_video=false&description=常见Web漏洞类型总结"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=常见Web漏洞类型总结&body=Check out this article: https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&name=常见Web漏洞类型总结&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
 
-  <div class="container sidebar-position-left page-post-detail">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Mi1k7ea</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
     </div>
-      
-        <p class="site-subtitle"></p>
-      
-  </div>
-
-  <div class="site-nav-toggle">
-    <button>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL注入与SQL盲注"><span class="toc-number">1.</span> <span class="toc-text">SQL注入与SQL盲注</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念"><span class="toc-number">1.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法"><span class="toc-number">1.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法"><span class="toc-number">1.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法"><span class="toc-number">1.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XSS（跨站脚本）"><span class="toc-number">2.</span> <span class="toc-text">XSS（跨站脚本）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-1"><span class="toc-number">2.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法-1"><span class="toc-number">2.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-1"><span class="toc-number">2.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-1"><span class="toc-number">2.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF（跨站请求伪造）"><span class="toc-number">3.</span> <span class="toc-text">CSRF（跨站请求伪造）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-2"><span class="toc-number">3.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、CSRF攻击获取数据的方法"><span class="toc-number">3.2.</span> <span class="toc-text">二、CSRF攻击获取数据的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-2"><span class="toc-number">3.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-2"><span class="toc-number">3.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件上传漏洞"><span class="toc-number">4.</span> <span class="toc-text">文件上传漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-3"><span class="toc-number">4.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、文件上传攻击分类"><span class="toc-number">4.2.</span> <span class="toc-text">二、文件上传攻击分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、上传文件中的解析攻击"><span class="toc-number">4.3.</span> <span class="toc-text">三、上传文件中的解析攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、检测方法"><span class="toc-number">4.4.</span> <span class="toc-text">四、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、防御方法"><span class="toc-number">4.5.</span> <span class="toc-text">五、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件包含漏洞"><span class="toc-number">5.</span> <span class="toc-text">文件包含漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-4"><span class="toc-number">5.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、文件包含漏洞的利用技巧"><span class="toc-number">5.2.</span> <span class="toc-text">二、文件包含漏洞的利用技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-3"><span class="toc-number">5.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-3"><span class="toc-number">5.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的验证码"><span class="toc-number">6.</span> <span class="toc-text">不安全的验证码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-5"><span class="toc-number">6.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、验证码的安全问题"><span class="toc-number">6.2.</span> <span class="toc-text">二、验证码的安全问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-4"><span class="toc-number">6.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-4"><span class="toc-number">6.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令注入漏洞"><span class="toc-number">7.</span> <span class="toc-text">命令注入漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-6"><span class="toc-number">7.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法-2"><span class="toc-number">7.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、绕过disable-functions的方法"><span class="toc-number">7.3.</span> <span class="toc-text">三、绕过disable_functions的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、检测方法-1"><span class="toc-number">7.4.</span> <span class="toc-text">四、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、防御方法-1"><span class="toc-number">7.5.</span> <span class="toc-text">五、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#暴力破解"><span class="toc-number">8.</span> <span class="toc-text">暴力破解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-7"><span class="toc-number">8.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、检测方法"><span class="toc-number">8.2.</span> <span class="toc-text">二、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、防御方法"><span class="toc-number">8.3.</span> <span class="toc-text">三、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码注入"><span class="toc-number">9.</span> <span class="toc-text">代码注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-8"><span class="toc-number">9.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法-3"><span class="toc-number">9.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-5"><span class="toc-number">9.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-5"><span class="toc-number">9.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF"><span class="toc-number">10.</span> <span class="toc-text">SSRF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-9"><span class="toc-number">10.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法-4"><span class="toc-number">10.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-6"><span class="toc-number">10.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-6"><span class="toc-number">10.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XML注入"><span class="toc-number">11.</span> <span class="toc-text">XML注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-10"><span class="toc-number">11.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、检测方法-1"><span class="toc-number">11.2.</span> <span class="toc-text">二、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、防御方法-1"><span class="toc-number">11.3.</span> <span class="toc-text">三、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反序列化漏洞"><span class="toc-number">12.</span> <span class="toc-text">反序列化漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-11"><span class="toc-number">12.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、检测方法-2"><span class="toc-number">12.2.</span> <span class="toc-text">二、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、防御方法-2"><span class="toc-number">12.3.</span> <span class="toc-text">三、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XPath注入"><span class="toc-number">13.</span> <span class="toc-text">XPath注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-12"><span class="toc-number">13.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、检测方法-3"><span class="toc-number">13.2.</span> <span class="toc-text">二、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、防御方法-3"><span class="toc-number">13.3.</span> <span class="toc-text">三、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LDAP注入"><span class="toc-number">14.</span> <span class="toc-text">LDAP注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CRLF注入"><span class="toc-number">15.</span> <span class="toc-text">CRLF注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URL不安全重定向"><span class="toc-number">16.</span> <span class="toc-text">URL不安全重定向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#点击劫持"><span class="toc-number">17.</span> <span class="toc-text">点击劫持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTML5安全"><span class="toc-number">18.</span> <span class="toc-text">HTML5安全</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web缓存攻击"><span class="toc-number">19.</span> <span class="toc-text">Web缓存攻击</span></a></li></ol>
+    </div>
+  </span>
 </div>
 
-<nav class="site-nav">
-  
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        常见Web漏洞类型总结
+    </h1>
 
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
-            
-            Home
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
-            
-            Tags
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
-            
-            Categories
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
-            
-            Archives
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
-            
-            About
-          </a>
-        </li>
-      
 
-      
-        <li class="menu-item menu-item-search">
-          
-            <a href="javascript:;" class="popup-trigger">
-          
-            
-              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
-            
-            Search
-          </a>
-        </li>
-      
-    </ul>
-  
 
-  
-    <div class="site-search">
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
       
-  <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    <div class="postdate">
+      
+        <time datetime="2019-01-30T14:47:15.000Z" itemprop="datePublished">2019-01-30</time>
+        
+      
     </div>
-  </div>
-  <div id="local-search-result"></div>
-</div>
 
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Web安全基础/">Web安全基础</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Web安全/">Web安全</a>
+    </div>
 
 
     </div>
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
+  </header>
   
 
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Mi1k7ea">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/pain.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Mi1k7ea">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">常见Web漏洞类型总结</h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-30T22:47:15+08:00">
-                2019-01-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/Web安全基础/" itemprop="url" rel="index">
-                    <span itemprop="name">Web安全基础</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-            <span class="post-meta-divider">|</span>
-            <span class="page-pv"><i class="fa fa-eye"></i>
-            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>Views
-            </span>
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <p>原文博客链接：<a href="https://SKI12.github.io" target="_blank" rel="noopener">https://SKI12.github.io</a></p>
-<p>这里小结一下常见的Web漏洞类型，待完善。</p>
-<h1 id="SQL注入与SQL盲注"><a href="#SQL注入与SQL盲注" class="headerlink" title="SQL注入与SQL盲注"></a>SQL注入与SQL盲注</h1><h2 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+  <div class="content" itemprop="articleBody">
+    <p>这里小结一下常见的Web漏洞类型，待完善。</p>
+<h2 id="SQL注入与SQL盲注"><a href="#SQL注入与SQL盲注" class="headerlink" title="SQL注入与SQL盲注"></a>SQL注入与SQL盲注</h2><h3 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进行攻击。</p>
 <p><strong>成因</strong></p>
 <p>　　针对SQL注入的攻击行为可描述为通过在用户可控参数中注入SQL语法，破坏原有SQL结构，达到编写程序时意料之外结果的攻击行为。其成因可以归结为以下两个原因叠加造成的：</p>
@@ -430,8 +196,7 @@
 <p>​    @@datadir  @@hostname  @@VERSION  @@version_compile_os</p>
 <p><strong>危害</strong></p>
 <p>　　攻击者利用SQL注入漏洞，可以获取数据库中的多种信息（例如：管理员后台密码），从而脱取数据库中内容（脱库）。在特别情况下还可以修改数据库内容或者插入内容到数据库，如果数据库权限分配存在问题，或者数据库本身存在缺陷，那么攻击者可以通过SQL注入漏洞直接获取webshell或者服务器系统权限。</p>
-<hr>
-<h2 id="二、绕过WAF的方法"><a href="#二、绕过WAF的方法" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h2><p><strong>1、大小写绕过</strong></p>
+<h3 id="二、绕过WAF的方法"><a href="#二、绕过WAF的方法" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h3><p><strong>1、大小写绕过</strong></p>
 <p>​    如：?id=1’ uNiOn SElecT * FrOm users #</p>
 <p><strong>2、简单编码绕过</strong></p>
 <p>​    如URL编码、双重URL编码、Hex编码、Unicode编码等。</p>
@@ -474,8 +239,7 @@
 <p><strong>11、缓冲区溢出绕过</strong></p>
 <p>​    如id=1 and (select 1)=(Select 0xAAAAAAAAAAAAAAAAAAAAA)+UnIoN+SeLeCT+1,2,version(),4,5,database(),user(),8,9,10 #</p>
 <p>​    其中 A 越多越好，一般要求 1000 个以上。</p>
-<hr>
-<h2 id="三、检测方法"><a href="#三、检测方法" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p><strong>1、基于报错的检测方法</strong></p>
+<h3 id="三、检测方法"><a href="#三、检测方法" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p><strong>1、基于报错的检测方法</strong></p>
 <p>使用各种符号以及组合： ‘  “  (  %</p>
 <p>如直接在URL后添加单引号看是否报错index.php?id=1’</p>
 <p><strong>2、基于布尔的检测</strong></p>
@@ -489,8 +253,7 @@
 <p>1’ and 1=1 #  </p>
 <p>1’ and 1=2 #  </p>
 <p>判断这两种不同的输入是否有不一样的显示，如果一个正常一个通用的错误提示或者啥也不显示，则几乎可以确定是含有SQL注入漏洞的。</p>
-<hr>
-<h2 id="四、防御方法"><a href="#四、防御方法" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>关键是对所有用户的输入进行严格的检查过滤、对数据库配置使用最小权限原则。</p>
+<h3 id="四、防御方法"><a href="#四、防御方法" class="headerlink" title="四、防御方法"></a>四、防御方法</h3><p>关键是对所有用户的输入进行严格的检查过滤、对数据库配置使用最小权限原则。</p>
 <p><strong>常用的修复方案</strong></p>
 <p>（1）所有的查询语句都使用数据库提供的参数化查询接口，参数化的语句使用参数而不是将用户输入变量嵌入到 SQL 语句中。</p>
 <p>（2）过滤危险的 SQL 语句关键字。</p>
@@ -513,8 +276,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String sql=&quot;select id,no from user where id=?&quot;;</span><br><span class="line">PreparedStatement ps = conn.prepareStatement(sql);</span><br><span class="line">prestmt.setInt(1,id);</span><br><span class="line">prestmt.executeQuery();</span><br></pre></td></tr></table></figure>
 <p><strong>2、变量绑定</strong></p>
 <p>是指在sql语句的条件中使用变量而不是常量，是为了减少解析的。具体的细节网上很多，后面再补充。</p>
-<hr>
-<h1 id="XSS（跨站脚本）"><a href="#XSS（跨站脚本）" class="headerlink" title="XSS（跨站脚本）"></a>XSS（跨站脚本）</h1><h2 id="一、基本概念-1"><a href="#一、基本概念-1" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="XSS（跨站脚本）"><a href="#XSS（跨站脚本）" class="headerlink" title="XSS（跨站脚本）"></a>XSS（跨站脚本）</h2><h3 id="一、基本概念-1"><a href="#一、基本概念-1" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>　　跨站脚本攻击(Cross Site Scripting)，为不和层叠样式表(Cascading Style Sheets, CSS)的缩写混淆，故将跨站脚本攻击缩写为XSS。</p>
 <p>​    XSS，全称cross-site scripting，是用于攻击Web客户端而不是服务器端，其最大的特点是能把恶意的JS或HTML代码注入到用户浏览的网页上。而XSS漏洞的存在，主要是由于Web应用程序对用户的输入没有进行严格的过滤所导致的，当攻击者把恶意代码注入到网页时，用户只要访问该网页就会执行其中的恶意代码。</p>
 <p><strong>成因</strong></p>
@@ -540,8 +302,7 @@
 <p>​    内嵌恶意HTML代码到页面中；</p>
 <p>​    页面恶意重定向；</p>
 <p>​    利用XSS进行DDOS，参考：SOHU视频XSS漏洞导致其用户成为DDOS肉鸡。</p>
-<hr>
-<h2 id="二、绕过WAF的方法-1"><a href="#二、绕过WAF的方法-1" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h2><p><strong>利用&lt;&gt;标记注入HTML或JS</strong></p>
+<h3 id="二、绕过WAF的方法-1"><a href="#二、绕过WAF的方法-1" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h3><p><strong>利用&lt;&gt;标记注入HTML或JS</strong></p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined">alert(‘xss’)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p><strong>利用HTML标签属性值执行XSS</strong><br>    很多的HTML标记中的属性都支持javascript:[code]伪协议的形式</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">”javascript:alert(</span>'<span class="attr">xss</span>');”&gt;</span></span><br></pre></td></tr></table></figure>
@@ -577,11 +338,9 @@
 <p><strong>动态调用远程JS</strong><br>    将shellcode保存在其他服务器中，然后再用script标签来动态加载。除此之外，还可以通过基于DOM的方法创建和插入结点，把代码注入到网页中。这两种方式在利用中都有相应的演示。</p>
 <p><strong>使用window.location.hash</strong></p>
 <p>​    即DOM型。location是JS管理地址栏的内置对象，location.hash则是用来获取或设置页面的标签值。相关的简单的利用已有示例，至于DOM型的XSS会有进一步的笔记。</p>
-<hr>
-<h2 id="三、检测方法-1"><a href="#三、检测方法-1" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>​    寻找脚本程序的输出显示代码，搜索关键字，显示输出那个变量，跟踪变量是否被过滤。</p>
+<h3 id="三、检测方法-1"><a href="#三、检测方法-1" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p>​    寻找脚本程序的输出显示代码，搜索关键字，显示输出那个变量，跟踪变量是否被过滤。</p>
 <p>​    可以先输入一些内容，页面返回之后，可以查看网页源代码，搜索内容关键字看看是不是直接返回在页面的HTML代码中。</p>
-<hr>
-<h2 id="四、防御方法-1"><a href="#四、防御方法-1" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p><strong>1、调用函数</strong></p>
+<h3 id="四、防御方法-1"><a href="#四、防御方法-1" class="headerlink" title="四、防御方法"></a>四、防御方法</h3><p><strong>1、调用函数</strong></p>
 <p>​    对于用户提交的数据可以通过调用函数进行过滤，htmlspecialchars()函数将输出的内容进行HTML的编码，效果最好；str_replace()函数可以将指定的字符串转换为其他字符串的，但是会被绕过。</p>
 <p><strong>2、使用XSS Filter</strong></p>
 <p><strong>（1）输入过滤</strong></p>
@@ -615,8 +374,7 @@
 <p>（2） 分析和强化客户端JS代码，特别是受到用户影响的DOM对象，注意能直接修改DOM和创建HTML文件的相关函数或方法，并在输出变量到页面时先进行编码转义，如输出到HTML则进行HTML编码、输出到</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br></pre></td></tr></table></figure>
 <p>则进行JS编码。</p>
-<hr>
-<h1 id="CSRF（跨站请求伪造）"><a href="#CSRF（跨站请求伪造）" class="headerlink" title="CSRF（跨站请求伪造）"></a>CSRF（跨站请求伪造）</h1><h2 id="一、基本概念-2"><a href="#一、基本概念-2" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="CSRF（跨站请求伪造）"><a href="#CSRF（跨站请求伪造）" class="headerlink" title="CSRF（跨站请求伪造）"></a>CSRF（跨站请求伪造）</h2><h3 id="一、基本概念-2"><a href="#一、基本概念-2" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>　　跨站请求伪造（Cross-Site Request Forgery，CSRF）是一种使已登录用户在不知情的情况下执行某种动作的攻击。因为攻击者看不到伪造请求的响应结果，所以CSRF攻击主要用来执行动作，而非窃取用户数据。当受害者是一个普通用户时，CSRF可以实现在其不知情的情况下转移用户资金、发送邮件等操作；但是如果受害者是一个具有管理员权限的用户时CSRF则可能威胁到整个Web系统的安全。</p>
 <p><strong>成因</strong></p>
 <p>由于程序员的不严谨导致Web应用程序存在漏洞</p>
@@ -636,8 +394,7 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">This XML file does not appear to have any style information associated with it. The document tree is shown below.</span><br><span class="line"><span class="tag">&lt;<span class="name">cross-domain-policy</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">allow-access-from</span> <span class="attr">domain</span>=<span class="string">"*"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">cross-domain-policy</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>Flash跨域权限管理文件过滤规则不严(domain=”*”)，导致可以从其它任何域传Flash产生CSRF。</p>
 <p>CSRF蠕虫：CSRF常见的危害是攻击者可以在用户不知情的情况下以用户的身份进行指定的操作，但实际上CSRF的危害远不止于此，经过特意构造的CSRF可以产生蠕虫的效果。如：某社区私信好友的接口和获取好友列表的接口都存在CSRF漏洞，攻击者就可以将其组合成一个CSRF蠕虫——当一个用户访问恶意页面后通过CSRF获取其好友列表信息，然后再利用私信好友的CSRF漏洞给其每个好友发送一条指向恶意页面的信息，只要有人查看这个信息里的链接，CSRF蠕虫就会不断传播下去，其可能造成的危害和影响非常巨大！</p>
-<hr>
-<h2 id="二、CSRF攻击获取数据的方法"><a href="#二、CSRF攻击获取数据的方法" class="headerlink" title="二、CSRF攻击获取数据的方法"></a>二、CSRF攻击获取数据的方法</h2><p>要获取的关键数据：用户 id、用户昵称、用户 email、用户个人页面地址等。</p>
+<h3 id="二、CSRF攻击获取数据的方法"><a href="#二、CSRF攻击获取数据的方法" class="headerlink" title="二、CSRF攻击获取数据的方法"></a>二、CSRF攻击获取数据的方法</h3><p>要获取的关键数据：用户 id、用户昵称、用户 email、用户个人页面地址等。</p>
 <p>同域内 CSRF 攻击获取数据几乎没任何限制。</p>
 <p>跨域 CSRF 攻击获取数据的几种方法总结如下：</p>
 <p><strong>1、结合XSS 组合漏洞</strong></p>
@@ -656,12 +413,10 @@
 <p>相关代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> flash.net.*; </span><br><span class="line">var _l = new URLLoader(new URLRequest(“http://目标站点/<span class="string">"));</span></span><br><span class="line"><span class="string">_l.addEventListener(Event.COMPLETE,function()&#123;text1.text = _l.data&#125;);</span></span><br><span class="line"><span class="string">_l.load();</span></span><br></pre></td></tr></table></figure>
 <p><strong>4、服务端代理技术</strong></p>
-<hr>
-<h2 id="三、检测方法-2"><a href="#三、检测方法-2" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>最简单的方法就是抓取一个正常请求的数据包，去掉 Referer 字段后再重新提交，如果该提交还有效，那么基本上可以确定存在 CSRF 漏洞。另外还需要确认数据包中确实没有含有token字样，即使有也尝试去掉再发包看是否是进行有效的CSRF校验即可。</p>
+<h3 id="三、检测方法-2"><a href="#三、检测方法-2" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p>最简单的方法就是抓取一个正常请求的数据包，去掉 Referer 字段后再重新提交，如果该提交还有效，那么基本上可以确定存在 CSRF 漏洞。另外还需要确认数据包中确实没有含有token字样，即使有也尝试去掉再发包看是否是进行有效的CSRF校验即可。</p>
 <p>一些专门针对 CSRF 漏洞进行检测的工具，如CSRFTester，CSRF Request Builder 等。</p>
 <p>以 CSRFTester 工具为例，CSRF 漏洞检测工具的测试原理如下：使用 CSRFTester 进行测试时，首先需要抓取我们在浏览器中访问过的所有链接以及所有的表单等信息，然后通过在 CSRFTester 中修改相应的表单等信息，重新提交，这相当于一次伪造客户端请求。如果修改后的测试请求成功被网站服务器接受，则说明存在CSRF 漏洞，当然此款工具也可以被用来进行 CSRF 攻击。</p>
-<hr>
-<h2 id="四、防御方法-2"><a href="#四、防御方法-2" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p><strong>1、 服务端的防御</strong></p>
+<h3 id="四、防御方法-2"><a href="#四、防御方法-2" class="headerlink" title="四、防御方法"></a>四、防御方法</h3><p><strong>1、 服务端的防御</strong></p>
 <p>主要有 5 种策略：验证 HTTP的Referer字段、在请求地址中添加 token 并验证、在 HTTP 头中自定义属性并验证、使用POST替代GET等。</p>
 <p>（1）、验证 HTTP的Referer字段，在 HTTP 头的Referer字段记录了该 HTTP 请求的来源地址。顺便解决了非法盗链、站外提交等问题。在通常情况下，访问一个安全受限页面的请求必须来自于同一个网站。</p>
 <p>（2）、在请求地址中添加 token 并验证，可以在 HTTP请求中以参数的形式加入一个随机产生的 token，并在服务器端建立一个拦截器来验证这个token，如果请求中没有 token 或者 token 内容不正确，则认为可能是 CSRF 攻击而拒绝该请求。抵御 CSRF 攻击的关键在于：在请求中加入攻击者所不能伪造的信息，并且该信息不存在于 Cookie 之中。</p>
@@ -672,8 +427,7 @@
 <p>用户的安全意识与良好的上网习惯。</p>
 <p><strong>3、 安全设备的防御</strong></p>
 <p>有些厂商的安全产品能基于硬件层面对HTTP 头部的 Referer 字段内容进行检查来快速准确的识别 CSRF 攻击。</p>
-<hr>
-<h1 id="文件上传漏洞"><a href="#文件上传漏洞" class="headerlink" title="文件上传漏洞"></a>文件上传漏洞</h1><h2 id="一、基本概念-3"><a href="#一、基本概念-3" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="文件上传漏洞"><a href="#文件上传漏洞" class="headerlink" title="文件上传漏洞"></a>文件上传漏洞</h2><h3 id="一、基本概念-3"><a href="#一、基本概念-3" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>文件上传漏洞是指由于服务器端对于用户上传部分的控制不严格导致攻击者可以上传一个恶意的文件到服务器。简单点说，就是用户直接或者通过各种绕过方式将WebShell上传到服务器中进而执行利用。</p>
 <p><strong>成因</strong></p>
 <p>导致文件上传的漏洞的原因较多，主要包括以下几类：</p>
@@ -684,8 +438,7 @@
 <p>文件解析漏洞导致文件执行</p>
 <p>文件路径截断</p>
 <p>服务器配置不当</p>
-<hr>
-<h2 id="二、文件上传攻击分类"><a href="#二、文件上传攻击分类" class="headerlink" title="二、文件上传攻击分类"></a>二、文件上传攻击分类</h2><p><strong>1、轻量级检测绕过攻击</strong></p>
+<h3 id="二、文件上传攻击分类"><a href="#二、文件上传攻击分类" class="headerlink" title="二、文件上传攻击分类"></a>二、文件上传攻击分类</h3><p><strong>1、轻量级检测绕过攻击</strong></p>
 <p>（1）绕过javascript 对扩展名的检测：</p>
 <p>使用Burpsuite等反向代理工具直接POST数据包到服务端，绕过前端检测，如DVWA中的绕过示例。</p>
 <p>（2）绕过服务端对http request 包MIME 类型检测：</p>
@@ -739,8 +492,7 @@
 <p>文件加载绕过 (代码层漏洞)</p>
 <p>攻击手法与环节如图：</p>
 <p><img src="/2019/01/30/常见Web漏洞类型/1.png" alt="文件上传攻击思路图"></p>
-<hr>
-<h2 id="三、上传文件中的解析攻击"><a href="#三、上传文件中的解析攻击" class="headerlink" title="三、上传文件中的解析攻击"></a>三、上传文件中的解析攻击</h2><p><strong>1、直接解析（几乎没有防御）</strong></p>
+<h3 id="三、上传文件中的解析攻击"><a href="#三、上传文件中的解析攻击" class="headerlink" title="三、上传文件中的解析攻击"></a>三、上传文件中的解析攻击</h3><p><strong>1、直接解析（几乎没有防御）</strong></p>
 <p>比如直接上传一个扩展名是.php 的文件，只需要简单地绕过客户端javascript 检测或者服务端MIME 类型检测就行了。</p>
 <p><strong>2、配合解析(有一定程度的防御)</strong></p>
 <p>可以理解为先将代码注入到服务器上，上传一个带有一句话木马的图片或文件，等待一个解析的配合来实现攻击。</p>
@@ -761,10 +513,8 @@
 <p>IIS的asp 解析漏洞：IIS自身的漏洞</p>
 <p>Nginx的%00 解析漏洞：Nginx自身的漏洞</p>
 <p>php-cgi的默认配置漏洞：这类以CGI 形式调用php的web 应用程序主要出现在IIS和Nginx；而Apache 通常是以module 的形式去调用php，所以很少出现该类型漏洞。</p>
-<hr>
-<h2 id="四、检测方法"><a href="#四、检测方法" class="headerlink" title="四、检测方法"></a>四、检测方法</h2><p>简单点的方法就是直接上传各种类型的文件，再通过Burpsuite修改各个可以绕过的检测内容来检测。</p>
-<hr>
-<h2 id="五、防御方法"><a href="#五、防御方法" class="headerlink" title="五、防御方法"></a>五、防御方法</h2><p>简单的防御方法为：获取文件扩展名进行白名单对比，然后对文件进行重命名。当然若存在解析漏洞等容易被绕过，具体点的防御方法如下：</p>
+<h3 id="四、检测方法"><a href="#四、检测方法" class="headerlink" title="四、检测方法"></a>四、检测方法</h3><p>简单点的方法就是直接上传各种类型的文件，再通过Burpsuite修改各个可以绕过的检测内容来检测。</p>
+<h3 id="五、防御方法"><a href="#五、防御方法" class="headerlink" title="五、防御方法"></a>五、防御方法</h3><p>简单的防御方法为：获取文件扩展名进行白名单对比，然后对文件进行重命名。当然若存在解析漏洞等容易被绕过，具体点的防御方法如下：</p>
 <p>1、客户端JavaScript检测：通常为检测文件扩展名)</p>
 <p>2、服务端MIME 类型检测：检测Content-Type内容)</p>
 <p>3、服务端目录路径检测：检测跟path参数相关的内容</p>
@@ -822,8 +572,7 @@
 <p>对二次渲染的攻击方式：攻击文件加载器自身，常见的就是溢出攻击，上传恶意文件后服务器上的文件加载器会主动进行加载测试，加载测试时被溢出攻击执行shellcode比如access/mdb 溢出；二次渲染相当于是把原本属于图像数据的部分抓了出来，再用自己的API 或函数进行重新渲染，在这个过程中非图像数据的部分直接就被隔离开了。</p>
 <p>示例代码：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">image_gd_open</span><span class="params">(file, extension)</span> </span>&#123; </span><br><span class="line">    extension = str_replace(<span class="string">'jpg'</span>, <span class="string">'jpeg'</span>, extension); </span><br><span class="line">    open_func = <span class="string">'imageCreateFrom'</span>. extension; <span class="comment">//函数名变成imageCreateFrompng  之类 </span></span><br><span class="line">    <span class="keyword">if</span> (!function_exists($open_func)) &#123; </span><br><span class="line">    	<span class="keyword">return</span> <span class="keyword">FALSE</span>; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> open_func(file); <span class="comment">//变成imagecreatefrompng('/tmp/php0lbTOn') </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h1 id="文件包含漏洞"><a href="#文件包含漏洞" class="headerlink" title="文件包含漏洞"></a>文件包含漏洞</h1><h2 id="一、基本概念-4"><a href="#一、基本概念-4" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="文件包含漏洞"><a href="#文件包含漏洞" class="headerlink" title="文件包含漏洞"></a>文件包含漏洞</h2><h3 id="一、基本概念-4"><a href="#一、基本概念-4" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>简单地说，就是在通过函数包含文件时，由于没有对包含的文件名进行有效的过滤处理，被攻击者利用从而导致了包含了Web根目录以外的文件进来，就会导致文件信息的泄露甚至注入了恶意代码。</p>
 <p>这里主要针对PHP语言。</p>
 <p><strong>PHP中的文件包含函数</strong></p>
@@ -849,8 +598,7 @@
 <p>可以使用多种编码方式进行绕过</p>
 <p>%00嵌入任意位置</p>
 <p>.的利用</p>
-<hr>
-<h2 id="二、文件包含漏洞的利用技巧"><a href="#二、文件包含漏洞的利用技巧" class="headerlink" title="二、文件包含漏洞的利用技巧"></a>二、文件包含漏洞的利用技巧</h2><p>包含漏洞上传技巧：</p>
+<h3 id="二、文件包含漏洞的利用技巧"><a href="#二、文件包含漏洞的利用技巧" class="headerlink" title="二、文件包含漏洞的利用技巧"></a>二、文件包含漏洞的利用技巧</h3><p>包含漏洞上传技巧：</p>
 <p>一般将一句话木马和图片进行绑定上传。</p>
 <p>包含读文件：</p>
 <p>如<a href="http://10.10.10.128/dvwa/vulnerabilities/fi/?page=php://filter/read=convert.base64-encode/resource=x.php" target="_blank" rel="noopener">http://10.10.10.128/dvwa/vulnerabilities/fi/?page=php://filter/read=convert.base64-encode/resource=x.php</a></p>
@@ -863,18 +611,15 @@
 <p><a href="http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log" target="_blank" rel="noopener">http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log</a></p>
 <p>PHP内置的协议：</p>
 <p><img src="/2019/01/30/常见Web漏洞类型/2.png" alt="php伪协议"></p>
-<hr>
-<h2 id="三、检测方法-3"><a href="#三、检测方法-3" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>找到有包含函数的页面，对函数内容进行替换查看结果；</p>
+<h3 id="三、检测方法-3"><a href="#三、检测方法-3" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p>找到有包含函数的页面，对函数内容进行替换查看结果；</p>
 <p>可以使用工具来代替手工的过程，如Kadimus、Burpsuite的插件LFI scanner checks等；</p>
 <p>白盒测试时，可以在源代码中查看allow_url_fopen、allow_url_include等敏感函数是否开启。</p>
-<hr>
-<h2 id="四、防御方法-3"><a href="#四、防御方法-3" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、严格判断包含中的参数是否外部可控。</p>
+<h3 id="四、防御方法-3"><a href="#四、防御方法-3" class="headerlink" title="四、防御方法"></a>四、防御方法</h3><p>1、严格判断包含中的参数是否外部可控。</p>
 <p>2、路径限制，限制被包含的文件只能在某一个文件夹内，特别是一定要禁止目录跳转字符，如：“../”。</p>
 <p>3、基于白名单的包含文件验证，验证被包含的文件是否在白名单中。</p>
 <p>4、尽量不要使用动态包含，可以在需要包含的页面固定写好，如：“include(“head.php”)”。</p>
 <p>5、可以通过调用str_replace()函数实现相关敏感字符的过滤，一定程度上防御了远程文件包含。</p>
-<hr>
-<h1 id="不安全的验证码"><a href="#不安全的验证码" class="headerlink" title="不安全的验证码"></a>不安全的验证码</h1><h2 id="一、基本概念-5"><a href="#一、基本概念-5" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="不安全的验证码"><a href="#不安全的验证码" class="headerlink" title="不安全的验证码"></a>不安全的验证码</h2><h3 id="一、基本概念-5"><a href="#一、基本概念-5" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>验证码问题归类为逻辑漏洞类问题，通常是开发者编写代码时存在设计缺陷、可导致某些特殊情况使得验证码可被绕过，从而使得验证码的防御机制形同虚设。</p>
 <p><strong>原理过程</strong></p>
 <p>1.客户端发起一个请求</p>
@@ -882,8 +627,7 @@
 <p>3.服务端将验证码和 SessionID 一并返回给客户端</p>
 <p>4.客户端提交验证码连同 SessionID 给服务端</p>
 <p>5.服务端验证验证码同时销毁当前会话，返回给客户端结果</p>
-<hr>
-<h2 id="二、验证码的安全问题"><a href="#二、验证码的安全问题" class="headerlink" title="二、验证码的安全问题"></a>二、验证码的安全问题</h2><p>客户端问题：</p>
+<h3 id="二、验证码的安全问题"><a href="#二、验证码的安全问题" class="headerlink" title="二、验证码的安全问题"></a>二、验证码的安全问题</h3><p>客户端问题：</p>
 <p>1、 客户端生成验证码：验证码由客户端 JS生成并且仅仅在客户端用JS验证。</p>
 <p>2、 验证码输出客户端：输出在HTML中，不应该把验证码的内容发送到客户端 cookie 或输出到response headers的其他字段中。</p>
 <p>3、 验证码输出在 cookie 中：有些系统默认不显示验证码，而是在用户校验错误一定次数之后再出现。那如何判断用户已经错误几次了呢？若是如下判断：        </p>
@@ -894,15 +638,12 @@
 <p>1、 验证码不过期，没有及时销毁会话导致验证码复用</p>
 <p>2、 没有进行非空判断</p>
 <p>3、 产生的验证码问题集内的答案非常有限</p>
-<hr>
-<h2 id="三、检测方法-4"><a href="#三、检测方法-4" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>简单的方法，先是手工登录几次，查看是否出现验证码以及验证码是否失效，然后再通过Burpsuite来进一步测试。</p>
-<hr>
-<h2 id="四、防御方法-4"><a href="#四、防御方法-4" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、 强制要求输入验证码，否则必须实施 IP 策略。注意不要被 X-Forwarded-For（用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段） 绕过了。</p>
+<h3 id="三、检测方法-4"><a href="#三、检测方法-4" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p>简单的方法，先是手工登录几次，查看是否出现验证码以及验证码是否失效，然后再通过Burpsuite来进一步测试。</p>
+<h3 id="四、防御方法-4"><a href="#四、防御方法-4" class="headerlink" title="四、防御方法"></a>四、防御方法</h3><p>1、 强制要求输入验证码，否则必须实施 IP 策略。注意不要被 X-Forwarded-For（用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段） 绕过了。</p>
 <p>2、 验证码只能用一次，用完立即过期。</p>
 <p>3、 验证码强度增强，使用扭曲、变形、干扰线条、干扰背景色、变换字体等。</p>
 <p>4、 大网站最好统一安全验证码，各处使用同一个验证码接口。</p>
-<hr>
-<h1 id="命令注入漏洞"><a href="#命令注入漏洞" class="headerlink" title="命令注入漏洞"></a>命令注入漏洞</h1><h2 id="一、基本概念-6"><a href="#一、基本概念-6" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="命令注入漏洞"><a href="#命令注入漏洞" class="headerlink" title="命令注入漏洞"></a>命令注入漏洞</h2><h3 id="一、基本概念-6"><a href="#一、基本概念-6" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>当应用需要调用一些外部程序去处理内容的情况下，就会用到一些执行系统命令的函数。如PHP中的system、exec、shell_exec等，当用户可以控制命令执行函数中的参数时，将可以注入恶意系统命令到正常命令中，达到任意命令执行的效果。 </p>
 <p>这里以PHP为主，以后在Java分类中会单独总结Java类的漏洞。</p>
 <p><strong>成因</strong></p>
@@ -915,13 +656,11 @@
 <p>执行系统命令：system, passthru, shell_exec, exec, popen, proc_open</p>
 <p>代码执行与加密：eval, assert, call_user_func,base64_decode, gzinflate, gzuncompress, gzdecode, str_rot13</p>
 <p>文件包含与生成：require，require_once，include,  include_once，file_get_contents, file_put_contents, fputs, fwrite<br>.htaccess：SetHandler, auto_prepend_file, auto_append_file</p>
-<hr>
-<h2 id="二、绕过WAF的方法-2"><a href="#二、绕过WAF的方法-2" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h2><p><strong>1、黑白名单测试绕过</strong></p>
+<h3 id="二、绕过WAF的方法-2"><a href="#二、绕过WAF的方法-2" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h3><p><strong>1、黑白名单测试绕过</strong></p>
 <p><strong>2、可用符号替换</strong></p>
 <p><strong>3、换行符\n</strong></p>
 <p><strong>4、$IFS替换空格</strong></p>
-<hr>
-<h2 id="三、绕过disable-functions的方法"><a href="#三、绕过disable-functions的方法" class="headerlink" title="三、绕过disable_functions的方法"></a>三、绕过disable_functions的方法</h2><p>禁止 webshell 执行命令原理：PHP配置文件里的disable_functions =  配置，用来禁止某些 php 函数。</p>
+<h3 id="三、绕过disable-functions的方法"><a href="#三、绕过disable-functions的方法" class="headerlink" title="三、绕过disable_functions的方法"></a>三、绕过disable_functions的方法</h3><p>禁止 webshell 执行命令原理：PHP配置文件里的disable_functions =  配置，用来禁止某些 php 函数。</p>
 <p>1、 黑名单绕过</p>
 <p>2、 系统组件绕过（Windows）：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">command=_POST[a];</span><br><span class="line">wsh = <span class="keyword">new</span> COM(<span class="string">'WScript.shell'</span>);   <span class="comment">// 生成一个 COM 对象</span></span><br><span class="line">exec = wsh-&gt;exec(<span class="string">'cmd.exe /c '</span>.command); <span class="comment">//调用对象方法来执行命令</span></span><br><span class="line">stdout = exec-&gt;StdOut();</span><br><span class="line">stroutput = stdout-&gt;ReadAll();</span><br><span class="line"><span class="keyword">echo</span> $stroutput</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
@@ -931,32 +670,26 @@
 <p>防御方法：将dl函数加入disable_function中禁用。</p>
 <p>使用PHP突破Disable_functions执行Linux命令：linux 的 webshell 管理员禁用了exec，system，passthru，popen，shell_exec等等 PHP 执行命令函数，导致不能执行命令，php 提供了一个扩展模块功能，使用 dl 函数能包含一个扩展模块。类似.so或者想windows下的 dll 文件。可以自定义函数来调用 linux 命令而无视Disable_functions的限制。</p>
 <p>在PHP中使用create_function()创建匿名函数，如果没有严格对参数传递进行过滤，攻击者可以构造特殊字符串传递给 create_function()执行任意命令。</p>
-<hr>
-<h2 id="四、检测方法-1"><a href="#四、检测方法-1" class="headerlink" title="四、检测方法"></a>四、检测方法</h2><p>基于黑盒的测试：简单点就是直接手工在输入内容之后添加各种分号或其它可以绕过的符号再添加命令，最后查看返回结果判断。</p>
+<h3 id="四、检测方法-1"><a href="#四、检测方法-1" class="headerlink" title="四、检测方法"></a>四、检测方法</h3><p>基于黑盒的测试：简单点就是直接手工在输入内容之后添加各种分号或其它可以绕过的符号再添加命令，最后查看返回结果判断。</p>
 <p>基于白盒的测试：查看源代码，搜索PHP中执行系统命令的函数如system、passthru等。</p>
-<hr>
-<h2 id="五、防御方法-1"><a href="#五、防御方法-1" class="headerlink" title="五、防御方法"></a>五、防御方法</h2><p>1、尽量不要执行外部的应用程序或命令。</p>
+<h3 id="五、防御方法-1"><a href="#五、防御方法-1" class="headerlink" title="五、防御方法"></a>五、防御方法</h3><p>1、尽量不要执行外部的应用程序或命令。</p>
 <p>2、使用自定义函数或函数库实现外部应用程序或命令的功能。</p>
 <p>3、在执行 system 等命令执行功能的函数前，确定参数内容。</p>
 <p>4、使用 escapeshellarg ()函数和escapeshellcmd()函数处理相关用户输入的内容。escapeshellarg() 函数会将任何引起参数或命令结束的字符进行转义，如单引号“’”会被转义为“\’”，双引号“””会被转义为“\””，分号“ ;”会被转义为“\;”，这样 escapeshellarg 会将参数内容限制在一对单引号或双引号里面，转义参数中所包含的单引号或双引号，使其无法对当前执行进行截断，实现防范命令注入攻击的目的。escapeshellcmd()函数会转义内容中的所有shell元字符来进行防御，这些元字符包括：# $ ; , \ ‘ | ? * ~ &lt; &gt; ^ ( ) [ ] { } </p>
 <p>5、使用 safe_mode_exec_dir 执行可执行的文件路径。将 php.ini 文件中的 safe_mode 设置为 On，然后将允许执行的文件放入一个目录中，并使用 safe_mode_exec_dir 指定这个可执行的文件路径。这样，在需要执行相应的外部程序时，程序必须在 safe_mode_exec_dir指定的目录中才会允许执行，否则执行将失败。</p>
-<hr>
-<h1 id="暴力破解"><a href="#暴力破解" class="headerlink" title="暴力破解"></a>暴力破解</h1><h2 id="一、基本概念-7"><a href="#一、基本概念-7" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="暴力破解"><a href="#暴力破解" class="headerlink" title="暴力破解"></a>暴力破解</h2><h3 id="一、基本概念-7"><a href="#一、基本概念-7" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>暴力破解其实并不算是漏洞而是设计缺陷，当页面或程序未对请求的数量进行严格的限制时，攻击者可使用字典一直暴力破解用户名密码，导致密码被破解出来的安全风险。</p>
 <p><strong>分类</strong></p>
 <p>1、C/S架构暴力破解：</p>
 <p>主要使用的破解工具Hydra、Bruter、X-scan</p>
 <p>2、B/S架构暴力破解：</p>
 <p>使用Burpsuite镜像表单爆破</p>
-<hr>
-<h2 id="二、检测方法"><a href="#二、检测方法" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>简单粗暴的方法，直接使用Burpsuite进行暴力破解，看看有没有什么防暴破的机制即可。</p>
-<hr>
-<h2 id="三、防御方法"><a href="#三、防御方法" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、设置复杂的密码</p>
+<h3 id="二、检测方法"><a href="#二、检测方法" class="headerlink" title="二、检测方法"></a>二、检测方法</h3><p>简单粗暴的方法，直接使用Burpsuite进行暴力破解，看看有没有什么防暴破的机制即可。</p>
+<h3 id="三、防御方法"><a href="#三、防御方法" class="headerlink" title="三、防御方法"></a>三、防御方法</h3><p>1、设置复杂的密码</p>
 <p>2、采用验证码机制，同时可防范CSRF攻击</p>
 <p>3、登陆日志，限制登录次数</p>
 <p>4、调用sleep()函数，当登录失败时停止一段时间才允许再次登录，如DVWA的High级的防暴破机制</p>
-<hr>
-<h1 id="代码注入"><a href="#代码注入" class="headerlink" title="代码注入"></a>代码注入</h1><h2 id="一、基本概念-8"><a href="#一、基本概念-8" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="代码注入"><a href="#代码注入" class="headerlink" title="代码注入"></a>代码注入</h2><h3 id="一、基本概念-8"><a href="#一、基本概念-8" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>代码注入，与命令注入类似，程序未对用户输入内容进行严格校验从而导致恶意代码注入执行，只不过是注入到特定的编程语言代码中，如PHP的eval注入、HTML页面的JS注入、OGNL注入等。</p>
 <p>这里以PHP为主，Java代码会在Java分类中单独总结。</p>
 <p><strong>成因</strong></p>
@@ -965,19 +698,15 @@
 <p>eval()、assert()、preg_replace()、str_replace()、call_user_func()…等函数。</p>
 <p>eval()函数注入攻击，将参数字符串作为PHP 程序代码来执行，用户可以将 PHP 代码保存成字符串的形式，然后传递给 eval 函数执行。</p>
 <p>PHP中的assert()、preg_replace()、str_replace()以及call_user_func()函数同样可以实现eval 注入攻击的效果。preg_replace()函数的作用是用来执行常规表达式的查找和替换的，当替换内容为用户可控数据时，就可能导致命令注入攻击漏洞的形成。</p>
-<hr>
-<h2 id="二、绕过WAF的方法-3"><a href="#二、绕过WAF的方法-3" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h2><p>和命令注入类似。</p>
-<hr>
-<h2 id="三、检测方法-5"><a href="#三、检测方法-5" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>基于黑盒的测试：简单点就是直接手工在输入内容之后添加各种分号或其它可以绕过的符号再添加命令，最后查看返回结果判断。</p>
+<h3 id="二、绕过WAF的方法-3"><a href="#二、绕过WAF的方法-3" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h3><p>和命令注入类似。</p>
+<h3 id="三、检测方法-5"><a href="#三、检测方法-5" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p>基于黑盒的测试：简单点就是直接手工在输入内容之后添加各种分号或其它可以绕过的符号再添加命令，最后查看返回结果判断。</p>
 <p>基于白盒的测试：查看源代码，搜索与执行PHP代码的函数如eval、assert等。</p>
-<hr>
-<h2 id="四、防御方法-5"><a href="#四、防御方法-5" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、尽量不要执行外部的应用程序或命令。</p>
+<h3 id="四、防御方法-5"><a href="#四、防御方法-5" class="headerlink" title="四、防御方法"></a>四、防御方法</h3><p>1、尽量不要执行外部的应用程序或命令。</p>
 <p>2、使用自定义函数或函数库实现外部应用程序或命令的功能。</p>
 <p>3、在执行php中eval()等代码执行功能的函数前，确定参数内容。</p>
 <p>4、使用 escapeshellarg ()函数和escapeshellcmd()函数处理相关用户输入的内容。escapeshellarg() 函数会将任何引起参数或命令结束的字符进行转义，如单引号“’”会被转义为“\’”，双引号“””会被转义为“\””，分号“ ;”会被转义为“\;”，这样 escapeshellarg 会将参数内容限制在一对单引号或双引号里面，转义参数中所包含的单引号或双引号，使其无法对当前执行进行截断，实现防范命令注入攻击的目的。escapeshellcmd()函数会转义内容中的所有shell元字符来进行防御，这些元字符包括：# $ ; , \ ‘ | ? * ~ &lt; &gt; ^ ( ) [ ] { } </p>
 <p>5、使用 safe_mode_exec_dir 执行可执行的文件路径。将 php.ini 文件中的 safe_mode 设置为 On，然后将允许执行的文件放入一个目录中，并使用 safe_mode_exec_dir 指定这个可执行的文件路径。这样，在需要执行相应的外部程序时，程序必须在 safe_mode_exec_dir指定的目录中才会允许执行，否则执行将失败。</p>
-<hr>
-<h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h1><h2 id="一、基本概念-9"><a href="#一、基本概念-9" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h2><h3 id="一、基本概念-9"><a href="#一、基本概念-9" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>SSRF(Server-Side Request Forgery:服务器端请求伪造) 是一种由攻击者构造形成由服务端发起请求的一个安全漏洞。一般情况下，SSRF攻击的目标是从外网无法访问的内部系统。（正是因为它是由服务端发起的，所以它能够请求到与它相连而与外网隔离的内部系统）。</p>
 <p>形成的原因大都是由于服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤与限制。SSRF漏洞就是通过篡改获取资源的请求发送给服务器，但是服务器并没有发现在这个请求是合法的，然后服务器以他的身份来访问其他服务器的资源。</p>
 <p><strong>出现漏洞的常见位置</strong></p>
@@ -988,23 +717,19 @@
 <p>5）图片、文章收藏功能</p>
 <p>6）未公开的api实现以及其他调用URL的功能</p>
 <p>7）从URL关键字中寻找</p>
-<hr>
-<h2 id="二、绕过WAF的方法-4"><a href="#二、绕过WAF的方法-4" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h2><p>主要针对URL过滤的绕过。</p>
+<h3 id="二、绕过WAF的方法-4"><a href="#二、绕过WAF的方法-4" class="headerlink" title="二、绕过WAF的方法"></a>二、绕过WAF的方法</h3><p>主要针对URL过滤的绕过。</p>
 <p>1、 使用@符号：我们请求<a href="http://a.com@b.com与请求http://b.com的结果是一致的；" target="_blank" rel="noopener">http://a.com@b.com与请求http://b.com的结果是一致的；</a></p>
 <p>2、 IP地址转换进制访问：如115.239.210.26 ＝ 16373751032</p>
 <p>3、 添加端口号：<a href="http://127.0.0.1:8080" target="_blank" rel="noopener">http://127.0.0.1:8080</a></p>
 <p>4、 使用短链接：<a href="http://dwz.cn/11SMa" target="_blank" rel="noopener">http://dwz.cn/11SMa</a></p>
-<hr>
-<h2 id="三、检测方法-6"><a href="#三、检测方法-6" class="headerlink" title="三、检测方法"></a>三、检测方法</h2><p>1、因为SSRF漏洞是构造服务器发送请求的安全漏洞，所以我们就可以通过抓包分析发送的请求是否是由服务器的发送的来判断是否存在SSRF漏洞</p>
+<h3 id="三、检测方法-6"><a href="#三、检测方法-6" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p>1、因为SSRF漏洞是构造服务器发送请求的安全漏洞，所以我们就可以通过抓包分析发送的请求是否是由服务器的发送的来判断是否存在SSRF漏洞</p>
 <p>2、在页面源码中查找访问的资源地址 ，如果该资源地址类型为 <a href="http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞" target="_blank" rel="noopener">http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞</a></p>
-<hr>
-<h2 id="四、防御方法-6"><a href="#四、防御方法-6" class="headerlink" title="四、防御方法"></a>四、防御方法</h2><p>1、过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件。那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。</p>
+<h3 id="四、防御方法-6"><a href="#四、防御方法-6" class="headerlink" title="四、防御方法"></a>四、防御方法</h3><p>1、过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件。那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。</p>
 <p>2、统一错误信息，避免用户可以根据错误信息来判断远端服务器的端口状态。</p>
 <p>3、限制请求的端口为http常用的端口，比如，80,443,8080,8090。</p>
 <p>4、黑名单内网ip。避免应用被用来获取获取内网数据，攻击内网。</p>
 <p>5、禁用不需要的协议。仅仅允许http和https请求。可以防止类似于file:///,gopher://,ftp:// 等引起的问题。</p>
-<hr>
-<h1 id="XML注入"><a href="#XML注入" class="headerlink" title="XML注入"></a>XML注入</h1><h2 id="一、基本概念-10"><a href="#一、基本概念-10" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="XML注入"><a href="#XML注入" class="headerlink" title="XML注入"></a>XML注入</h2><h3 id="一、基本概念-10"><a href="#一、基本概念-10" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>XML是一种可扩展标记语言，可以理解为HTML的扩展语言，一般用于数据存储、数据传输、数据共享，其中DTD文档来解释XML文档。XML必须包含根元素，所有的标签都要闭合，对大小写敏感，并且属性值需要加引号。</p>
 <p>XML注入即XXE（XML外部实体注入），是指利用可控的参数或入口来加载不可控的参数或代码，造成不可控的运行结果。</p>
 <p>ENTITY实体：如果在XML文档中需要频繁使用某一条数据，可以预先给这个数据起一个别名。即一个ENTITY，然后再在文档中调用它。</p>
@@ -1021,19 +746,16 @@
 <p>2、URL请求，SSRF</p>
 <p>3、DoS</p>
 <p>4、远程代码执行：在PHP开启expect扩展的前提下</p>
-<hr>
-<h2 id="二、检测方法-1"><a href="#二、检测方法-1" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>盲测：判断request的XML请求是否被解析，可以根据请求头中的“SOAP”字段来判断，也可以根据错误返回中有“SAX”字样。</p>
+<h3 id="二、检测方法-1"><a href="#二、检测方法-1" class="headerlink" title="二、检测方法"></a>二、检测方法</h3><p>盲测：判断request的XML请求是否被解析，可以根据请求头中的“SOAP”字段来判断，也可以根据错误返回中有“SAX”字样。</p>
 <p>漏洞挖掘总结：一般为Xfire开发的或者某些wsdl结尾的文件。</p>
 <p>1、Service为Xfire</p>
 <p>2、明显的XML作为内容的输入点</p>
 <p>3、某些以JSON格式的Request</p>
-<hr>
-<h2 id="三、防御方法-1"><a href="#三、防御方法-1" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、禁用外部实体</p>
+<h3 id="三、防御方法-1"><a href="#三、防御方法-1" class="headerlink" title="三、防御方法"></a>三、防御方法</h3><p>1、禁用外部实体</p>
 <p>2、过滤和验证用户提交的XML数据</p>
 <p>3、不允许XML中含有任何自己声明的DTD</p>
 <p>4、有效的措施：配置XML parser只能使用静态DTD，禁止外来引入；对于Java来说，直接设置相应的属性值为false即可</p>
-<hr>
-<h1 id="反序列化漏洞"><a href="#反序列化漏洞" class="headerlink" title="反序列化漏洞"></a>反序列化漏洞</h1><h2 id="一、基本概念-11"><a href="#一、基本概念-11" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
+<h2 id="反序列化漏洞"><a href="#反序列化漏洞" class="headerlink" title="反序列化漏洞"></a>反序列化漏洞</h2><h3 id="一、基本概念-11"><a href="#一、基本概念-11" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
 <p>通常我们定义了一个类的对象，其中保存了一些属性值，为了方便下次可以继续使用在这个对象或者在其他的文件中可以使用该对象，于是就可以调用serialize()函数将该对象序列化为字符串的形式，将该字符串保存起来，等到需要使用该对象时只需将该字符串传过去并调用unserialize()函数对其反序列化即可。</p>
 <p>这里以PHP为例，Java的会在Java分类单独总结。</p>
 <p>PHP在进行反序列化操作时，若存在相应的魔法函数、unserialize()函数的参数可控且可以传递到魔法函数中执行相应的敏感操作，则会造成PHP反序列化漏洞的风险。</p>
@@ -1054,795 +776,120 @@
 <p>unserialize()反序列化漏洞</p>
 <p>session反序列化漏洞</p>
 <p>phar反序列化漏洞</p>
-<hr>
-<h2 id="二、检测方法-2"><a href="#二、检测方法-2" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><p>以PHP为例，全局搜索PHP的反序列化函数如unserialize()，查看其中涉及的文件代码中是否含有魔法函数或其他危险的类方法，且进一步排查魔法函数的内容是否外界可控且存在危险操作。</p>
-<hr>
-<h2 id="三、防御方法-2"><a href="#三、防御方法-2" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><p>1、要严格控制unserialize()函数的参数，坚持用户所输入的信息都是不可靠的原则；</p>
+<h3 id="二、检测方法-2"><a href="#二、检测方法-2" class="headerlink" title="二、检测方法"></a>二、检测方法</h3><p>以PHP为例，全局搜索PHP的反序列化函数如unserialize()，查看其中涉及的文件代码中是否含有魔法函数或其他危险的类方法，且进一步排查魔法函数的内容是否外界可控且存在危险操作。</p>
+<h3 id="三、防御方法-2"><a href="#三、防御方法-2" class="headerlink" title="三、防御方法"></a>三、防御方法</h3><p>1、要严格控制unserialize()函数的参数，坚持用户所输入的信息都是不可靠的原则；</p>
 <p>2、要对于反序列化后的变量内容进行检查，以确定内容没有被污染。</p>
-<hr>
-<h1 id="XPath注入"><a href="#XPath注入" class="headerlink" title="XPath注入"></a>XPath注入</h1><h2 id="一、基本概念-12"><a href="#一、基本概念-12" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p><strong>漏洞定义</strong></p>
-<hr>
-<h2 id="二、检测方法-3"><a href="#二、检测方法-3" class="headerlink" title="二、检测方法"></a>二、检测方法</h2><hr>
-<h2 id="三、防御方法-3"><a href="#三、防御方法-3" class="headerlink" title="三、防御方法"></a>三、防御方法</h2><hr>
-<h1 id="LDAP注入"><a href="#LDAP注入" class="headerlink" title="LDAP注入"></a>LDAP注入</h1><p>具体可参考<a href="http://www.4hou.com/technology/9090.html" target="_blank" rel="noopener">技术详解：基于Web的LDAP注入漏洞</a></p>
-<hr>
-<h1 id="CRLF注入"><a href="#CRLF注入" class="headerlink" title="CRLF注入"></a>CRLF注入</h1><p>待完善…</p>
-<hr>
-<h1 id="URL不安全重定向"><a href="#URL不安全重定向" class="headerlink" title="URL不安全重定向"></a>URL不安全重定向</h1><p>待完善…</p>
-<hr>
-<h1 id="点击劫持"><a href="#点击劫持" class="headerlink" title="点击劫持"></a>点击劫持</h1><p>待完善…</p>
-<hr>
-<h1 id="HTML5安全"><a href="#HTML5安全" class="headerlink" title="HTML5安全"></a>HTML5安全</h1><p>待完善…</p>
-<hr>
-<h1 id="Web缓存攻击"><a href="#Web缓存攻击" class="headerlink" title="Web缓存攻击"></a>Web缓存攻击</h1><p>待完善…</p>
+<h2 id="XPath注入"><a href="#XPath注入" class="headerlink" title="XPath注入"></a>XPath注入</h2><h3 id="一、基本概念-12"><a href="#一、基本概念-12" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p><strong>漏洞定义</strong></p>
+<p>待完善…</p>
+<h3 id="二、检测方法-3"><a href="#二、检测方法-3" class="headerlink" title="二、检测方法"></a>二、检测方法</h3><p>待完善…</p>
+<h3 id="三、防御方法-3"><a href="#三、防御方法-3" class="headerlink" title="三、防御方法"></a>三、防御方法</h3><p>待完善…</p>
+<h2 id="LDAP注入"><a href="#LDAP注入" class="headerlink" title="LDAP注入"></a>LDAP注入</h2><p>具体可参考<a href="http://www.4hou.com/technology/9090.html" target="_blank" rel="noopener">技术详解：基于Web的LDAP注入漏洞</a></p>
+<h2 id="CRLF注入"><a href="#CRLF注入" class="headerlink" title="CRLF注入"></a>CRLF注入</h2><p>待完善…</p>
+<h2 id="URL不安全重定向"><a href="#URL不安全重定向" class="headerlink" title="URL不安全重定向"></a>URL不安全重定向</h2><p>待完善…</p>
+<h2 id="点击劫持"><a href="#点击劫持" class="headerlink" title="点击劫持"></a>点击劫持</h2><p>待完善…</p>
+<h2 id="HTML5安全"><a href="#HTML5安全" class="headerlink" title="HTML5安全"></a>HTML5安全</h2><p>待完善…</p>
+<h2 id="Web缓存攻击"><a href="#Web缓存攻击" class="headerlink" title="Web缓存攻击"></a>Web缓存攻击</h2><p>待完善…</p>
 
-      
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">文章</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+        
+      </ul>
     </div>
-    
-    
-    
 
-    
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL注入与SQL盲注"><span class="toc-number">1.</span> <span class="toc-text">SQL注入与SQL盲注</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念"><span class="toc-number">1.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法"><span class="toc-number">1.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法"><span class="toc-number">1.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法"><span class="toc-number">1.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XSS（跨站脚本）"><span class="toc-number">2.</span> <span class="toc-text">XSS（跨站脚本）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-1"><span class="toc-number">2.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法-1"><span class="toc-number">2.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-1"><span class="toc-number">2.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-1"><span class="toc-number">2.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF（跨站请求伪造）"><span class="toc-number">3.</span> <span class="toc-text">CSRF（跨站请求伪造）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-2"><span class="toc-number">3.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、CSRF攻击获取数据的方法"><span class="toc-number">3.2.</span> <span class="toc-text">二、CSRF攻击获取数据的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-2"><span class="toc-number">3.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-2"><span class="toc-number">3.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件上传漏洞"><span class="toc-number">4.</span> <span class="toc-text">文件上传漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-3"><span class="toc-number">4.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、文件上传攻击分类"><span class="toc-number">4.2.</span> <span class="toc-text">二、文件上传攻击分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、上传文件中的解析攻击"><span class="toc-number">4.3.</span> <span class="toc-text">三、上传文件中的解析攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、检测方法"><span class="toc-number">4.4.</span> <span class="toc-text">四、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、防御方法"><span class="toc-number">4.5.</span> <span class="toc-text">五、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件包含漏洞"><span class="toc-number">5.</span> <span class="toc-text">文件包含漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-4"><span class="toc-number">5.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、文件包含漏洞的利用技巧"><span class="toc-number">5.2.</span> <span class="toc-text">二、文件包含漏洞的利用技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-3"><span class="toc-number">5.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-3"><span class="toc-number">5.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的验证码"><span class="toc-number">6.</span> <span class="toc-text">不安全的验证码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-5"><span class="toc-number">6.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、验证码的安全问题"><span class="toc-number">6.2.</span> <span class="toc-text">二、验证码的安全问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-4"><span class="toc-number">6.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-4"><span class="toc-number">6.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令注入漏洞"><span class="toc-number">7.</span> <span class="toc-text">命令注入漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-6"><span class="toc-number">7.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法-2"><span class="toc-number">7.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、绕过disable-functions的方法"><span class="toc-number">7.3.</span> <span class="toc-text">三、绕过disable_functions的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、检测方法-1"><span class="toc-number">7.4.</span> <span class="toc-text">四、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、防御方法-1"><span class="toc-number">7.5.</span> <span class="toc-text">五、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#暴力破解"><span class="toc-number">8.</span> <span class="toc-text">暴力破解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-7"><span class="toc-number">8.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、检测方法"><span class="toc-number">8.2.</span> <span class="toc-text">二、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、防御方法"><span class="toc-number">8.3.</span> <span class="toc-text">三、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码注入"><span class="toc-number">9.</span> <span class="toc-text">代码注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-8"><span class="toc-number">9.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法-3"><span class="toc-number">9.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-5"><span class="toc-number">9.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-5"><span class="toc-number">9.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF"><span class="toc-number">10.</span> <span class="toc-text">SSRF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-9"><span class="toc-number">10.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、绕过WAF的方法-4"><span class="toc-number">10.2.</span> <span class="toc-text">二、绕过WAF的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、检测方法-6"><span class="toc-number">10.3.</span> <span class="toc-text">三、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、防御方法-6"><span class="toc-number">10.4.</span> <span class="toc-text">四、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XML注入"><span class="toc-number">11.</span> <span class="toc-text">XML注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-10"><span class="toc-number">11.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、检测方法-1"><span class="toc-number">11.2.</span> <span class="toc-text">二、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、防御方法-1"><span class="toc-number">11.3.</span> <span class="toc-text">三、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反序列化漏洞"><span class="toc-number">12.</span> <span class="toc-text">反序列化漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-11"><span class="toc-number">12.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、检测方法-2"><span class="toc-number">12.2.</span> <span class="toc-text">二、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、防御方法-2"><span class="toc-number">12.3.</span> <span class="toc-text">三、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XPath注入"><span class="toc-number">13.</span> <span class="toc-text">XPath注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、基本概念-12"><span class="toc-number">13.1.</span> <span class="toc-text">一、基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、检测方法-3"><span class="toc-number">13.2.</span> <span class="toc-text">二、检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、防御方法-3"><span class="toc-number">13.3.</span> <span class="toc-text">三、防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LDAP注入"><span class="toc-number">14.</span> <span class="toc-text">LDAP注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CRLF注入"><span class="toc-number">15.</span> <span class="toc-text">CRLF注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URL不安全重定向"><span class="toc-number">16.</span> <span class="toc-text">URL不安全重定向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#点击劫持"><span class="toc-number">17.</span> <span class="toc-text">点击劫持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTML5安全"><span class="toc-number">18.</span> <span class="toc-text">HTML5安全</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web缓存攻击"><span class="toc-number">19.</span> <span class="toc-text">Web缓存攻击</span></a></li></ol>
+    </div>
 
-    
-
-    
-      <div>
-        <ul class="post-copyright">
-  <li class="post-copyright-author">
-    <strong>本文作者：</strong>
-    Mi1k7ea
-  </li>
-  <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/" title="常见Web漏洞类型总结">https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/</a>
-  </li>
-  <li class="post-copyright-license">
-    <strong>版权声明：</strong>
-    本文为博主原创文章，未经博主允许不得转载。
-  </li>
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&text=常见Web漏洞类型总结"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&is_video=false&description=常见Web漏洞类型总结"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=常见Web漏洞类型总结&body=Check out this article: https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&title=常见Web漏洞类型总结"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/&name=常见Web漏洞类型总结&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
-      </div>
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Web安全/" rel="tag"><i class="fa fa-tag"></i> Web安全</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2019/01/28/IA-32寄存器/" rel="next" title="IA-32（Intel Architecture 32位）寄存器">
-                <i class="fa fa-chevron-left"></i> IA-32（Intel Architecture 32位）寄存器
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/01/31/PHP伪协议/" rel="prev" title="PHP伪协议">
-                PHP伪协议 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
     </div>
-  </div>
 
-
-          </div>
-          
-
-
-          
-
-  
-
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
     </div>
+
   </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-      <div id="sidebar-dimmer"></div>
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
-
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-            
-              <img class="site-author-image" itemprop="image" src="/images/pain.jpg" alt="Mi1k7ea">
-            
-              <p class="site-author-name" itemprop="name">Mi1k7ea</p>
-              <p class="site-description motion-element" itemprop="description">何以解忧 惟有奶茶</p>
-          </div>
-
-          <nav class="site-state motion-element">
-
-            
-              <div class="site-state-item site-state-posts">
-              
-                <a href="/archives/">
-              
-                  <span class="site-state-item-count">6</span>
-                  <span class="site-state-item-name">posts</span>
-                </a>
-              </div>
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-categories">
-                <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
-                  <span class="site-state-item-name">categories</span>
-                </a>
-              </div>
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
-                  <span class="site-state-item-name">tags</span>
-                </a>
-              </div>
-            
-
-          </nav>
-
-          
-
-          
-            <div class="links-of-author motion-element">
-                
-                  <span class="links-of-author-item">
-                    <a href="https://github.com/Mi1k7ea" target="_blank" title="GitHub">
-                      
-                        <i class="fa fa-fw fa-github"></i>GitHub</a>
-                  </span>
-                
-                  <span class="links-of-author-item">
-                    <a href="https://blog.csdn.net/ski_12" target="_blank" title="CSDN">
-                      
-                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
-                  </span>
-                
-            </div>
-          
-
-          
-          
-
-          
-          
-            <div class="links-of-blogroll motion-element links-of-blogroll-block">
-              <div class="links-of-blogroll-title">
-                <i class="fa  fa-fw fa-link"></i>
-                Links
-              </div>
-              <ul class="links-of-blogroll-list">
-                
-                  <li class="links-of-blogroll-item">
-                    <a href="https://blog.csdn.net/ski_12/" title="SKI12" target="_blank">SKI12</a>
-                  </li>
-                
-              </ul>
-            </div>
-          
-
-          
-
-        </div>
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL注入与SQL盲注"><span class="nav-text">SQL注入与SQL盲注</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绕过WAF的方法"><span class="nav-text">二、绕过WAF的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XSS（跨站脚本）"><span class="nav-text">XSS（跨站脚本）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-1"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绕过WAF的方法-1"><span class="nav-text">二、绕过WAF的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-1"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-1"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CSRF（跨站请求伪造）"><span class="nav-text">CSRF（跨站请求伪造）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-2"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、CSRF攻击获取数据的方法"><span class="nav-text">二、CSRF攻击获取数据的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-2"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-2"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件上传漏洞"><span class="nav-text">文件上传漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-3"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、文件上传攻击分类"><span class="nav-text">二、文件上传攻击分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、上传文件中的解析攻击"><span class="nav-text">三、上传文件中的解析攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、检测方法"><span class="nav-text">四、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、防御方法"><span class="nav-text">五、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件包含漏洞"><span class="nav-text">文件包含漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-4"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、文件包含漏洞的利用技巧"><span class="nav-text">二、文件包含漏洞的利用技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-3"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-3"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不安全的验证码"><span class="nav-text">不安全的验证码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-5"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、验证码的安全问题"><span class="nav-text">二、验证码的安全问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-4"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-4"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#命令注入漏洞"><span class="nav-text">命令注入漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-6"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绕过WAF的方法-2"><span class="nav-text">二、绕过WAF的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、绕过disable-functions的方法"><span class="nav-text">三、绕过disable_functions的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、检测方法-1"><span class="nav-text">四、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、防御方法-1"><span class="nav-text">五、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#暴力破解"><span class="nav-text">暴力破解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-7"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码注入"><span class="nav-text">代码注入</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-8"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绕过WAF的方法-3"><span class="nav-text">二、绕过WAF的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-5"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-5"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSRF"><span class="nav-text">SSRF</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-9"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绕过WAF的方法-4"><span class="nav-text">二、绕过WAF的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、检测方法-6"><span class="nav-text">三、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、防御方法-6"><span class="nav-text">四、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XML注入"><span class="nav-text">XML注入</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-10"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法-1"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法-1"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反序列化漏洞"><span class="nav-text">反序列化漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-11"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法-2"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法-2"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XPath注入"><span class="nav-text">XPath注入</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、基本概念-12"><span class="nav-text">一、基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、检测方法-3"><span class="nav-text">二、检测方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、防御方法-3"><span class="nav-text">三、防御方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LDAP注入"><span class="nav-text">LDAP注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CRLF注入"><span class="nav-text">CRLF注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#URL不安全重定向"><span class="nav-text">URL不安全重定向</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#点击劫持"><span class="nav-text">点击劫持</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTML5安全"><span class="nav-text">HTML5安全</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Web缓存攻击"><span class="nav-text">Web缓存攻击</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
-  <span class="with-love">
-    <i class="fa fa-smile-o"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Mi1k7ea</span>
-
-  
 </div>
 
-
-
-
-
-
-
-
-
         
-<div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-  
-    <span class="site-uv">
-      <i class="fa fa-user"></i>
-      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
-      visitors
-    </span>
-  
-
-  
-    <span class="site-pv">
-      <i class="fa fa-eye"></i>
-      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
-      visits
-    </span>
-  
-</div>
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-    
-
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
   </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">文章</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
-  
-
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
-  
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
-
-
-
-  
-  
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  
-
-
-
-
-	
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  <script type="text/javascript">
-    // Popup Window;
-    var isfetched = false;
-    var isXml = true;
-    // Search DB path;
-    var search_path = "search.xml";
-    if (search_path.length === 0) {
-      search_path = "search.xml";
-    } else if (/json$/i.test(search_path)) {
-      isXml = false;
-    }
-    var path = "/" + search_path;
-    // monitor main search box;
-
-    var onPopupClose = function (e) {
-      $('.popup').hide();
-      $('#local-search-input').val('');
-      $('.search-result-list').remove();
-      $('#no-result').remove();
-      $(".local-search-pop-overlay").remove();
-      $('body').css('overflow', '');
-    }
-
-    function proceedsearch() {
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
-        .css('overflow', 'hidden');
-      $('.search-popup-overlay').click(onPopupClose);
-      $('.popup').toggle();
-      var $localSearchInput = $('#local-search-input');
-      $localSearchInput.attr("autocapitalize", "none");
-      $localSearchInput.attr("autocorrect", "off");
-      $localSearchInput.focus();
-    }
-
-    // search function;
-    var searchFunc = function(path, search_id, content_id) {
-      'use strict';
-
-      // start loading animation
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
-          '<div id="search-loading-icon">' +
-          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
-          '</div>' +
-          '</div>')
-        .css('overflow', 'hidden');
-      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
-
-      $.ajax({
-        url: path,
-        dataType: isXml ? "xml" : "json",
-        async: true,
-        success: function(res) {
-          // get the contents from search data
-          isfetched = true;
-          $('.popup').detach().appendTo('.header-inner');
-          var datas = isXml ? $("entry", res).map(function() {
-            return {
-              title: $("title", this).text(),
-              content: $("content",this).text(),
-              url: $("url" , this).text()
-            };
-          }).get() : res;
-          var input = document.getElementById(search_id);
-          var resultContent = document.getElementById(content_id);
-          var inputEventFunction = function() {
-            var searchText = input.value.trim().toLowerCase();
-            var keywords = searchText.split(/[\s\-]+/);
-            if (keywords.length > 1) {
-              keywords.push(searchText);
-            }
-            var resultItems = [];
-            if (searchText.length > 0) {
-              // perform local searching
-              datas.forEach(function(data) {
-                var isMatch = false;
-                var hitCount = 0;
-                var searchTextCount = 0;
-                var title = data.title.trim();
-                var titleInLowerCase = title.toLowerCase();
-                var content = data.content.trim().replace(/<[^>]+>/g,"");
-                var contentInLowerCase = content.toLowerCase();
-                var articleUrl = decodeURIComponent(data.url);
-                var indexOfTitle = [];
-                var indexOfContent = [];
-                // only match articles with not empty titles
-                if(title != '') {
-                  keywords.forEach(function(keyword) {
-                    function getIndexByWord(word, text, caseSensitive) {
-                      var wordLen = word.length;
-                      if (wordLen === 0) {
-                        return [];
-                      }
-                      var startPosition = 0, position = [], index = [];
-                      if (!caseSensitive) {
-                        text = text.toLowerCase();
-                        word = word.toLowerCase();
-                      }
-                      while ((position = text.indexOf(word, startPosition)) > -1) {
-                        index.push({position: position, word: word});
-                        startPosition = position + wordLen;
-                      }
-                      return index;
-                    }
-
-                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
-                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
-                  });
-                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
-                    isMatch = true;
-                    hitCount = indexOfTitle.length + indexOfContent.length;
-                  }
-                }
-
-                // show search results
-
-                if (isMatch) {
-                  // sort index by position of keyword
-
-                  [indexOfTitle, indexOfContent].forEach(function (index) {
-                    index.sort(function (itemLeft, itemRight) {
-                      if (itemRight.position !== itemLeft.position) {
-                        return itemRight.position - itemLeft.position;
-                      } else {
-                        return itemLeft.word.length - itemRight.word.length;
-                      }
-                    });
-                  });
-
-                  // merge hits into slices
-
-                  function mergeIntoSlice(text, start, end, index) {
-                    var item = index[index.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    var hits = [];
-                    var searchTextCountInSlice = 0;
-                    while (position + word.length <= end && index.length != 0) {
-                      if (word === searchText) {
-                        searchTextCountInSlice++;
-                      }
-                      hits.push({position: position, length: word.length});
-                      var wordEnd = position + word.length;
-
-                      // move to next position of hit
-
-                      index.pop();
-                      while (index.length != 0) {
-                        item = index[index.length - 1];
-                        position = item.position;
-                        word = item.word;
-                        if (wordEnd > position) {
-                          index.pop();
-                        } else {
-                          break;
-                        }
-                      }
-                    }
-                    searchTextCount += searchTextCountInSlice;
-                    return {
-                      hits: hits,
-                      start: start,
-                      end: end,
-                      searchTextCount: searchTextCountInSlice
-                    };
-                  }
-
-                  var slicesOfTitle = [];
-                  if (indexOfTitle.length != 0) {
-                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
-                  }
-
-                  var slicesOfContent = [];
-                  while (indexOfContent.length != 0) {
-                    var item = indexOfContent[indexOfContent.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    // cut out 100 characters
-                    var start = position - 20;
-                    var end = position + 80;
-                    if(start < 0){
-                      start = 0;
-                    }
-                    if (end < position + word.length) {
-                      end = position + word.length;
-                    }
-                    if(end > content.length){
-                      end = content.length;
-                    }
-                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
-                  }
-
-                  // sort slices in content by search text's count and hits' count
-
-                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
-                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
-                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
-                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
-                      return sliceRight.hits.length - sliceLeft.hits.length;
-                    } else {
-                      return sliceLeft.start - sliceRight.start;
-                    }
-                  });
-
-                  // select top N slices in content
-
-                  var upperBound = parseInt('1');
-                  if (upperBound >= 0) {
-                    slicesOfContent = slicesOfContent.slice(0, upperBound);
-                  }
-
-                  // highlight title and content
-
-                  function highlightKeyword(text, slice) {
-                    var result = '';
-                    var prevEnd = slice.start;
-                    slice.hits.forEach(function (hit) {
-                      result += text.substring(prevEnd, hit.position);
-                      var end = hit.position + hit.length;
-                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
-                      prevEnd = end;
-                    });
-                    result += text.substring(prevEnd, slice.end);
-                    return result;
-                  }
-
-                  var resultItem = '';
-
-                  if (slicesOfTitle.length != 0) {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
-                  } else {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
-                  }
-
-                  slicesOfContent.forEach(function (slice) {
-                    resultItem += "<a href='" + articleUrl + "'>" +
-                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
-                      "...</p>" + "</a>";
-                  });
-
-                  resultItem += "</li>";
-                  resultItems.push({
-                    item: resultItem,
-                    searchTextCount: searchTextCount,
-                    hitCount: hitCount,
-                    id: resultItems.length
-                  });
-                }
-              })
-            };
-            if (keywords.length === 1 && keywords[0] === "") {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
-            } else if (resultItems.length === 0) {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
-            } else {
-              resultItems.sort(function (resultLeft, resultRight) {
-                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
-                  return resultRight.searchTextCount - resultLeft.searchTextCount;
-                } else if (resultLeft.hitCount !== resultRight.hitCount) {
-                  return resultRight.hitCount - resultLeft.hitCount;
-                } else {
-                  return resultRight.id - resultLeft.id;
-                }
-              });
-              var searchResultList = '<ul class=\"search-result-list\">';
-              resultItems.forEach(function (result) {
-                searchResultList += result.item;
-              })
-              searchResultList += "</ul>";
-              resultContent.innerHTML = searchResultList;
-            }
-          }
-
-          if ('auto' === 'auto') {
-            input.addEventListener('input', inputEventFunction);
-          } else {
-            $('.search-icon').click(inputEventFunction);
-            input.addEventListener('keypress', function (event) {
-              if (event.keyCode === 13) {
-                inputEventFunction();
-              }
-            });
-          }
-
-          // remove loading animation
-          $(".local-search-pop-overlay").remove();
-          $('body').css('overflow', '');
-
-          proceedsearch();
-        }
-      });
-    }
-
-    // handle and trigger popup window;
-    $('.popup-trigger').click(function(e) {
-      e.stopPropagation();
-      if (isfetched === false) {
-        searchFunc(path, 'local-search-input', 'local-search-result');
-      } else {
-        proceedsearch();
-      };
-    });
-
-    $('.popup-btn-close').click(onPopupClose);
-    $('.popup').click(function(e){
-      e.stopPropagation();
-    });
-    $(document).on('keyup', function (event) {
-      var shouldDismissSearchPopup = event.which === 27 &&
-        $('.search-popup').is(':visible');
-      if (shouldDismissSearchPopup) {
-        onPopupClose();
-      }
-    });
-  </script>
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-
-  
-
-  
 
 </body>
 </html>
