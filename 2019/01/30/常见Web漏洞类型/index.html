@@ -798,6 +798,44 @@
 </article>
 
 
+<div id="gitment_title" class="gitment_title"></div>
+<div id="container" style="display:none"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+  const myTheme = {
+    render(state, instance) {
+      const container = document.createElement('div');
+      container.lang = "en-US";
+      container.className = 'gitment-container gitment-root-container';
+      container.appendChild(instance.renderHeader(state, instance));
+      container.appendChild(instance.renderEditor(state, instance));
+      container.appendChild(instance.renderComments(state, instance));
+      container.appendChild(instance.renderFooter(state, instance));
+      return container;
+    }
+  }
+
+  function showGitment() {
+    $("#gitment_title").attr("style", "display:none");
+    $("#container").attr("style", "").addClass("gitment_container");
+    var gitment = new Gitment({
+      id: decodeURI(window.location.pathname),
+      theme: myTheme,
+      owner: 'mi1k7ea',
+      repo: 'mi1k7ea.github.io',
+      oauth: {
+        client_id: '5faa6378da1c7571144f',
+        client_secret: '69589f0e0826a0a8f307ebc5ee4db093695768e7'
+      }
+    });
+    gitment.render('container');
+  }
+
+  showGitment();
+</script>
+
 
         
           <div id="footer-post-container">
@@ -858,7 +896,7 @@
   </div>
   <span id="busuanzi_container_site_pv"> 
     <i class="fas fa-eye"></i>
-    访客：<span id="busuanzi_value_site_uv"></span>
+    过客：<span id="busuanzi_value_site_uv"></span>
   </span>
   <div class="footer-right">
     <nav>
