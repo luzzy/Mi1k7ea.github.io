@@ -335,7 +335,7 @@
 <p><strong>内嵌</strong></p>
 <p><strong>字符编码</strong><br>    可以对代码进行十进制编码（&amp;#），可以在每个十进制字符后面加上分号；，也可以采用&amp;#0、&amp;#00；等的形式。</p>
 <p>​    JS中的eval()函数，用于计算字符串并执行其中的JS代码。可以使用\连接十六进制字符串形式的脚本让eval()函数来执行，如</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined">eval(“\x61\x6c\x65\x72\x74\x28\x27\x58\x53\x53\x27\x29”);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="built_in">eval</span>(“\x61\x6c\x65\x72\x74\x28\x27\x58\x53\x53\x27\x29”);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>​    也可以让其执行十进制形式的脚本，但需要和String.fromCharCode()函数一起使用、实现将字符转为ASCII值，如</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"javascript:eval(String.fromCharCode(97,108,101,114,116,40,39,88,83,83,39,41))"</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>​    在利用CSS中，可以对style中的属性进行十六进制的编码来绕过。</p>
