@@ -6,13 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。下载hitb-bin100.elf将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：点击进去查看，发现这段代码是在main()函数中的：接着查看">
+    <meta name="description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。 下载hitb-bin100.elf 将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：  根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：  点击进去查看，发现这段代码是在main()函数中">
 <meta name="keywords" content="Reverse">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HITB Binary 100 writeup">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。下载hitb-bin100.elf将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：点击进去查看，发现这段代码是在main()函数中的：接着查看">
+<meta property="og:description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。 下载hitb-bin100.elf 将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：  根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：  点击进去查看，发现这段代码是在main()函数中">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/1.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/2.jpg">
@@ -24,10 +24,10 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/8.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/9.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/10.jpg">
-<meta property="og:updated_time" content="2019-02-24T03:44:01.431Z">
+<meta property="og:updated_time" content="2019-02-24T04:06:19.641Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HITB Binary 100 writeup">
-<meta name="twitter:description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。下载hitb-bin100.elf将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：点击进去查看，发现这段代码是在main()函数中的：接着查看">
+<meta name="twitter:description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。 下载hitb-bin100.elf 将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：  根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：  点击进去查看，发现这段代码是在main()函数中">
 <meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/1.jpg">
     
     
@@ -93,7 +93,7 @@
         <li><a class="icon" href="/2019/01/01/Linux环境与相关工具/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/通过DVWA学习DOM型XSS/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/Python安全小工具之反编译pyc文件/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -173,7 +173,31 @@
   
 
   <div class="content" itemprop="articleBody">
-    <p>HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。<br><a href="https://cedricvb.be/wp-content/files/hitb-bin100.elf" target="_blank" rel="noopener">下载hitb-bin100.elf</a><br>将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：<br><img src="/2019/01/01/HITB_Binary_100_writeup/1.jpg" alt=""><br>根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：<br><img src="/2019/01/01/HITB_Binary_100_writeup/2.jpg" alt=""><br>点击进去查看，发现这段代码是在main()函数中的：<br><img src="/2019/01/01/HITB_Binary_100_writeup/3.jpg" alt=""><br>接着查看一下该二进制文件的函数等信息：<br><img src="/2019/01/01/HITB_Binary_100_writeup/4.jpg" alt=""><br>在Function Window也可以看到，除了调用一些标准库的函数，整个程序几乎都编译到了main函数中：<br><img src="/2019/01/01/HITB_Binary_100_writeup/5.jpg" alt=""><br>查看main函数的汇编代码，可以看到有两个地址值得研究，即4007e8和400803，因为其中都是会调用printf函数输出内容：<br><img src="/2019/01/01/HITB_Binary_100_writeup/6.jpg" alt=""><br>直接在GDB上运行并jump到相应的地址查看：<br><img src="/2019/01/01/HITB_Binary_100_writeup/7.jpg" alt=""><br>可以看到，KEY是正常的输出出来了，但是FLAG输出的是一堆乱码，然后就出现“stack smashing detected”的错误而终止运行了。跳过去直接输出Flag是不可能的了。<br>F5看一下伪代码吧，看到在输出flag前一段主要的代码：<br><img src="/2019/01/01/HITB_Binary_100_writeup/8.jpg" alt=""><br>分析可知，v20变量存放的是该循环执行的次数、无法改变；v21变量调用time函数生成一个时间戳，用于后续与v6变量的相减形成随机种子值；v11变量用于内循环执行的次数，从0-36；v6变量同样调用time函数生成一个时间戳，与v21变量不同在于每次内循环结束后重新生成时间戳时都会先sleep 1s后再生成；在内循环的最后是一个sleep()函数，调用来休眠1s；其余的代码都是用于生成输出的字符串。<br>这里如果想直接nop掉sleep()函数是行不通的，因为整段代码的执行依赖于该sleep()函数，v6与v21的差值在每次内循环结束的时候都会通过sleep()函数实现增一，如果不这样正常处理，将得不到正常的flag。<br>换个思路，这里关键的两个函数是sleep()和time()，我们可以重新定义该两个函数，通过LD_PRELOAD预先加载这两个函数而不是调用系统自己的从而实现欺骗程序该代码确实是睡眠了1s了，也就是说，自定义的sleep()函数直接对时间变量t自增1而不是真的等待了一秒才运行结束，从而可以将程序的休眠时间去掉：<br><img src="/2019/01/01/HITB_Binary_100_writeup/9.jpg" alt=""><br>gcc编译为so文件（-fpic参数指定为位置无关、即使用相对地址，-shared参数指定为共享库），再通过LD_PRELOAD在该elf程序运行前优先加载生成的动态链接库time.so并管道输出到一个文件中查看，可以看到输出了flag：<br><img src="/2019/01/01/HITB_Binary_100_writeup/10.jpg" alt=""></p>
+    <p>HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。</p>
+<p><a href="https://cedricvb.be/wp-content/files/hitb-bin100.elf" target="_blank" rel="noopener">下载hitb-bin100.elf</a></p>
+<p>将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/1.jpg" alt=""></p>
+<p>根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/2.jpg" alt=""></p>
+<p>点击进去查看，发现这段代码是在main()函数中的：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/3.jpg" alt=""></p>
+<p>接着查看一下该二进制文件的函数等信息：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/4.jpg" alt=""></p>
+<p>在Function Window也可以看到，除了调用一些标准库的函数，整个程序几乎都编译到了main函数中：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/5.jpg" alt=""></p>
+<p>查看main函数的汇编代码，可以看到有两个地址值得研究，即4007e8和400803，因为其中都是会调用printf函数输出内容：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/6.jpg" alt=""></p>
+<p>直接在GDB上运行并jump到相应的地址查看：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/7.jpg" alt=""></p>
+<p>可以看到，KEY是正常的输出出来了，但是FLAG输出的是一堆乱码，然后就出现“stack smashing detected”的错误而终止运行了。跳过去直接输出Flag是不可能的了。</p>
+<p>F5看一下伪代码吧，看到在输出flag前一段主要的代码：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/8.jpg" alt=""></p>
+<p>分析可知，v20变量存放的是该循环执行的次数、无法改变；v21变量调用time函数生成一个时间戳，用于后续与v6变量的相减形成随机种子值；v11变量用于内循环执行的次数，从0-36；v6变量同样调用time函数生成一个时间戳，与v21变量不同在于每次内循环结束后重新生成时间戳时都会先sleep 1s后再生成；在内循环的最后是一个sleep()函数，调用来休眠1s；其余的代码都是用于生成输出的字符串。</p>
+<p>这里如果想直接nop掉sleep()函数是行不通的，因为整段代码的执行依赖于该sleep()函数，v6与v21的差值在每次内循环结束的时候都会通过sleep()函数实现增一，如果不这样正常处理，将得不到正常的flag。</p>
+<p>换个思路，这里关键的两个函数是sleep()和time()，我们可以重新定义该两个函数，通过LD_PRELOAD预先加载这两个函数而不是调用系统自己的从而实现欺骗程序该代码确实是睡眠了1s了，也就是说，自定义的sleep()函数直接对时间变量t自增1而不是真的等待了一秒才运行结束，从而可以将程序的休眠时间去掉：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/9.jpg" alt=""></p>
+<p>gcc编译为so文件（-fpic参数指定为位置无关、即使用相对地址，-shared参数指定为共享库），再通过LD_PRELOAD在该elf程序运行前优先加载生成的动态链接库time.so并管道输出到一个文件中查看，可以看到输出了flag：</p>
+<p><img src="/2019/01/01/HITB_Binary_100_writeup/10.jpg" alt=""></p>
 
   </div>
 </article>

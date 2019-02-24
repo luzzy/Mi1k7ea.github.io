@@ -6,13 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="这里小结一下Linux二进制分析相关的环境与工具的基础知识。 ##Linux工具Linux自带了很多常用的binutils工具，这些工具可在以下的URL中找到，其中包含许多用于二进制分析和破解的工具：http://www.gnu.org/software/binutils/ ###GDBGNU Debuger，具体的不用多说。 ###GNU binutils中的objdumpobject dump">
+    <meta name="description" content="这里小结一下Linux二进制分析相关的环境与工具的基础知识。 Linux工具Linux自带了很多常用的binutils工具，这些工具可在以下的URL中找到，其中包含许多用于二进制分析和破解的工具：http://www.gnu.org/software/binutils/ GDBGNU Debuger，具体的不用多说。 GNU binutils中的objdumpobject dump是一种对代码进行">
 <meta name="keywords" content="二进制">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux环境与相关工具">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/Linux环境与相关工具/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="这里小结一下Linux二进制分析相关的环境与工具的基础知识。 ##Linux工具Linux自带了很多常用的binutils工具，这些工具可在以下的URL中找到，其中包含许多用于二进制分析和破解的工具：http://www.gnu.org/software/binutils/ ###GDBGNU Debuger，具体的不用多说。 ###GNU binutils中的objdumpobject dump">
+<meta property="og:description" content="这里小结一下Linux二进制分析相关的环境与工具的基础知识。 Linux工具Linux自带了很多常用的binutils工具，这些工具可在以下的URL中找到，其中包含许多用于二进制分析和破解的工具：http://www.gnu.org/software/binutils/ GDBGNU Debuger，具体的不用多说。 GNU binutils中的objdumpobject dump是一种对代码进行">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Linux环境与相关工具/1.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Linux环境与相关工具/2.jpg">
@@ -25,10 +25,10 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Linux环境与相关工具/9.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Linux环境与相关工具/10.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Linux环境与相关工具/11.jpg">
-<meta property="og:updated_time" content="2019-02-24T03:46:21.235Z">
+<meta property="og:updated_time" content="2019-02-24T04:04:23.535Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux环境与相关工具">
-<meta name="twitter:description" content="这里小结一下Linux二进制分析相关的环境与工具的基础知识。 ##Linux工具Linux自带了很多常用的binutils工具，这些工具可在以下的URL中找到，其中包含许多用于二进制分析和破解的工具：http://www.gnu.org/software/binutils/ ###GDBGNU Debuger，具体的不用多说。 ###GNU binutils中的objdumpobject dump">
+<meta name="twitter:description" content="这里小结一下Linux二进制分析相关的环境与工具的基础知识。 Linux工具Linux自带了很多常用的binutils工具，这些工具可在以下的URL中找到，其中包含许多用于二进制分析和破解的工具：http://www.gnu.org/software/binutils/ GDBGNU Debuger，具体的不用多说。 GNU binutils中的objdumpobject dump是一种对代码进行">
 <meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/Linux环境与相关工具/1.jpg">
     
     
@@ -121,7 +121,7 @@
 
     </div>
     <div id="toc">
-      
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux工具"><span class="toc-number">1.</span> <span class="toc-text">Linux工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GDB"><span class="toc-number">1.1.</span> <span class="toc-text">GDB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GNU-binutils中的objdump"><span class="toc-number">1.2.</span> <span class="toc-text">GNU binutils中的objdump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GNU-binutils中的objcopy"><span class="toc-number">1.3.</span> <span class="toc-text">GNU binutils中的objcopy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strace"><span class="toc-number">1.4.</span> <span class="toc-text">strace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ltrace"><span class="toc-number">1.5.</span> <span class="toc-text">ltrace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ftrace"><span class="toc-number">1.6.</span> <span class="toc-text">ftrace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#readelf"><span class="toc-number">1.7.</span> <span class="toc-text">readelf</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ERESI——ELF反编译系统接口"><span class="toc-number">1.8.</span> <span class="toc-text">ERESI——ELF反编译系统接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设备和文件"><span class="toc-number">2.</span> <span class="toc-text">设备和文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-lt-pid-gt-maps"><span class="toc-number">2.1.</span> <span class="toc-text">/proc/&lt;pid&gt;/maps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-kcore"><span class="toc-number">2.2.</span> <span class="toc-text">/proc/kcore</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#boot-System-map"><span class="toc-number">2.3.</span> <span class="toc-text">/boot/System.map</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-kallsyms"><span class="toc-number">2.4.</span> <span class="toc-text">/proc/kallsyms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-iomem"><span class="toc-number">2.5.</span> <span class="toc-text">/proc/iomem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ECFS"><span class="toc-number">2.6.</span> <span class="toc-text">ECFS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接器相关环境指针"><span class="toc-number">3.</span> <span class="toc-text">链接器相关环境指针</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LD-PRELOAD环境变量"><span class="toc-number">3.1.</span> <span class="toc-text">LD_PRELOAD环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LD-SHOW-AUXV环境变量"><span class="toc-number">3.2.</span> <span class="toc-text">LD_SHOW_AUXV环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#链接器脚本"><span class="toc-number">3.3.</span> <span class="toc-text">链接器脚本</span></a></li></ol></li></ol>
     </div>
   </span>
 </div>
@@ -175,26 +175,63 @@
 
   <div class="content" itemprop="articleBody">
     <p>这里小结一下Linux二进制分析相关的环境与工具的基础知识。</p>
-<p>##Linux工具<br>Linux自带了很多常用的binutils工具，这些工具可在以下的URL中找到，其中包含许多用于二进制分析和破解的工具：<a href="http://www.gnu.org/software/binutils/" target="_blank" rel="noopener">http://www.gnu.org/software/binutils/</a></p>
-<p>###GDB<br>GNU Debuger，具体的不用多说。</p>
-<p>###GNU binutils中的objdump<br>object dump是一种对代码进行快速反编译的简介方案，在反编译简单的、未被篡改的二进制文件时较为有用，可以读取常用的ELF类型文件，但对于如恶意软件等较为复杂的反编译任务则显得局限。<br>主要缺点是需要依赖ELF节头，并且不会进行控制流分析。<br>一些常见用例：<br>查看ELF文件中所有节的数据或代码：<br>objdump -D \<elf object=""><br><img src="/2019/01/01/Linux环境与相关工具/1.jpg" alt=""><br>只查看ELF文件中的程序代码：<br>objdump -d \<elf object=""><br><img src="/2019/01/01/Linux环境与相关工具/2.jpg" alt=""><br>查看所有符号：<br>objdump -tf \<elf object=""><br><img src="/2019/01/01/Linux环境与相关工具/3.jpg" alt=""></elf></elf></elf></p>
-<p>###GNU binutils中的objcopy<br>object copy将目标文件的一部分或者全部内容拷贝到另外一个目标文件中，或者实现目标文件的格式转换。其可以分析和修改任意类型的ELF文件，修改ELF节，复制ELF节到ELF二进制中或反之。<br>要将.data节从一个ELF文件复制到另一个文件中可用以下命令：<br>objcopy -only-section=.data \<infile> \<outfile></outfile></infile></p>
-<p>###strace<br>system call trace系统调用追踪，是基于ptrace(2)系统调用的工具，通过在一个循环中使用PTRACE_SYSCALL请求来显示运行中程序的系统调用syscalls活动相关的信息以及程序执行中捕获到的信号量。<br>跟踪程序：<br>strace /bin/ls -o ls.out<br>附加到一个现存的进程上：<br>strace -p \<pid> -o daemon.out<br>原始输出将会显示每个系统调用的文件描述编号，系统调用会将文件描述符作为参数，如下：<br>SYS_read(3, buf, sizeof(buf));<br>若想查看读入到文件描述符3中的所有数据，可执行如下命令：<br>strace -e read=3 /bin/ls<br>也可以使用-e write=fd命令查看写入的数据。</pid></p>
-<p>###ltrace<br>library trace库追踪，与strace类似，用于解析共享库即一个程序的链接信息，并打印出用到的库函数。还可以使用-S参数查看系统调用。该命令通过解析可执行文件的动态段，并打印出共享库和静态库的实际符号和函数来提供更详细的信息。<br>ltrace \<program> -o program.out</program></p>
-<p>###ftrace<br>function trace函数追踪，与ltrace类似，另外还可以查看二进制文件本身的函数调用，可以在以下URL下载：<a href="https://github.com/elfmaster/ftrace" target="_blank" rel="noopener">https://github.com/elfmaster/ftrace</a></p>
-<p>###readelf<br>readelf是用于解析ELF二进制文件的工具。在进行反编译之前，需要手机目标文件相关的信息，该命令可以提供收集信息所需要的特定的ELF的所有数据。<br>查询节头表：readelf -S \<object><br><img src="/2019/01/01/Linux环境与相关工具/4.jpg" alt=""><br>查询程序头表：readelf -l \<object><br><img src="/2019/01/01/Linux环境与相关工具/5.jpg" alt=""><br>查询符号表：readelf -s \<object><br><img src="/2019/01/01/Linux环境与相关工具/6.jpg" alt=""><br>查询ELF文件头数据：readelf -e \<object><br><img src="/2019/01/01/Linux环境与相关工具/7.jpg" alt=""><br>查询重定位入口：readelf -r \<object><br><img src="/2019/01/01/Linux环境与相关工具/8.jpg" alt=""><br>查询动态段：readelf -d \<object><br><img src="/2019/01/01/Linux环境与相关工具/9.jpg" alt=""></object></object></object></object></object></object></p>
-<p>###ERESI——ELF反编译系统接口<br>ERESI工程包含了许多Linux二进制工具，具体查看<a href="http://www.eresi-project.org" target="_blank" rel="noopener">http://www.eresi-project.org</a></p>
-<p>##设备和文件</p>
-<p>###/proc/&lt;pid&gt;/maps<br>/proc/\<pid>/maps文件保存了一个进程镜像的布局，通过展现每个内存映射来实现，展现的内容包括可执行文件、共享库、栈、堆和VDSO等。对于快速解析一个进程的地址空间分布十分有用。</pid></p>
-<p>###/proc/kcore<br>/proc/kcore是proc文件系统的一项，是Linux内核的动态核心文件，是以ELF核心文件的形式所展现出来的原生内存转储。GDB可以使用/proc/kcore来对内核进行调试分析。</p>
-<p>###/boot/System.map<br>该文件几乎存在于所有的Linux版本中，包含了整个内核的所有符号。</p>
-<p>###/proc/kallsyms<br>/proc/kallsyms与/boot/System.map类似，/proc/kallsyms包含了内核中绝大部分的符号（若在CONFIG_KALLSYMS_ALL内核配置中指明则可以包含内核中全部的符号），区别是kallsyms是内核所属的/proc的一个入口并且可以动态更新。假如安装了新的LKM（Linux Kernel Module），符号会自动添加到/proc/kallsyms中。</p>
-<p>###/proc/iomem<br>/proc/iomem是一个proc入口，与/proc/\<pid>/maps类似，不过其是跟系统内存相关的。<br>例如，查询内核的text段所映射的物理内存位置，通过搜索Kernel便可以查看code/text段、data段和bss段的内容：<br><img src="/2019/01/01/Linux环境与相关工具/10.jpg" alt=""></pid></p>
-<p>###ECFS<br>Extended Core File Snapshot扩展核心文件快照，是一种核心转储技术，专门为进程镜像的高级取证分析所设计。可从该URL下载：<a href="https://github.com/elfmaster/ecfs" target="_blank" rel="noopener">https://github.com/elfmaster/ecfs</a></p>
-<p>##链接器相关环境指针</p>
-<p>###LD_PRELOAD环境变量<br>LD_PRELOAD环境变量可以设置成一个指定库的路径，动态链接时较其他库有着更高的优先级，允许预加载指定库中的函数和符号覆盖掉后续链接的库中的函数和符号。即可以通过重定向共享库函数来进行运行时修复。这项技术可用于绕过反调试代码，也可以用作用户机rootkit。<br>CTF中有示例参考HITB Binary 100。</p>
-<p>###LD_SHOW_AUXV环境变量<br>LD_SHOW_AUXV环境变量能够通知程序加载器来展示程序运行时的辅助向量。辅助向量是放在程序栈上的信息（通过内核的ELF常规加载方式），附带了传递给动态链接器的程序相关的特定信息。</p>
-<p>###链接器脚本<br>链接器脚本由链接器解释，把程序划分为节、内存和符号。gcc通过使用-T参数来指定链接器脚本。默认的链接器脚本可以使用ld –verbose命令查看：<br><img src="/2019/01/01/Linux环境与相关工具/11.jpg" alt=""></p>
+<h2 id="Linux工具"><a href="#Linux工具" class="headerlink" title="Linux工具"></a>Linux工具</h2><p>Linux自带了很多常用的binutils工具，这些工具可在以下的URL中找到，其中包含许多用于二进制分析和破解的工具：<a href="http://www.gnu.org/software/binutils/" target="_blank" rel="noopener">http://www.gnu.org/software/binutils/</a></p>
+<h3 id="GDB"><a href="#GDB" class="headerlink" title="GDB"></a>GDB</h3><p>GNU Debuger，具体的不用多说。</p>
+<h3 id="GNU-binutils中的objdump"><a href="#GNU-binutils中的objdump" class="headerlink" title="GNU binutils中的objdump"></a>GNU binutils中的objdump</h3><p>object dump是一种对代码进行快速反编译的简介方案，在反编译简单的、未被篡改的二进制文件时较为有用，可以读取常用的ELF类型文件，但对于如恶意软件等较为复杂的反编译任务则显得局限。</p>
+<p>主要缺点是需要依赖ELF节头，并且不会进行控制流分析。</p>
+<p>一些常见用例：</p>
+<p>查看ELF文件中所有节的数据或代码：</p>
+<p>objdump -D \<elf object=""></elf></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/1.jpg" alt=""></p>
+<p>只查看ELF文件中的程序代码：</p>
+<p>objdump -d \<elf object=""></elf></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/2.jpg" alt=""></p>
+<p>查看所有符号：</p>
+<p>objdump -tf \<elf object=""></elf></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/3.jpg" alt=""></p>
+<h3 id="GNU-binutils中的objcopy"><a href="#GNU-binutils中的objcopy" class="headerlink" title="GNU binutils中的objcopy"></a>GNU binutils中的objcopy</h3><p>object copy将目标文件的一部分或者全部内容拷贝到另外一个目标文件中，或者实现目标文件的格式转换。其可以分析和修改任意类型的ELF文件，修改ELF节，复制ELF节到ELF二进制中或反之。</p>
+<p>要将.data节从一个ELF文件复制到另一个文件中可用以下命令：</p>
+<p>objcopy -only-section=.data \<infile> \<outfile></outfile></infile></p>
+<h3 id="strace"><a href="#strace" class="headerlink" title="strace"></a>strace</h3><p>system call trace系统调用追踪，是基于ptrace(2)系统调用的工具，通过在一个循环中使用PTRACE_SYSCALL请求来显示运行中程序的系统调用syscalls活动相关的信息以及程序执行中捕获到的信号量。</p>
+<p>跟踪程序：</p>
+<p>strace /bin/ls -o ls.out</p>
+<p>附加到一个现存的进程上：</p>
+<p>strace -p \<pid> -o daemon.out</pid></p>
+<p>原始输出将会显示每个系统调用的文件描述编号，系统调用会将文件描述符作为参数，如下：</p>
+<p>SYS_read(3, buf, sizeof(buf));</p>
+<p>若想查看读入到文件描述符3中的所有数据，可执行如下命令：</p>
+<p>strace -e read=3 /bin/ls</p>
+<p>也可以使用-e write=fd命令查看写入的数据。</p>
+<h3 id="ltrace"><a href="#ltrace" class="headerlink" title="ltrace"></a>ltrace</h3><p>library trace库追踪，与strace类似，用于解析共享库即一个程序的链接信息，并打印出用到的库函数。还可以使用-S参数查看系统调用。该命令通过解析可执行文件的动态段，并打印出共享库和静态库的实际符号和函数来提供更详细的信息。</p>
+<p>ltrace \<program> -o program.out</program></p>
+<h3 id="ftrace"><a href="#ftrace" class="headerlink" title="ftrace"></a>ftrace</h3><p>function trace函数追踪，与ltrace类似，另外还可以查看二进制文件本身的函数调用，可以在以下URL下载：<a href="https://github.com/elfmaster/ftrace" target="_blank" rel="noopener">https://github.com/elfmaster/ftrace</a></p>
+<h3 id="readelf"><a href="#readelf" class="headerlink" title="readelf"></a>readelf</h3><p>readelf是用于解析ELF二进制文件的工具。在进行反编译之前，需要手机目标文件相关的信息，该命令可以提供收集信息所需要的特定的ELF的所有数据。</p>
+<p>查询节头表：readelf -S \<object></object></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/4.jpg" alt=""></p>
+<p>查询程序头表：readelf -l \<object></object></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/5.jpg" alt=""></p>
+<p>查询符号表：readelf -s \<object></object></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/6.jpg" alt=""></p>
+<p>查询ELF文件头数据：readelf -e \<object></object></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/7.jpg" alt=""></p>
+<p>查询重定位入口：readelf -r \<object></object></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/8.jpg" alt=""></p>
+<p>查询动态段：readelf -d \<object></object></p>
+<p><img src="/2019/01/01/Linux环境与相关工具/9.jpg" alt=""></p>
+<h3 id="ERESI——ELF反编译系统接口"><a href="#ERESI——ELF反编译系统接口" class="headerlink" title="ERESI——ELF反编译系统接口"></a>ERESI——ELF反编译系统接口</h3><p>ERESI工程包含了许多Linux二进制工具，具体查看<a href="http://www.eresi-project.org" target="_blank" rel="noopener">http://www.eresi-project.org</a></p>
+<h2 id="设备和文件"><a href="#设备和文件" class="headerlink" title="设备和文件"></a>设备和文件</h2><h3 id="proc-lt-pid-gt-maps"><a href="#proc-lt-pid-gt-maps" class="headerlink" title="/proc/&lt;pid&gt;/maps"></a>/proc/&lt;pid&gt;/maps</h3><p>/proc/\<pid>/maps文件保存了一个进程镜像的布局，通过展现每个内存映射来实现，展现的内容包括可执行文件、共享库、栈、堆和VDSO等。对于快速解析一个进程的地址空间分布十分有用。</pid></p>
+<h3 id="proc-kcore"><a href="#proc-kcore" class="headerlink" title="/proc/kcore"></a>/proc/kcore</h3><p>/proc/kcore是proc文件系统的一项，是Linux内核的动态核心文件，是以ELF核心文件的形式所展现出来的原生内存转储。GDB可以使用/proc/kcore来对内核进行调试分析。</p>
+<h3 id="boot-System-map"><a href="#boot-System-map" class="headerlink" title="/boot/System.map"></a>/boot/System.map</h3><p>该文件几乎存在于所有的Linux版本中，包含了整个内核的所有符号。</p>
+<h3 id="proc-kallsyms"><a href="#proc-kallsyms" class="headerlink" title="/proc/kallsyms"></a>/proc/kallsyms</h3><p>/proc/kallsyms与/boot/System.map类似，/proc/kallsyms包含了内核中绝大部分的符号（若在CONFIG_KALLSYMS_ALL内核配置中指明则可以包含内核中全部的符号），区别是kallsyms是内核所属的/proc的一个入口并且可以动态更新。假如安装了新的LKM（Linux Kernel Module），符号会自动添加到/proc/kallsyms中。</p>
+<h3 id="proc-iomem"><a href="#proc-iomem" class="headerlink" title="/proc/iomem"></a>/proc/iomem</h3><p>/proc/iomem是一个proc入口，与/proc/\<pid>/maps类似，不过其是跟系统内存相关的。</pid></p>
+<p>例如，查询内核的text段所映射的物理内存位置，通过搜索Kernel便可以查看code/text段、data段和bss段的内容：</p>
+<p><img src="/2019/01/01/Linux环境与相关工具/10.jpg" alt=""></p>
+<h3 id="ECFS"><a href="#ECFS" class="headerlink" title="ECFS"></a>ECFS</h3><p>Extended Core File Snapshot扩展核心文件快照，是一种核心转储技术，专门为进程镜像的高级取证分析所设计。可从该URL下载：<a href="https://github.com/elfmaster/ecfs" target="_blank" rel="noopener">https://github.com/elfmaster/ecfs</a></p>
+<h2 id="链接器相关环境指针"><a href="#链接器相关环境指针" class="headerlink" title="链接器相关环境指针"></a>链接器相关环境指针</h2><h3 id="LD-PRELOAD环境变量"><a href="#LD-PRELOAD环境变量" class="headerlink" title="LD_PRELOAD环境变量"></a>LD_PRELOAD环境变量</h3><p>LD_PRELOAD环境变量可以设置成一个指定库的路径，动态链接时较其他库有着更高的优先级，允许预加载指定库中的函数和符号覆盖掉后续链接的库中的函数和符号。即可以通过重定向共享库函数来进行运行时修复。这项技术可用于绕过反调试代码，也可以用作用户机rootkit。</p>
+<p>CTF中有示例参考HITB Binary 100。</p>
+<h3 id="LD-SHOW-AUXV环境变量"><a href="#LD-SHOW-AUXV环境变量" class="headerlink" title="LD_SHOW_AUXV环境变量"></a>LD_SHOW_AUXV环境变量</h3><p>LD_SHOW_AUXV环境变量能够通知程序加载器来展示程序运行时的辅助向量。辅助向量是放在程序栈上的信息（通过内核的ELF常规加载方式），附带了传递给动态链接器的程序相关的特定信息。</p>
+<h3 id="链接器脚本"><a href="#链接器脚本" class="headerlink" title="链接器脚本"></a>链接器脚本</h3><p>链接器脚本由链接器解释，把程序划分为节、内存和符号。gcc通过使用-T参数来指定链接器脚本。默认的链接器脚本可以使用ld –verbose命令查看：</p>
+<p><img src="/2019/01/01/Linux环境与相关工具/11.jpg" alt=""></p>
 
   </div>
 </article>
@@ -240,7 +277,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux工具"><span class="toc-number">1.</span> <span class="toc-text">Linux工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GDB"><span class="toc-number">1.1.</span> <span class="toc-text">GDB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GNU-binutils中的objdump"><span class="toc-number">1.2.</span> <span class="toc-text">GNU binutils中的objdump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GNU-binutils中的objcopy"><span class="toc-number">1.3.</span> <span class="toc-text">GNU binutils中的objcopy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strace"><span class="toc-number">1.4.</span> <span class="toc-text">strace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ltrace"><span class="toc-number">1.5.</span> <span class="toc-text">ltrace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ftrace"><span class="toc-number">1.6.</span> <span class="toc-text">ftrace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#readelf"><span class="toc-number">1.7.</span> <span class="toc-text">readelf</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ERESI——ELF反编译系统接口"><span class="toc-number">1.8.</span> <span class="toc-text">ERESI——ELF反编译系统接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设备和文件"><span class="toc-number">2.</span> <span class="toc-text">设备和文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-lt-pid-gt-maps"><span class="toc-number">2.1.</span> <span class="toc-text">/proc/&lt;pid&gt;/maps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-kcore"><span class="toc-number">2.2.</span> <span class="toc-text">/proc/kcore</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#boot-System-map"><span class="toc-number">2.3.</span> <span class="toc-text">/boot/System.map</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-kallsyms"><span class="toc-number">2.4.</span> <span class="toc-text">/proc/kallsyms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-iomem"><span class="toc-number">2.5.</span> <span class="toc-text">/proc/iomem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ECFS"><span class="toc-number">2.6.</span> <span class="toc-text">ECFS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接器相关环境指针"><span class="toc-number">3.</span> <span class="toc-text">链接器相关环境指针</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LD-PRELOAD环境变量"><span class="toc-number">3.1.</span> <span class="toc-text">LD_PRELOAD环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LD-SHOW-AUXV环境变量"><span class="toc-number">3.2.</span> <span class="toc-text">LD_SHOW_AUXV环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#链接器脚本"><span class="toc-number">3.3.</span> <span class="toc-text">链接器脚本</span></a></li></ol></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
