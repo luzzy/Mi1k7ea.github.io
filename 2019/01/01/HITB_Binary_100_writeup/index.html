@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。 下载hitb-bin100.elf 将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：  根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：  点击进去查看，发现这段代码是在main()函数中">
-<meta name="keywords" content="Reverse">
+<meta name="keywords" content="二进制">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HITB Binary 100 writeup">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/index.html">
@@ -24,7 +24,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/8.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/9.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/10.jpg">
-<meta property="og:updated_time" content="2019-02-24T04:06:19.641Z">
+<meta property="og:updated_time" content="2019-02-24T04:59:41.591Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HITB Binary 100 writeup">
 <meta name="twitter:description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。 下载hitb-bin100.elf 将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：  根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：  点击进去查看，发现这段代码是在main()函数中">
@@ -93,7 +93,7 @@
         <li><a class="icon" href="/2019/01/01/Linux环境与相关工具/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/cPickle反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/PyYAML反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -160,7 +160,7 @@
       
     <div class="article-tag">
         <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Reverse/">Reverse</a>
+        <a class="tag-link" href="/tags/二进制/">二进制</a>
     </div>
     <div class="article-tag">
         <i class="fas fa-eye"></i>
