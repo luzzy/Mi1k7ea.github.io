@@ -10,31 +10,31 @@
 <meta name="keywords" content="Web安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java XMLDecoder反序列化漏洞">
-<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/index.html">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
 <meta property="og:description" content="基本概念XMLDecoder用于将XMLEncoder创建的xml文档内容反序列化为一个Java对象，其位于java.beans包下。 影响版本XMLDecoder在JDK 1.4~JDK 11中都存在反序列化漏洞安全风险。 Demo1234567891011121314151617181920212223242526272829303132333435363738394041import com">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/1.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/2.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/3.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/4.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/5.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/6.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/7.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/8.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/9.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/10.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/11.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/12.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/13.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/14.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/15.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/16.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/1.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/2.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/3.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/4.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/5.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/6.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/7.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/8.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/9.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/10.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/11.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/12.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/13.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/14.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/15.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/16.jpg">
 <meta property="og:updated_time" content="2019-02-24T04:19:05.517Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java XMLDecoder反序列化漏洞">
 <meta name="twitter:description" content="基本概念XMLDecoder用于将XMLEncoder创建的xml文档内容反序列化为一个Java对象，其位于java.beans包下。 影响版本XMLDecoder在JDK 1.4~JDK 11中都存在反序列化漏洞安全风险。 Demo1234567891011121314151617181920212223242526272829303132333435363738394041import com">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/1.jpg">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/1.jpg">
     
     
         
@@ -96,10 +96,10 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2019/01/28/IA-32寄存器/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/PyYAML反序列化漏洞/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/（Python）cPickle反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -112,16 +112,16 @@
     <br>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&text=Java XMLDecoder反序列化漏洞"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&is_video=false&description=Java XMLDecoder反序列化漏洞"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Java XMLDecoder反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&name=Java XMLDecoder反序列化漏洞&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&text=Java XMLDecoder反序列化漏洞"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&is_video=false&description=Java XMLDecoder反序列化漏洞"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java XMLDecoder反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&name=Java XMLDecoder反序列化漏洞&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -186,41 +186,41 @@
 <p>poc.xml，可以看到java标签的class属性指定XMLDecoder类，对象标签指定ProcessBuilder类、void标签指定方法为start，即可调用ProcessBuilder.start()来执行其中的命令。</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">java</span> <span class="attr">version</span>=<span class="string">"1.8.0_131"</span> <span class="attr">class</span>=<span class="string">"java.beans.XMLDecoder"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">object</span> <span class="attr">class</span>=<span class="string">"java.lang.ProcessBuilder"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">array</span> <span class="attr">class</span>=<span class="string">"java.lang.String"</span> <span class="attr">length</span>=<span class="string">"1"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">void</span> <span class="attr">index</span>=<span class="string">"0"</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">string</span>&gt;</span>calc<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">void</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">void</span> <span class="attr">method</span>=<span class="string">"start"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">object</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">java</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>运行后，会弹出计算器：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/1.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/1.jpg" alt=""></p>
 <h2 id="调试分析"><a href="#调试分析" class="headerlink" title="调试分析"></a>调试分析</h2><p>在IDEA下设置断点跟踪调试。</p>
 <p>在readObject()处设置断点，可看到XMLDecoder对象xd的input属性包含了输入XML文档的路径：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/2.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/2.jpg" alt=""></p>
 <p>继续往里调试，调用到XMLDecoder.parsingComplete()时，发现里面调用了</p>
 <p>XMLDecoder.this.handler.parse()，其中this.handler即为DocumentHandler，换句话说，就是调用了DocumentHandler.parser()来解析输入的XML文档内容：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/3.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/3.jpg" alt=""></p>
 <p>跟踪进去，可以看到DocumentHandler.parser()中调用了SAXParserFactory.newInstance().newSAXParser().parse()来解析XML内容：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/4.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/4.jpg" alt=""></p>
 <p>接着设置xmlReader的相关handler，如处理XML内容、实体、错误、文档类型定义、文件等句柄，最后调用xmlReader.parse()解析XML文件内容：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/5.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/5.jpg" alt=""></p>
 <p>继续调试，在XML11Configuration.parse()中发现调用determineDocVersion()：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/6.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/6.jpg" alt=""></p>
 <p>跟踪进去发现，determineDocVersion()主要获取XML实体扫描器然后扫描解析\&lt;?xml version=…?&gt;来获取XML文档的版本信息：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/7.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/7.jpg" alt=""></p>
 <p>返回版本信息后，继续往下在XML11Configuration.parse()中调用startDocumentParsing()函数，主要是重置扫描器的版本配置并开始文件扫描准备，其中开始文件扫描准备是调用startEntity()函数（跟踪进去可以看到是通知扫描器开始实体扫描，其中文档实体的伪名称为“[xml]”、DTD的伪名称为“[dtd]”、参数实体名称以“%”开头；接着函数内部会调用startDocument()函数开始准备文件扫描）：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/8.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/8.jpg" alt=""></p>
 <p>可以看到最后调用到的startDocument()函数会清空当前对象和句柄为文件扫描的开始做准备：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/9.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/9.jpg" alt=""></p>
 <p>返回到XML11Configuration.parse()中继续往下调试，调用scanDocument()开始文件扫描：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/10.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/10.jpg" alt=""></p>
 <p>进入scanDocument()，可以看到设置实体句柄后，主要是执行do while循环体，其中的包含START_DOCUMENT、START_ELEMENT、CHARACTERS、SPACE、ENTITY_REFERENCE、PROCESSING_INSTRUCTION、COMMENT、DTD、CDATA、NOTATION_DECLARATION、ENTITY_DECLARATION、NAMESPACE、ATTRIBUTE、END_ELEMENT等的扫描识别：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/11.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/11.jpg" alt=""></p>
 <p>中间XML节点解析的过程不用过多分析，调试至END_ELEMENT时，可以看到其中提取出“calc”参数值：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/12.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/12.jpg" alt=""></p>
 <p>跟踪进去后面的getValueObject()函数，可以看到变量var3和var4，分别为获取到ProcessBuilder类名和start方法名，在调用Expression()：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/13.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/13.jpg" alt=""></p>
 <p>继续跟踪到里面，最后会调用MethodUtil.invoke()方法实现反射执行任意类方法：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/14.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/14.jpg" alt=""></p>
 <p>再次F7直接执行了代码弹出计算器：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/15.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/15.jpg" alt=""></p>
 <p>整体地看一下，整个调用过程大致如下：</p>
 <p>XMLDecoder.readObject() -&gt; XMLDecoder.parsingCompelete() -&gt; DocumentHandler.parse() -&gt; SAXParserFactory.newInstance().newSAXParser().parse() -&gt; xmlReader.parse()<br>可以发现，XMLDecoder类解析XML是调用DocumentHandler类实现的，而DocumentHandler类是基于SAXParser类对XML的解析上的。</p>
 <p>那么可以去分析一下，到底哪个类才是真正的漏洞类。测试一下，可以看出DocumentHandler类才是XMLDecoder反序列化漏洞的根源类：</p>
-<p><img src="/2019/01/01/（Java）XMLDecoder反序列化漏洞/XMLDecoder反序列化漏洞/16.jpg" alt=""></p>
+<p><img src="/2019/01/01/XMLDecoder反序列化漏洞/16.jpg" alt=""></p>
 <h2 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h2><p>全局搜索XMLDecoder关键字，排查是否调用readObject()函数且参数是否可控。</p>
 <h2 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h2><p>若可以尽量不使用XMLDecoder反序列化XML内容；若使用则尽量确保参数不可由外界输入，尽量以白名单的方式限定XML文档名且结合严格的过滤机制。</p>
 
@@ -273,16 +273,16 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&text=Java XMLDecoder反序列化漏洞"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&is_video=false&description=Java XMLDecoder反序列化漏洞"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Java XMLDecoder反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/（Java）XMLDecoder反序列化漏洞/&name=Java XMLDecoder反序列化漏洞&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&text=Java XMLDecoder反序列化漏洞"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&is_video=false&description=Java XMLDecoder反序列化漏洞"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java XMLDecoder反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&title=Java XMLDecoder反序列化漏洞"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/&name=Java XMLDecoder反序列化漏洞&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

@@ -10,25 +10,25 @@
 <meta name="keywords" content="Web安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python PyYAML反序列化漏洞">
-<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/index.html">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
 <meta property="og:description" content="基本概念（引用百度）YAML是“YAML不是一种标记语言”的外语缩写；但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名。它是一种直观的能够被电脑识别的数据序列化格式，是一个可读性高并且容易被人类阅读，容易和脚本语言交互，用来表达资料序列的编程语言。 PyYAML是Python中YAML语言的编辑器和解释器。 安装：pip install PyYAML 两个函数： yam">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/1.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/2.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/3.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/4.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/5.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/6.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/7.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/8.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/9.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/10.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/1.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/2.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/3.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/4.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/5.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/6.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/7.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/8.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/9.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/10.jpg">
 <meta property="og:updated_time" content="2019-02-24T04:23:53.858Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python PyYAML反序列化漏洞">
 <meta name="twitter:description" content="基本概念（引用百度）YAML是“YAML不是一种标记语言”的外语缩写；但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名。它是一种直观的能够被电脑识别的数据序列化格式，是一个可读性高并且容易被人类阅读，容易和脚本语言交互，用来表达资料序列的编程语言。 PyYAML是Python中YAML语言的编辑器和解释器。 安装：pip install PyYAML 两个函数： yam">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/1.jpg">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/1.jpg">
     
     
         
@@ -90,10 +90,10 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2019/01/01/SQL注入写WebShell方式小结/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/28/IA-32寄存器/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/PHP反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/XMLDecoder反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -106,16 +106,16 @@
     <br>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&text=Python PyYAML反序列化漏洞"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&is_video=false&description=Python PyYAML反序列化漏洞"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Python PyYAML反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&name=Python PyYAML反序列化漏洞&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&text=Python PyYAML反序列化漏洞"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&is_video=false&description=Python PyYAML反序列化漏洞"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Python PyYAML反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&name=Python PyYAML反序列化漏洞&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -180,31 +180,31 @@
 <p>yaml.dump()：将一个Python对象序列化生成为yaml文档。</p>
 <p>yaml.load()：将一个yaml文档反序列化为一个Python对象。</p>
 <p>简单的用例：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/1.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/1.jpg" alt=""></p>
 <p>可以看到，User对象经过yaml序列化之后内容为一行字符串，简单解释一下：“!!pythonobject”为yaml标签，yaml.load()会识别该标签并调用相应的方法执行反序列化操作；冒号后面的“__main__”为py文件名，这里为本文件的意思；“User”为序列化的对象类型，后面紧跟的大括号即为该对象的属性及其属性值。</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/2.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/2.jpg" alt=""></p>
 <p>更详细的说明可参考官方文档：<a href="https://pyyaml.org/wiki/PyYAMLDocumentation" target="_blank" rel="noopener">https://pyyaml.org/wiki/PyYAMLDocumentation</a></p>
 <h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><p>这里编写简单的Demo，一个py文件用于将恶意类序列化为字符串保存到yaml文件中，另一个py文件用于反序列化yaml文件内容为恶意类对象从而达到利用反序列化漏洞的目的。</p>
 <h3 id="yaml-test-py"><a href="#yaml-test-py" class="headerlink" title="yaml_test.py"></a>yaml_test.py</h3><p>先创建一个poc对象再调用yaml.dump()将其序列化为一个字符串，其中第10行代码为将默认的“__main__”替换为该文件名“yaml_test”，目的是为了后面yaml.load()反序列化该字符串的时候会根据yaml文件中的指引去读取yaml_ test.py中的poc这个类，否则无法正确执行：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/3.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/3.jpg" alt=""></p>
 <h3 id="yaml-test2-py"><a href="#yaml-test2-py" class="headerlink" title="yaml_test2.py"></a>yaml_test2.py</h3><p>直接yaml.load()读取目标yaml文件，由!!python/object标签解析其中的名为yaml_test的module中的poc类，最后执行了该类对象的__init__()方法从而执行了命令：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/4.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/4.jpg" alt=""></p>
 <h2 id="漏洞根源分析"><a href="#漏洞根源分析" class="headerlink" title="漏洞根源分析"></a>漏洞根源分析</h2><p>到$PYTHON_HOME/lib/site-packages/yaml/constructor.py中查看3个特殊Python标签的源码。</p>
 <p>!!python/object标签：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/5.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/5.jpg" alt=""></p>
 <p>!!python/object/new标签：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/6.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/6.jpg" alt=""></p>
 <p>!!python/object/apply标签：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/7.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/7.jpg" alt=""></p>
 <p>可以看到，!!python/object/new标签的代码实现其实就是!!python/object/apply标签的代码实现，只是最后newobj参数值不同而已。这3个Python标签中都是调用了make_python_instance()函数，查看该函数：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/8.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/8.jpg" alt=""></p>
 <p>可以看到，在该函数是会根据参数来动态创建新的Python类对象或通过引用module的类创建对象，从而可以执行任意命令。</p>
 <h2 id="通用payload"><a href="#通用payload" class="headerlink" title="通用payload"></a>通用payload</h2><p>只要存在yaml.load()且参数可控，则可以利用yaml反序列化漏洞，payload列举如下，当然不止如下：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/9.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/9.jpg" alt=""></p>
 <p>附上测试代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> yaml</span><br><span class="line"></span><br><span class="line">payload = <span class="string">'!!python/object/apply:subprocess.check_output [[calc.exe]]'</span></span><br><span class="line"><span class="comment">#payload = '!!python/object/apply:subprocess.check_output ["calc.exe"]'</span></span><br><span class="line"><span class="comment">#payload = '!!python/object/apply:subprocess.check_output [["calc.exe"]]'</span></span><br><span class="line"><span class="comment">#payload = '!!python/object/apply:os.system ["calc.exe"]'</span></span><br><span class="line"><span class="comment">#payload = '!!python/object/new:subprocess.check_output [["calc.exe"]]'</span></span><br><span class="line"><span class="comment">#payload = '!!python/object/new:os.system ["calc.exe"]'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">yaml.load(payload)</span><br></pre></td></tr></table></figure>
 <h2 id="一个疑问点？"><a href="#一个疑问点？" class="headerlink" title="一个疑问点？"></a>一个疑问点？</h2><p>为什么“!!python/object”标签不好使，明明Demo用的是这个标签，但通用payload中无法执行该payload？看了一些网上的文章也没有分析原因，其实查看官方文档就知道怎么回事了：</p>
-<p><img src="/2019/01/01/（Python）PyYAML反序列化漏洞/PyYAML反序列化漏洞/10.jpg" alt=""></p>
+<p><img src="/2019/01/01/PyYAML反序列化漏洞/10.jpg" alt=""></p>
 <p>可以看到，!!python/object标签的使用格式和另外两个根本就是两码事，其接收参数是使用大括号{}而非中括号[]，且并没有对参数args进行接收。也就是说，!!python/object标签只针对于对象类进行使用。</p>
 <h2 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h2><p>全局搜索Python代码中是否包含“import yaml”，若包含则进一步排查是否调用yaml.load()且参数是可控的。</p>
 <h2 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h2><p>使用安全函数yaml.safe_load()替代yaml.load()即可。</p>
@@ -258,16 +258,16 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&text=Python PyYAML反序列化漏洞"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&is_video=false&description=Python PyYAML反序列化漏洞"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Python PyYAML反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/（Python）PyYAML反序列化漏洞/&name=Python PyYAML反序列化漏洞&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&text=Python PyYAML反序列化漏洞"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&is_video=false&description=Python PyYAML反序列化漏洞"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Python PyYAML反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&title=Python PyYAML反序列化漏洞"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/&name=Python PyYAML反序列化漏洞&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

