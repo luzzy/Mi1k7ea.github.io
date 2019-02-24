@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="之前CTF做的一道需要绕过CSP的XSS题目，具体的代码没记下来，这里写个类似的来复现。 题目分析这里由于是本地写的类似程序，目标为弹框显示“1”即可。 访问目标站点，如下图所示，看到提示输入URL：  啥也不输入，点击Go，发现URL栏多了name参数和url参数：   查看源码，发现查看不到页面上显示的“Mi1k7ea”，推测应该是动态插入DOM生成的吧，右键查看元素，看到如下结构：  其中在">
-<meta name="keywords" content="XSS,Web安全">
+<meta name="keywords" content="Web安全,XSS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一道绕过CSP的XSS题目">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/02/21/一道绕过CSP的XSS题目/index.html">

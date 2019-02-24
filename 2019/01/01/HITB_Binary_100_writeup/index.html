@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。下载hitb-bin100.elf将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：点击进去查看，发现这段代码是在main()函数中的：接着查看">
+<meta name="keywords" content="Reverse">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HITB Binary 100 writeup">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。下载hitb-bin100.elf将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：点击进去查看，发现这段代码是在main()函数中的：接着查看">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/1.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/2.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/3.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/4.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/5.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/6.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/7.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/8.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/9.jpg">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/10.jpg">
+<meta property="og:updated_time" content="2019-02-24T03:44:01.431Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HITB Binary 100 writeup">
+<meta name="twitter:description" content="HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。下载hitb-bin100.elf将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：点击进去查看，发现这段代码是在main()函数中的：接着查看">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/1.jpg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>HITB Binary 100 writeup</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/01/01/phar反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&text=HITB Binary 100 writeup"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&is_video=false&description=HITB Binary 100 writeup"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HITB Binary 100 writeup&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&name=HITB Binary 100 writeup&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        HITB Binary 100 writeup
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-31T17:01:01.000Z" itemprop="datePublished">2019-01-01</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/WriteUp-Reverse/">WriteUp:Reverse</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Reverse/">Reverse</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。<br><a href="https://cedricvb.be/wp-content/files/hitb-bin100.elf" target="_blank" rel="noopener">下载hitb-bin100.elf</a><br>将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来：<br><img src="/2019/01/01/HITB_Binary_100_writeup/1.jpg" alt=""><br>根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串：<br><img src="/2019/01/01/HITB_Binary_100_writeup/2.jpg" alt=""><br>点击进去查看，发现这段代码是在main()函数中的：<br><img src="/2019/01/01/HITB_Binary_100_writeup/3.jpg" alt=""><br>接着查看一下该二进制文件的函数等信息：<br><img src="/2019/01/01/HITB_Binary_100_writeup/4.jpg" alt=""><br>在Function Window也可以看到，除了调用一些标准库的函数，整个程序几乎都编译到了main函数中：<br><img src="/2019/01/01/HITB_Binary_100_writeup/5.jpg" alt=""><br>查看main函数的汇编代码，可以看到有两个地址值得研究，即4007e8和400803，因为其中都是会调用printf函数输出内容：<br><img src="/2019/01/01/HITB_Binary_100_writeup/6.jpg" alt=""><br>直接在GDB上运行并jump到相应的地址查看：<br><img src="/2019/01/01/HITB_Binary_100_writeup/7.jpg" alt=""><br>可以看到，KEY是正常的输出出来了，但是FLAG输出的是一堆乱码，然后就出现“stack smashing detected”的错误而终止运行了。跳过去直接输出Flag是不可能的了。<br>F5看一下伪代码吧，看到在输出flag前一段主要的代码：<br><img src="/2019/01/01/HITB_Binary_100_writeup/8.jpg" alt=""><br>分析可知，v20变量存放的是该循环执行的次数、无法改变；v21变量调用time函数生成一个时间戳，用于后续与v6变量的相减形成随机种子值；v11变量用于内循环执行的次数，从0-36；v6变量同样调用time函数生成一个时间戳，与v21变量不同在于每次内循环结束后重新生成时间戳时都会先sleep 1s后再生成；在内循环的最后是一个sleep()函数，调用来休眠1s；其余的代码都是用于生成输出的字符串。<br>这里如果想直接nop掉sleep()函数是行不通的，因为整段代码的执行依赖于该sleep()函数，v6与v21的差值在每次内循环结束的时候都会通过sleep()函数实现增一，如果不这样正常处理，将得不到正常的flag。<br>换个思路，这里关键的两个函数是sleep()和time()，我们可以重新定义该两个函数，通过LD_PRELOAD预先加载这两个函数而不是调用系统自己的从而实现欺骗程序该代码确实是睡眠了1s了，也就是说，自定义的sleep()函数直接对时间变量t自增1而不是真的等待了一秒才运行结束，从而可以将程序的休眠时间去掉：<br><img src="/2019/01/01/HITB_Binary_100_writeup/9.jpg" alt=""><br>gcc编译为so文件（-fpic参数指定为位置无关、即使用相对地址，-shared参数指定为共享库），再通过LD_PRELOAD在该elf程序运行前优先加载生成的动态链接库time.so并管道输出到一个文件中查看，可以看到输出了flag：<br><img src="/2019/01/01/HITB_Binary_100_writeup/10.jpg" alt=""></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&text=HITB Binary 100 writeup"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&is_video=false&description=HITB Binary 100 writeup"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HITB Binary 100 writeup&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&title=HITB Binary 100 writeup"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/HITB_Binary_100_writeup/&name=HITB Binary 100 writeup&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
