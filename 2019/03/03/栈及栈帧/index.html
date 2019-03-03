@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="栈栈是一种典型的后进先出 (Last in First Out) 的数据结构，其操作主要有压栈 (push) 与出栈 (pop) 两种操作，两者都是对栈顶的操作。 每个程序在运行时都有虚拟地址空间，其中某一部分就是该程序对应的栈，用于保存函数调用信息和局部变量。 程序的栈是从进程地址空间的高地址向低地址增长的，即从栈顶处增长。  栈帧栈帧（Stack Frame）是利用EBP寄存器访问栈内局部变量">
+<meta name="keywords" content="栈溢出">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈基础">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="栈栈是一种典型的后进先出 (Last in First Out) 的数据结构，其操作主要有压栈 (push) 与出栈 (pop) 两种操作，两者都是对栈顶的操作。 每个程序在运行时都有虚拟地址空间，其中某一部分就是该程序对应的栈，用于保存函数调用信息和局部变量。 程序的栈是从进程地址空间的高地址向低地址增长的，即从栈顶处增长。  栈帧栈帧（Stack Frame）是利用EBP寄存器访问栈内局部变量">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/9.png">
+<meta property="og:updated_time" content="2019-03-03T02:20:48.728Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="栈基础">
+<meta name="twitter:description" content="栈栈是一种典型的后进先出 (Last in First Out) 的数据结构，其操作主要有压栈 (push) 与出栈 (pop) 两种操作，两者都是对栈顶的操作。 每个程序在运行时都有虚拟地址空间，其中某一部分就是该程序对应的栈，用于保存函数调用信息和局部变量。 程序的栈是从进程地址空间的高地址向低地址增长的，即从栈顶处增长。  栈帧栈帧（Stack Frame）是利用EBP寄存器访问栈内局部变量">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/03/栈及栈帧/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>栈基础</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/03/03/栈溢出基本原理/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/02/24/CSP策略及绕过技巧小结/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&text=栈基础"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&is_video=false&description=栈基础"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=栈基础&body=Check out this article: https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&name=栈基础&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#栈"><span class="toc-number">1.</span> <span class="toc-text">栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#栈帧"><span class="toc-number">2.</span> <span class="toc-text">栈帧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数调用栈"><span class="toc-number">3.</span> <span class="toc-text">函数调用栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#函数调用开始时的栈变化"><span class="toc-number">3.1.</span> <span class="toc-text">函数调用开始时的栈变化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、逆序Push被调函数的参数入栈"><span class="toc-number">3.1.1.</span> <span class="toc-text">1、逆序Push被调函数的参数入栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、Push调用函数的下一条指令的地址入栈"><span class="toc-number">3.1.2.</span> <span class="toc-text">2、Push调用函数的下一条指令的地址入栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、Push-EBP构建栈帧"><span class="toc-number">3.1.3.</span> <span class="toc-text">3、Push EBP构建栈帧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、Push被调函数的局部变量等数据入栈"><span class="toc-number">3.1.4.</span> <span class="toc-text">4、Push被调函数的局部变量等数据入栈</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数调用结束时的栈变化"><span class="toc-number">3.2.</span> <span class="toc-text">函数调用结束时的栈变化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、Pop被调函数局部变量等数据出栈"><span class="toc-number">3.2.1.</span> <span class="toc-text">1、Pop被调函数局部变量等数据出栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、通过栈帧恢复调用函数基地址"><span class="toc-number">3.2.2.</span> <span class="toc-text">2、通过栈帧恢复调用函数基地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、Pop调用函数下一条指令的地址到栈顶"><span class="toc-number">3.2.3.</span> <span class="toc-text">3、Pop调用函数下一条指令的地址到栈顶</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        栈基础
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-03T01:13:09.000Z" itemprop="datePublished">2019-03-03</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/二进制基础/">二进制基础</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/栈溢出/">栈溢出</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h2><p>栈是一种典型的后进先出 (Last in First Out) 的数据结构，其操作主要有压栈 (push) 与出栈 (pop) 两种操作，两者都是对栈顶的操作。</p>
+<p>每个程序在运行时都有虚拟地址空间，其中某一部分就是该程序对应的栈，用于保存函数调用信息和局部变量。</p>
+<p><strong>程序的栈是从进程地址空间的高地址向低地址增长的，即从栈顶处增长</strong>。</p>
+<p><img src="/2019/03/03/栈及栈帧/1.png" alt=""></p>
+<h2 id="栈帧"><a href="#栈帧" class="headerlink" title="栈帧"></a>栈帧</h2><p>栈帧（Stack Frame）是利用EBP寄存器访问栈内局部变量、参数、函数返回地址等的手段，在程序中用于声明局部变量、调用函数等。</p>
+<p>整个过程为：调用某函数时，先把用作基准点（函数起始地址）的ESP值保存到EBP并维持在函数内部。无论ESP的值如何变化，以EBP的值为基准能够准确安全访问到相关函数的局部变量、参数、返回地址等。</p>
+<p>基本的栈帧结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUSH EBP</span><br><span class="line">MOV EBP,ESP</span><br><span class="line">...</span><br><span class="line">MOV ESP,EBP</span><br><span class="line">POP EBP</span><br><span class="line">RETN</span><br></pre></td></tr></table></figure>
+<p>具体的可参考之前的博文：<a href="https://blog.csdn.net/SKI_12/article/details/80554677" target="_blank" rel="noopener">栈帧</a></p>
+<h2 id="函数调用栈"><a href="#函数调用栈" class="headerlink" title="函数调用栈"></a>函数调用栈</h2><blockquote>
+<p>函数调用栈是指程序运行时内存一段连续的区域，用来保存函数运行时的状态信息，包括函数参数与局部变量等。称之为“栈”是因为发生函数调用时，调用函数（caller）的状态被保存在栈内，被调用函数（callee）的状态被压入调用栈的栈顶；在函数调用结束时，栈顶的函数（callee）状态被弹出，栈顶恢复到调用函数（caller）的状态。函数调用栈在内存中从高地址向低地址生长，所以栈顶对应的内存地址在压栈时变小，退栈时变大。</p>
+</blockquote>
+<p>函数调用发生和结束时调用栈的变化如图：</p>
+<p><img src="/2019/03/03/栈及栈帧/2.png" alt=""></p>
+<p>函数状态主要涉及三个寄存器——ESP，EBP，EIP。ESP用来在Push和Pop时存储函数调用栈的栈顶地址。EBP用来存储当前函数状态的基地址，在函数运行时不变，可以用来索引确定函数参数或局部变量的位置，即栈帧作用。EIP用来存储即将执行的程序指令的地址，CPU依照 EIP的存储内容读取指令并执行，EIP随之指向相邻的下一条指令，如此反复，程序就得以连续执行指令。</p>
+<h3 id="函数调用开始时的栈变化"><a href="#函数调用开始时的栈变化" class="headerlink" title="函数调用开始时的栈变化"></a>函数调用开始时的栈变化</h3><p>下面让我们来看看发生函数调用开始时，栈顶函数状态以及上述寄存器的变化。</p>
+<p><strong>变化的核心任务是将调用函数（caller）的状态保存起来，同时创建被调用函数（callee）的状态。</strong></p>
+<h4 id="1、逆序Push被调函数的参数入栈"><a href="#1、逆序Push被调函数的参数入栈" class="headerlink" title="1、逆序Push被调函数的参数入栈"></a>1、逆序Push被调函数的参数入栈</h4><p>首先将被调用函数（callee）的参数按照逆序依次压入栈内。如果被调用函数（callee）不需要参数，则没有这一步骤。这些参数仍会保存在调用函数（caller）的函数状态内，之后压入栈内的数据都会作为被调用函数（callee）的函数状态来保存，如下图（注意一点就是，和开始的图的地址高低位方向不一样，现在是上面是高位下面是低位）：</p>
+<p><img src="/2019/03/03/栈及栈帧/3.png" alt=""></p>
+<h4 id="2、Push调用函数的下一条指令的地址入栈"><a href="#2、Push调用函数的下一条指令的地址入栈" class="headerlink" title="2、Push调用函数的下一条指令的地址入栈"></a>2、Push调用函数的下一条指令的地址入栈</h4><p>然后将调用函数（caller）进行调用之后的下一条指令地址作为返回地址压入栈内。这样调用函数（caller）的 eip（指令）信息得以保存：</p>
+<p><img src="/2019/03/03/栈及栈帧/4.png" alt=""></p>
+<h4 id="3、Push-EBP构建栈帧"><a href="#3、Push-EBP构建栈帧" class="headerlink" title="3、Push EBP构建栈帧"></a>3、Push EBP构建栈帧</h4><p>再将当前的EBP寄存器的值（也就是调用函数的基地址）压入栈内，并将 EBP寄存器的值更新为当前栈顶的地址。这样调用函数（caller）的 EBP（基地址）信息得以保存。同时，EBP被更新为被调用函数（callee）的基地址：</p>
+<p><img src="/2019/03/03/栈及栈帧/5.png" alt=""></p>
+<h4 id="4、Push被调函数的局部变量等数据入栈"><a href="#4、Push被调函数的局部变量等数据入栈" class="headerlink" title="4、Push被调函数的局部变量等数据入栈"></a>4、Push被调函数的局部变量等数据入栈</h4><p>再之后是将被调用函数（callee）的局部变量等数据压入栈内：</p>
+<p><img src="/2019/03/03/栈及栈帧/6.png" alt=""></p>
+<p>在压栈的过程中，esp 寄存器的值不断减小（对应于栈从内存高地址向低地址生长）。压入栈内的数据包括调用参数、返回地址、调用函数的基地址，以及局部变量，其中调用参数以外的数据共同构成了被调用函数（callee）的状态。在发生调用时，程序还会将被调用函数（callee）的指令地址存到 eip 寄存器内，这样程序就可以依次执行被调用函数的指令了。</p>
+<h3 id="函数调用结束时的栈变化"><a href="#函数调用结束时的栈变化" class="headerlink" title="函数调用结束时的栈变化"></a>函数调用结束时的栈变化</h3><p>看过了函数调用发生时的情况，就不难理解函数调用结束时的变化。</p>
+<p><strong>变化的核心任务是丢弃被调用函数（callee）的状态，并将栈顶恢复为调用函数（caller）的状态。</strong></p>
+<h4 id="1、Pop被调函数局部变量等数据出栈"><a href="#1、Pop被调函数局部变量等数据出栈" class="headerlink" title="1、Pop被调函数局部变量等数据出栈"></a>1、Pop被调函数局部变量等数据出栈</h4><p>首先被调用函数的局部变量会从栈内直接弹出，栈顶会指向被调用函数（callee）的基地址。</p>
+<p><img src="/2019/03/03/栈及栈帧/7.png" alt=""></p>
+<h4 id="2、通过栈帧恢复调用函数基地址"><a href="#2、通过栈帧恢复调用函数基地址" class="headerlink" title="2、通过栈帧恢复调用函数基地址"></a>2、通过栈帧恢复调用函数基地址</h4><p>然后将基地址内存储的调用函数（caller）的基地址从栈内弹出，并存到 EBP寄存器内。这样调用函数（caller）的 EBP（基地址）信息得以恢复。此时栈顶会指向返回地址。</p>
+<p><img src="/2019/03/03/栈及栈帧/8.png" alt=""></p>
+<h4 id="3、Pop调用函数下一条指令的地址到栈顶"><a href="#3、Pop调用函数下一条指令的地址到栈顶" class="headerlink" title="3、Pop调用函数下一条指令的地址到栈顶"></a>3、Pop调用函数下一条指令的地址到栈顶</h4><p>再将返回地址从栈内弹出，并存到 EIP寄存器内。这样调用函数（caller）的 EIP（指令）信息得以恢复。</p>
+<p><img src="/2019/03/03/栈及栈帧/9.png" alt=""></p>
+<p>至此调用函数（caller）的函数状态就全部恢复了，之后就是继续执行调用函数的指令了，中间的被调函数的参数会直接被略过而返回到调用函数的指令中继续执行。</p>
+<p>函数调用约定可参考之前的博文：<a href="https://blog.csdn.net/SKI_12/article/details/80549743" target="_blank" rel="noopener">函数调用约定</a></p>
+<p>另外推荐两个学习函数调用栈的详细的教程：</p>
+<ul>
+<li><p><a href="http://www.cnblogs.com/clover-toeic/p/3755401.html" target="_blank" rel="noopener">C 语言函数调用栈 (一)</a></p>
+</li>
+<li><p><a href="http://www.cnblogs.com/clover-toeic/p/3756668.html" target="_blank" rel="noopener">C 语言函数调用栈 (二)</a></p>
+</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/stack-intro/" target="_blank" rel="noopener">栈介绍</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/25816426" target="_blank" rel="noopener">手把手教你栈溢出从入门到放弃（上）</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#栈"><span class="toc-number">1.</span> <span class="toc-text">栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#栈帧"><span class="toc-number">2.</span> <span class="toc-text">栈帧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数调用栈"><span class="toc-number">3.</span> <span class="toc-text">函数调用栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#函数调用开始时的栈变化"><span class="toc-number">3.1.</span> <span class="toc-text">函数调用开始时的栈变化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、逆序Push被调函数的参数入栈"><span class="toc-number">3.1.1.</span> <span class="toc-text">1、逆序Push被调函数的参数入栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、Push调用函数的下一条指令的地址入栈"><span class="toc-number">3.1.2.</span> <span class="toc-text">2、Push调用函数的下一条指令的地址入栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、Push-EBP构建栈帧"><span class="toc-number">3.1.3.</span> <span class="toc-text">3、Push EBP构建栈帧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、Push被调函数的局部变量等数据入栈"><span class="toc-number">3.1.4.</span> <span class="toc-text">4、Push被调函数的局部变量等数据入栈</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数调用结束时的栈变化"><span class="toc-number">3.2.</span> <span class="toc-text">函数调用结束时的栈变化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、Pop被调函数局部变量等数据出栈"><span class="toc-number">3.2.1.</span> <span class="toc-text">1、Pop被调函数局部变量等数据出栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、通过栈帧恢复调用函数基地址"><span class="toc-number">3.2.2.</span> <span class="toc-text">2、通过栈帧恢复调用函数基地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、Pop调用函数下一条指令的地址到栈顶"><span class="toc-number">3.2.3.</span> <span class="toc-text">3、Pop调用函数下一条指令的地址到栈顶</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&text=栈基础"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&is_video=false&description=栈基础"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=栈基础&body=Check out this article: https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&title=栈基础"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/03/栈及栈帧/&name=栈基础&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

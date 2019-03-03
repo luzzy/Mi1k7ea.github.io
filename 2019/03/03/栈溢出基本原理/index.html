@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="栈溢出基本原理栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是：  程序必须向栈上写入数据。 写入的数据大小没有被良好地控制。  当函数正在执">
+<meta name="keywords" content="栈溢出,Pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈溢出基本原理">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="栈溢出基本原理栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是：  程序必须向栈上写入数据。 写入的数据大小没有被良好地控制。  当函数正在执">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/9.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/10.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/11.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/12.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/13.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/14.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/15.png">
+<meta property="og:updated_time" content="2019-03-03T10:25:42.526Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="栈溢出基本原理">
+<meta name="twitter:description" content="栈溢出基本原理栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是：  程序必须向栈上写入数据。 写入的数据大小没有被良好地控制。  当函数正在执">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>栈溢出基本原理</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/03/03/ROP之ret2text/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/03/03/栈及栈帧/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&text=栈溢出基本原理"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&is_video=false&description=栈溢出基本原理"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=栈溢出基本原理&body=Check out this article: https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&name=栈溢出基本原理&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#栈溢出基本原理"><span class="toc-number">1.</span> <span class="toc-text">栈溢出基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、函数调用结束时"><span class="toc-number">1.1.</span> <span class="toc-text">1、函数调用结束时</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、函数调用开始时"><span class="toc-number">1.2.</span> <span class="toc-text">2、函数调用开始时</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#栈溢出Demo"><span class="toc-number">2.</span> <span class="toc-text">栈溢出Demo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、运行程序，了解功能"><span class="toc-number">2.1.</span> <span class="toc-text">1、运行程序，了解功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、file查看elf文件是否动态链接"><span class="toc-number">2.2.</span> <span class="toc-text">2、file查看elf文件是否动态链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、checksec检查安全编译选项"><span class="toc-number">2.3.</span> <span class="toc-text">3、checksec检查安全编译选项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、使用IDA进行静态汇编代码分析"><span class="toc-number">2.4.</span> <span class="toc-text">4、使用IDA进行静态汇编代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、计算偏移地址"><span class="toc-number">2.5.</span> <span class="toc-text">5、计算偏移地址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（1）GDB断点调试获取"><span class="toc-number">2.5.1.</span> <span class="toc-text">（1）GDB断点调试获取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（2）使用GDB-pattern字符串溢出计算偏移量"><span class="toc-number">2.5.2.</span> <span class="toc-text">（2）使用GDB pattern字符串溢出计算偏移量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、编写payload"><span class="toc-number">2.6.</span> <span class="toc-text">6、编写payload</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#栈溢出步骤小结"><span class="toc-number">3.</span> <span class="toc-text">栈溢出步骤小结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#寻找危险函数"><span class="toc-number">3.1.</span> <span class="toc-text">寻找危险函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#确定填充长度"><span class="toc-number">3.2.</span> <span class="toc-text">确定填充长度</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        栈溢出基本原理
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-03T02:21:25.000Z" itemprop="datePublished">2019-03-03</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Pwn/">Pwn</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Pwn/">Pwn</a>, <a class="tag-link" href="/tags/栈溢出/">栈溢出</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="栈溢出基本原理"><a href="#栈溢出基本原理" class="headerlink" title="栈溢出基本原理"></a>栈溢出基本原理</h2><p>栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是：</p>
+<ul>
+<li>程序必须向栈上写入数据。</li>
+<li>写入的数据大小没有被良好地控制。</li>
+</ul>
+<p><strong>当函数正在执行内部指令的过程中我们无法拿到程序的控制权，只有在发生函数调用或者结束函数调用时，程序的控制权会在函数状态之间发生跳转，这时才可以通过修改函数状态来实现攻击。</strong>而控制程序执行指令最关键的寄存器就是 EIP，所以栈溢出利用就是让 EIP载入攻击指令的地址。</p>
+<h3 id="1、函数调用结束时"><a href="#1、函数调用结束时" class="headerlink" title="1、函数调用结束时"></a>1、函数调用结束时</h3><p>先来看看函数调用结束时，如果要让 EIP指向攻击指令，需要哪些准备。</p>
+<p>首先，在Pop过程中，返回地址会被传给 EIP，所以我们只需要让溢出数据用攻击指令的地址来覆盖返回地址就可以了。其次，我们可以在溢出数据内包含一段攻击指令，也可以在内存其他位置寻找可用的攻击指令。</p>
+<p><img src="/2019/03/03/栈溢出基本原理/1.png" alt=""></p>
+<h3 id="2、函数调用开始时"><a href="#2、函数调用开始时" class="headerlink" title="2、函数调用开始时"></a>2、函数调用开始时</h3><p>再来看看函数调用开始时，如果要让 EIP指向攻击指令，需要哪些准备。</p>
+<p>这时，EIP会指向原程序中某个指定的函数，我们没法通过改写返回地址来控制了，不过我们可以“偷梁换柱”——将原本指定的函数在调用时替换为其他函数。</p>
+<h2 id="栈溢出Demo"><a href="#栈溢出Demo" class="headerlink" title="栈溢出Demo"></a>栈溢出Demo</h2><p>编写一段简单的调用gets()函数代码，主要目的读取一个字符串，并将其输出，可明显知道是存在栈溢出漏洞的，我们可以控制程序执行pwn()函数实现栈溢出效果测试：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pwn</span><span class="params">()</span> </span>&#123; <span class="built_in">puts</span>(<span class="string">"Stack Overflow! Hacked By Mi1k7ea."</span>); &#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vulnerable</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s[<span class="number">12</span>];</span><br><span class="line">  gets(s);</span><br><span class="line">  <span class="built_in">puts</span>(s);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  vulnerable();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译该c文件：<code>gcc -m32 -fno-stack-protector stack_test.c -o stack_test</code>。</p>
+<blockquote>
+<p>gcc 编译指令中，<code>-m32</code> 指的是生成 32 位程序； <code>-fno-stack-protector</code> 指的是不开启堆栈溢出保护，即不生成 canary。 此外，为了更加方便地介绍栈溢出的基本利用方式，这里还需要关闭 PIE（Position Independent Executable），避免加载基址被打乱。不同 gcc 版本对于 PIE 的默认配置不同，我们可以使用命令<code>gcc -v</code>查看 gcc 默认的开关情况。如果含有<code>--enable-default-pie</code>参数则代表 PIE 默认已开启，需要在编译指令中添加参数<code>-no-pie</code>。</p>
+</blockquote>
+<p><img src="/2019/03/03/栈溢出基本原理/2.png" alt=""></p>
+<p>可以看出，gcc警告说gets()是一个危险函数，它从不检查输入字符串的长度，而是以回车来判断输入是否结束，导致栈溢出漏洞存在。</p>
+<p>下面就来简单描述一下栈溢出攻击利用的步骤吧。</p>
+<h3 id="1、运行程序，了解功能"><a href="#1、运行程序，了解功能" class="headerlink" title="1、运行程序，了解功能"></a>1、运行程序，了解功能</h3><p>程序功能很简单，输入什么输出什么：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/3.png" alt=""></p>
+<h3 id="2、file查看elf文件是否动态链接"><a href="#2、file查看elf文件是否动态链接" class="headerlink" title="2、file查看elf文件是否动态链接"></a>2、file查看elf文件是否动态链接</h3><p>可以看到，该ELF文件是动态链接的：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/5.png" alt=""></p>
+<p>为什么要多做这可能没用的一步呢？因为后面会让我们提前知道这题到底会不会设计到libc相关的内容，若为静态文件则无需这方面的考虑。</p>
+<h3 id="3、checksec检查安全编译选项"><a href="#3、checksec检查安全编译选项" class="headerlink" title="3、checksec检查安全编译选项"></a>3、checksec检查安全编译选项</h3><p>可以看到，只开启了NX，和GCC编译时的选项是一致的：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/4.png" alt=""></p>
+<h3 id="4、使用IDA进行静态汇编代码分析"><a href="#4、使用IDA进行静态汇编代码分析" class="headerlink" title="4、使用IDA进行静态汇编代码分析"></a>4、使用IDA进行静态汇编代码分析</h3><p>使用IDA打开该ELF文件，F5，点击vulnerable()函数，关注到其中的gets()函数是存在栈溢出漏洞的，而它的s参数在其上方定义了，关注到IDA给出变量s相对于ESP和EBP的偏移量分别为ESP+4h和EBP-14h：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/6.png" alt=""></p>
+<p>由此知道，gets()导致存在栈溢出漏洞，而其参数s距离EBP的偏移地址为14h。</p>
+<p>同时，点击查看我们需要溢出至调用的目标函数pwn()，记下它的地址0x0804843B：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/7.png" alt=""></p>
+<h3 id="5、计算偏移地址"><a href="#5、计算偏移地址" class="headerlink" title="5、计算偏移地址"></a>5、计算偏移地址</h3><p>构造payload之前，需要计算能够控制的内存的起始地址距离main()函数的返回地址的字节数。这里为计算变量s距离main()函数的返回地址的字节数。</p>
+<p>由函数调用栈可知，要计算能够控制的内存的起始地址距离main()函数的返回地址的字节数，都是先通过计算出能够控制的内存的起始地址距离EBP的字节数，再加上4即可，看下图便一目了然：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/8.png" alt=""></p>
+<p>其实由第四步的IDA分析可以知道，参数s距离EBP的偏移地址为14h。</p>
+<p>但是有时候并不能完全相信IDA计算出来的偏移，最为准确的是用GDB打断点调试出来，下面介绍两种GDB方法。</p>
+<h4 id="（1）GDB断点调试获取"><a href="#（1）GDB断点调试获取" class="headerlink" title="（1）GDB断点调试获取"></a>（1）GDB断点调试获取</h4><p>先用IDA查看gets()函数的地址，获取到其地址为0x08048461：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/9.png" alt=""></p>
+<p>在GDB中在该地址打下断点并运行，看到程序在调用gets()函数前停下，这时看到EBP为0xffffd028、ESP为0xffffd000：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/10.png" alt=""></p>
+<p>由前面可知，变量s相对于ESP和EBP的偏移量分别为ESP+4h和EBP-14h，这里只看其距离EBP的距离，计算出s的地址为0xffffd028-14h=0xffffd014。</p>
+<p>为了验证一下本次IDA计算出的偏移值是否准确，我们接着在gets()函数的下一条指令地址处即0x08048466中打下断点，再c继续往下运行，要求输入字符串，这里输入“hello”之后程序就停止在断点处：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/11.png" alt=""></p>
+<p>可以看到，存放“hello”的内存地址即s的地址为0xffffd014，且ESP下一次会指向该地址。该地址和使用IDA给出的偏移量计算出来的结果一致，即这次的IDA计算结果可信。</p>
+<p>由此可知，s的地址为0xffffd014，则s距离EBP偏移量为14h，则s与函数返回地址的偏移为14h+4=18h。</p>
+<h4 id="（2）使用GDB-pattern字符串溢出计算偏移量"><a href="#（2）使用GDB-pattern字符串溢出计算偏移量" class="headerlink" title="（2）使用GDB pattern字符串溢出计算偏移量"></a>（2）使用GDB pattern字符串溢出计算偏移量</h4><p>GDB的pattern_create创建计算溢出偏移量的字符串，在输入内容时输入即可：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/12.png" alt=""></p>
+<p><img src="/2019/03/03/栈溢出基本原理/13.png" alt=""></p>
+<p>记下此刻的EIP值，即0x44414128或字符“(AAD”，再输入pattern_offset中计算出偏移值：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/14.png" alt=""></p>
+<p>得出s与函数返回地址的偏移为24，即18h=14h+4。</p>
+<h3 id="6、编写payload"><a href="#6、编写payload" class="headerlink" title="6、编写payload"></a>6、编写payload</h3><p>在下面payload中，前面14h个字节码用“a”覆盖，将EBP覆盖为“bbbb”，最后插入小端存储形式的pwn()函数地址：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./stack_test"</span>)</span><br><span class="line">pwn_addr = <span class="number">0x0804843B</span></span><br><span class="line">payload = flat([<span class="string">"a"</span> * <span class="number">0x14</span>, <span class="string">"bbbb"</span>, p32(pwn_addr)])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p>运行payload，直接栈溢出执行了pwn()函数：</p>
+<p><img src="/2019/03/03/栈溢出基本原理/15.png" alt=""></p>
+<p>整个栈溢出的漏洞发现及利用过程大致如此，当然还有其他的一些技巧这里还未涉及。</p>
+<h2 id="栈溢出步骤小结"><a href="#栈溢出步骤小结" class="headerlink" title="栈溢出步骤小结"></a>栈溢出步骤小结</h2><p>Demo是具体细化的步骤，总体而言主要分为两个步骤，先是找到危险函数确定存在栈溢出漏洞，然后就是通过调试分析计算出栈溢出攻击利用需要溢出的偏移量，最后就可以顺利地写exp进行利用。</p>
+<h3 id="寻找危险函数"><a href="#寻找危险函数" class="headerlink" title="寻找危险函数"></a>寻找危险函数</h3><p>通过寻找危险函数，我们快速确定程序是否可能有栈溢出，以及有的话，栈溢出的位置在哪里。常见的危险函数如下</p>
+<ul>
+<li>输入<ul>
+<li>gets，直接读取一行，忽略’\x00’</li>
+<li>scanf</li>
+<li>vscanf</li>
+</ul>
+</li>
+<li>输出<ul>
+<li>sprintf</li>
+</ul>
+</li>
+<li>字符串<ul>
+<li>strcpy，字符串复制，遇到’\x00’停止</li>
+<li>strcat，字符串拼接，遇到’\x00’停止</li>
+<li>bcopy</li>
+</ul>
+</li>
+</ul>
+<h3 id="确定填充长度"><a href="#确定填充长度" class="headerlink" title="确定填充长度"></a>确定填充长度</h3><p>这一部分主要是计算<strong>我们所要操作的地址与我们所要覆盖的地址的距离</strong>。常见的操作方法就是打开 IDA，根据其给定的地址计算偏移。一般变量会有以下几种索引模式：</p>
+<ul>
+<li>相对于栈基地址的的索引，可以直接通过查看 EBP 相对偏移获得</li>
+<li>相对应栈顶指针的索引，一般需要进行调试，之后还是会转换到第一种类型。</li>
+<li>直接地址索引，就相当于直接给定了地址。</li>
+</ul>
+<p>一般来说，我们会有如下的覆盖需求：</p>
+<ul>
+<li><strong>覆盖函数返回地址</strong>，这时候就是直接看 EBP 即可。</li>
+<li><strong>覆盖栈上某个变量的内容</strong>，这时候就需要更加精细的计算了。</li>
+<li><strong>覆盖 bss 段某个变量的内容</strong>。</li>
+<li>根据现实执行情况，覆盖特定的变量或地址的内容。</li>
+</ul>
+<p>之所以我们想要覆盖某个地址，是因为我们想通过覆盖地址的方法来<strong>直接或者间接地控制程序执行流程</strong>。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/stackoverflow-basic/" target="_blank" rel="noopener">栈溢出原理</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/25816426" target="_blank" rel="noopener">手把手教你栈溢出从入门到放弃（上）</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#栈溢出基本原理"><span class="toc-number">1.</span> <span class="toc-text">栈溢出基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、函数调用结束时"><span class="toc-number">1.1.</span> <span class="toc-text">1、函数调用结束时</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、函数调用开始时"><span class="toc-number">1.2.</span> <span class="toc-text">2、函数调用开始时</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#栈溢出Demo"><span class="toc-number">2.</span> <span class="toc-text">栈溢出Demo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、运行程序，了解功能"><span class="toc-number">2.1.</span> <span class="toc-text">1、运行程序，了解功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、file查看elf文件是否动态链接"><span class="toc-number">2.2.</span> <span class="toc-text">2、file查看elf文件是否动态链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、checksec检查安全编译选项"><span class="toc-number">2.3.</span> <span class="toc-text">3、checksec检查安全编译选项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、使用IDA进行静态汇编代码分析"><span class="toc-number">2.4.</span> <span class="toc-text">4、使用IDA进行静态汇编代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、计算偏移地址"><span class="toc-number">2.5.</span> <span class="toc-text">5、计算偏移地址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（1）GDB断点调试获取"><span class="toc-number">2.5.1.</span> <span class="toc-text">（1）GDB断点调试获取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（2）使用GDB-pattern字符串溢出计算偏移量"><span class="toc-number">2.5.2.</span> <span class="toc-text">（2）使用GDB pattern字符串溢出计算偏移量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、编写payload"><span class="toc-number">2.6.</span> <span class="toc-text">6、编写payload</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#栈溢出步骤小结"><span class="toc-number">3.</span> <span class="toc-text">栈溢出步骤小结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#寻找危险函数"><span class="toc-number">3.1.</span> <span class="toc-text">寻找危险函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#确定填充长度"><span class="toc-number">3.2.</span> <span class="toc-text">确定填充长度</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&text=栈溢出基本原理"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&is_video=false&description=栈溢出基本原理"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=栈溢出基本原理&body=Check out this article: https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&title=栈溢出基本原理"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/03/栈溢出基本原理/&name=栈溢出基本原理&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

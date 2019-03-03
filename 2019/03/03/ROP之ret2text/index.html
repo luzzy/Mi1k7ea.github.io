@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="ROPROP，Return Oriented Programming，核心操作就是——修改返回地址，让其指向内存中已有的一段指令，可用于绕过NX的保护机制。 ROP的思想是在栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。所谓 gadgets 就是以ret结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程">
+<meta name="keywords" content="栈溢出,Pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ROP基础及栈溢出之ret2text">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="ROPROP，Return Oriented Programming，核心操作就是——修改返回地址，让其指向内存中已有的一段指令，可用于绕过NX的保护机制。 ROP的思想是在栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。所谓 gadgets 就是以ret结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/9.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/10.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/11.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/12.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/13.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/14.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/15.png">
+<meta property="og:updated_time" content="2019-03-03T10:25:57.196Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ROP基础及栈溢出之ret2text">
+<meta name="twitter:description" content="ROPROP，Return Oriented Programming，核心操作就是——修改返回地址，让其指向内存中已有的一段指令，可用于绕过NX的保护机制。 ROP的思想是在栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。所谓 gadgets 就是以ret结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>ROP基础及栈溢出之ret2text</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/03/03/栈溢出基本原理/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&text=ROP基础及栈溢出之ret2text"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&is_video=false&description=ROP基础及栈溢出之ret2text"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ROP基础及栈溢出之ret2text&body=Check out this article: https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&name=ROP基础及栈溢出之ret2text&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ROP"><span class="toc-number">1.</span> <span class="toc-text">ROP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单个Gadget溢出示例"><span class="toc-number">1.1.</span> <span class="toc-text">单个Gadget溢出示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个Gadgets溢出示例"><span class="toc-number">1.2.</span> <span class="toc-text">多个Gadgets溢出示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2text"><span class="toc-number">2.</span> <span class="toc-text">ret2text</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、运行程序，了解执行流程"><span class="toc-number">2.1.</span> <span class="toc-text">一、运行程序，了解执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、file查看elf文件是否动态链接"><span class="toc-number">2.2.</span> <span class="toc-text">二、file查看elf文件是否动态链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、checksec查看保护机制"><span class="toc-number">2.3.</span> <span class="toc-text">三、checksec查看保护机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、使用IDA进行静态汇编代码分析"><span class="toc-number">2.4.</span> <span class="toc-text">四、使用IDA进行静态汇编代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、计算偏移地址"><span class="toc-number">2.5.</span> <span class="toc-text">五、计算偏移地址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Method-1——GDB断点调试获取"><span class="toc-number">2.5.1.</span> <span class="toc-text">Method 1——GDB断点调试获取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Method2——使用GDB-pattern字符串溢出计算偏移量"><span class="toc-number">2.5.2.</span> <span class="toc-text">Method2——使用GDB pattern字符串溢出计算偏移量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#六、编写payload"><span class="toc-number">2.6.</span> <span class="toc-text">六、编写payload</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ROP基础及栈溢出之ret2text
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-03T08:18:36.000Z" itemprop="datePublished">2019-03-03</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Pwn/">Pwn</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Pwn/">Pwn</a>, <a class="tag-link" href="/tags/栈溢出/">栈溢出</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="ROP"><a href="#ROP" class="headerlink" title="ROP"></a>ROP</h2><p>ROP，Return Oriented Programming，核心操作就是——<strong>修改返回地址，让其指向内存中已有的一段指令，可用于绕过NX的保护机制</strong>。</p>
+<p>ROP的思想是在<strong>栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。</strong>所谓 gadgets 就是以ret结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程序的执行流程。</p>
+<p>之所以称之为 ROP，是因为核心在于利用了指令集中的 ret 指令，改变了指令流的执行顺序。ROP 攻击一般得满足如下条件：</p>
+<ul>
+<li>程序存在溢出，并且可以控制返回地址。</li>
+<li>可以找到满足条件的 gadgets 以及相应 gadgets 的地址。</li>
+</ul>
+<p>ROP要完成的任务包括：在内存中确定某段指令的地址，并用其覆盖返回地址。</p>
+<p>下面看下单个Gadget和多个Gadgets进行溢出的原理示例。</p>
+<h3 id="单个Gadget溢出示例"><a href="#单个Gadget溢出示例" class="headerlink" title="单个Gadget溢出示例"></a>单个Gadget溢出示例</h3><p>其payload是如下形式，使用padding溢出到返回地址前，再将gadget地址传到返回地址处：</p>
+<blockquote>
+<p><strong>payload :</strong> padding + address of gadget</p>
+</blockquote>
+<p><img src="/2019/03/03/ROP之ret2text/1.png" alt=""></p>
+<h3 id="多个Gadgets溢出示例"><a href="#多个Gadgets溢出示例" class="headerlink" title="多个Gadgets溢出示例"></a>多个Gadgets溢出示例</h3><p>如果想连续执行若干段指令，就需要每个 gadget 执行完毕可以将控制权交给下一个 gadget。所以 gadget 的最后一步应该是 RET 指令，这样程序的控制权（EIP）才能得到切换，所以这种技术被称为返回导向编程( <strong>R</strong>eturn <strong>O</strong>riented <strong>P</strong>rogramming )。要执行多个 gadget，溢出数据应该以下面的方式构造：</p>
+<blockquote>
+<p><strong>payload :</strong> padding + address of gadget 1 + address of gadget 2 + ……  + address of gadget n</p>
+</blockquote>
+<p>在这样的构造下，被调用函数返回时会跳转执行 gadget 1，执行完毕时 gadget 1 的 RET 指令会将此时的栈顶数据（也就是 gadget 2 的地址）弹出至 EIP，程序继续跳转执行 gadget 2，以此类推。</p>
+<p><img src="/2019/03/03/ROP之ret2text/2.png" alt=""></p>
+<p>……（待补充）</p>
+<h2 id="ret2text"><a href="#ret2text" class="headerlink" title="ret2text"></a>ret2text</h2><p>ret2text即控制程序执行程序本身已有的的代码 (.text)。也就是说，在该ELF的.text代码段中是存在可以利用的代码的，如存在system(“/bin/sh”)的代码。</p>
+<p>下面按照一般的做题步骤做下吧。</p>
+<h3 id="一、运行程序，了解执行流程"><a href="#一、运行程序，了解执行流程" class="headerlink" title="一、运行程序，了解执行流程"></a>一、运行程序，了解执行流程</h3><p>运行程序，输入内容后即返回：</p>
+<p><img src="/2019/03/03/ROP之ret2text/3.png" alt=""></p>
+<h3 id="二、file查看elf文件是否动态链接"><a href="#二、file查看elf文件是否动态链接" class="headerlink" title="二、file查看elf文件是否动态链接"></a>二、file查看elf文件是否动态链接</h3><p>可用看到是32位ELF文件，且是动态链接的，即可能与libc相关：</p>
+<p><img src="/2019/03/03/ROP之ret2text/4.png" alt=""></p>
+<h3 id="三、checksec查看保护机制"><a href="#三、checksec查看保护机制" class="headerlink" title="三、checksec查看保护机制"></a>三、checksec查看保护机制</h3><p>查看一下程序的保护机制，可以看到是32位的程序且仅仅开启了栈不可执行保护NX：</p>
+<p><img src="/2019/03/03/ROP之ret2text/5.png" alt=""></p>
+<h3 id="四、使用IDA进行静态汇编代码分析"><a href="#四、使用IDA进行静态汇编代码分析" class="headerlink" title="四、使用IDA进行静态汇编代码分析"></a>四、使用IDA进行静态汇编代码分析</h3><p>IDA打开查看，可以看出程序在主函数中使用了gets函数，显然存在栈溢出漏洞，且可看到变量v4相对于ESP和EBP寄存器的偏移：</p>
+<p><img src="/2019/03/03/ROP之ret2text/6.png" alt=""></p>
+<p>由于NX启动了即栈不可执行，我们可以到其他的地方查看，打开shift+F12打开string窗口，可用看到“/bin/sh/”字符串：</p>
+<p><img src="/2019/03/03/ROP之ret2text/7.png" alt=""></p>
+<p>双击点击进去，发现是在secure函数中调用的：</p>
+<p><img src="/2019/03/03/ROP之ret2text/8.png" alt=""></p>
+<p>点击后面的secure，进入secure函数发现了存在直接调用system(“/bin/sh”)的代码，那么如果我们直接控制程序返回至0x0804863A，那么就可以得到shell了：</p>
+<p><img src="/2019/03/03/ROP之ret2text/9.png" alt=""></p>
+<p>现在已经明确了可利用的Gadget地址，即反弹shell的地址：0x0804863A。</p>
+<h3 id="五、计算偏移地址"><a href="#五、计算偏移地址" class="headerlink" title="五、计算偏移地址"></a>五、计算偏移地址</h3><p>构造payload之前，需要计算能够控制的内存的起始地址距离main()函数的返回地址的字节数。</p>
+<h4 id="Method-1——GDB断点调试获取"><a href="#Method-1——GDB断点调试获取" class="headerlink" title="Method 1——GDB断点调试获取"></a>Method 1——GDB断点调试获取</h4><p>先查看一下gets()函数的汇编代码，得知该字符串是通过相对于ESP的索引（具体如何判断可看后面的调试）：</p>
+<p><img src="/2019/03/03/ROP之ret2text/10.png" alt=""></p>
+<p>可知gets()函数地址为0x080486AE，在该处设置断点进行调试：</p>
+<p><img src="/2019/03/03/ROP之ret2text/11.png" alt=""></p>
+<p>ESP为ffffcfa0，其中存放的内容为ffffcfbc，即输入的内容s的地址为ESP+1c= ffffcfbc，而EBP为ffffd028，则s到EBP的偏移为|ffffd028- ffffcfbc|=6c，所以s相对与返回地址的偏移为0x6c+4=0x70。</p>
+<p>确认一遍，在gets()函数的下一条汇编指令处打断点，继续运行并输入一大串1：</p>
+<p><img src="/2019/03/03/ROP之ret2text/12.png" alt=""></p>
+<p>可以发现EAX地址处确实保存的是s（数据换成1），且|EAX-ESP|=|0xffffcfbc-0xffffcfa0|=1c，即说明s是相对于ESP偏移的；但|EAX-EBP|=|0xffffcfbc-0xffffd028|=6c，和IDA给出的64h有差别，由此可知IDA给出的相对于ESP的偏移是正确的、但相对于EBP的偏移是有误差的，这就是之前说的IDA分析给出的偏移量并不那么可信。</p>
+<h4 id="Method2——使用GDB-pattern字符串溢出计算偏移量"><a href="#Method2——使用GDB-pattern字符串溢出计算偏移量" class="headerlink" title="Method2——使用GDB pattern字符串溢出计算偏移量"></a>Method2——使用GDB pattern字符串溢出计算偏移量</h4><p>GDB的pattern_create创建计算溢出偏移量的字符串，在输入内容时输入即可：</p>
+<p><img src="/2019/03/03/ROP之ret2text/13.png" alt=""></p>
+<p>pattern_offset算出偏移量：</p>
+<p><img src="/2019/03/03/ROP之ret2text/14.png" alt=""></p>
+<p>得出s与函数返回地址的偏移为112即0x70。</p>
+<h3 id="六、编写payload"><a href="#六、编写payload" class="headerlink" title="六、编写payload"></a>六、编写payload</h3><p>由前面分析知，可以利用.text代码段区域中的system(“/bin/sh”)代码，该代码段即为可被ROP利用的Gadget，地址为0x0804863a，将其覆盖到函数返回地址处，前面再padding 70h个字节码即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2text"</span>)</span><br><span class="line">binsh_addr = <span class="number">0x0804863a</span></span><br><span class="line">payload = flat([<span class="string">"A"</span> * <span class="number">0x70</span>, binsh_addr])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p>运行后，成功getshell：</p>
+<p><img src="/2019/03/03/ROP之ret2text/15.png" alt=""></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/basic-rop/" target="_blank" rel="noopener">基本 ROP</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/25892385" target="_blank" rel="noopener">手把手教你栈溢出从入门到放弃（下）</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ROP"><span class="toc-number">1.</span> <span class="toc-text">ROP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单个Gadget溢出示例"><span class="toc-number">1.1.</span> <span class="toc-text">单个Gadget溢出示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多个Gadgets溢出示例"><span class="toc-number">1.2.</span> <span class="toc-text">多个Gadgets溢出示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2text"><span class="toc-number">2.</span> <span class="toc-text">ret2text</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、运行程序，了解执行流程"><span class="toc-number">2.1.</span> <span class="toc-text">一、运行程序，了解执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、file查看elf文件是否动态链接"><span class="toc-number">2.2.</span> <span class="toc-text">二、file查看elf文件是否动态链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、checksec查看保护机制"><span class="toc-number">2.3.</span> <span class="toc-text">三、checksec查看保护机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、使用IDA进行静态汇编代码分析"><span class="toc-number">2.4.</span> <span class="toc-text">四、使用IDA进行静态汇编代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、计算偏移地址"><span class="toc-number">2.5.</span> <span class="toc-text">五、计算偏移地址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Method-1——GDB断点调试获取"><span class="toc-number">2.5.1.</span> <span class="toc-text">Method 1——GDB断点调试获取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Method2——使用GDB-pattern字符串溢出计算偏移量"><span class="toc-number">2.5.2.</span> <span class="toc-text">Method2——使用GDB pattern字符串溢出计算偏移量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#六、编写payload"><span class="toc-number">2.6.</span> <span class="toc-text">六、编写payload</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&text=ROP基础及栈溢出之ret2text"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&is_video=false&description=ROP基础及栈溢出之ret2text"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ROP基础及栈溢出之ret2text&body=Check out this article: https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&title=ROP基础及栈溢出之ret2text"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/&name=ROP基础及栈溢出之ret2text&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

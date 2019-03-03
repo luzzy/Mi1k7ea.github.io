@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="之前做CTF遇到phar反序列化漏洞概念，这里小结一下，主要参考自https://paper.seebug.org/680/ 基本概念phar (PHP Archive) 是PHP里类似于Java中jar的一种打包文件，用于归档。当PHP 版本&amp;gt;=5.3时默认开启支持PHAR文件的。 phar文件默认状态是只读，使用phar文件不需要任何的配置。 而phar://伪协议即PHP归档，用来解析">
-<meta name="keywords" content="Web安全,PHP">
+<meta name="keywords" content="PHP,Web安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="phar反序列化漏洞">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/phar反序列化漏洞/index.html">
@@ -97,10 +97,8 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2019/01/01/PHP反序列化漏洞/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/HITB_Binary_100_writeup/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
-        
-        <li><a class="icon" href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
