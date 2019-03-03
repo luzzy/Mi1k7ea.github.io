@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="ROPROP，Return Oriented Programming，核心操作就是——修改返回地址，让其指向内存中已有的一段指令，可用于绕过NX的保护机制。 ROP的思想是在栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。所谓 gadgets 就是以ret结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程">
-<meta name="keywords" content="栈溢出,Pwn">
+<meta name="keywords" content="二进制,栈溢出,Pwn">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ROP基础及栈溢出之ret2text">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/03/ROP之ret2text/index.html">
@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/13.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/14.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/ROP之ret2text/15.png">
-<meta property="og:updated_time" content="2019-03-03T10:25:57.196Z">
+<meta property="og:updated_time" content="2019-03-03T11:01:58.879Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ROP基础及栈溢出之ret2text">
 <meta name="twitter:description" content="ROPROP，Return Oriented Programming，核心操作就是——修改返回地址，让其指向内存中已有的一段指令，可用于绕过NX的保护机制。 ROP的思想是在栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。所谓 gadgets 就是以ret结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程">
@@ -94,6 +94,8 @@
     <br>
     <span id="actions">
       <ul>
+        
+        <li><a class="icon" href="/2019/03/03/栈溢出之ret2shellcode/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" href="/2019/03/03/栈溢出基本原理/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
@@ -163,7 +165,7 @@
       
     <div class="article-tag">
         <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Pwn/">Pwn</a>, <a class="tag-link" href="/tags/栈溢出/">栈溢出</a>
+        <a class="tag-link" href="/tags/Pwn/">Pwn</a>, <a class="tag-link" href="/tags/二进制/">二进制</a>, <a class="tag-link" href="/tags/栈溢出/">栈溢出</a>
     </div>
     <div class="article-tag">
         <i class="fas fa-eye"></i>
@@ -276,6 +278,7 @@
           <li><a href="/atom.xml">RSS</a></li>
         
       </ul>
+      <br><br>
     </div>
 
     <div id="toc-footer" style="display: none">
