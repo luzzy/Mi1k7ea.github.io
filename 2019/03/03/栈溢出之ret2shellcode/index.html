@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出之ret2shellcode/9.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出之ret2shellcode/11.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/03/栈溢出之ret2shellcode/10.png">
-<meta property="og:updated_time" content="2019-03-03T14:10:58.978Z">
+<meta property="og:updated_time" content="2019-03-05T15:04:22.654Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="栈溢出之ret2shellcode">
 <meta name="twitter:description" content="ret2shellcoderet2shellcode，即控制程序执行shellcode代码——修改函数返回地址，让其指向溢出数据中的一段指令。 shellcode指的是用于完成某个功能的汇编代码，常见的功能主要是获取目标系统的 shell。一般来说，shellcode 需要我们自己填充。另外，要想执行 shellcode，需要shellcode所在的区域具有可执行权限。 ret2shellcode">
@@ -188,6 +188,8 @@
 <p>最后可以拼接出最终的溢出数据，输入至程序来执行 shellcode 了：</p>
 <p><img src="/2019/03/03/栈溢出之ret2shellcode/2.png" alt=""></p>
 <p>这种方法生效的一个前提是在函数调用栈上的数据（shellcode）要有可执行的权限（另一个前提是上面提到的关闭内存布局随机化）。很多时候操作系统会关闭函数调用栈的可执行权限，这样 shellcode 的方法就失效了，不过我们还可以尝试使用内存里已有的指令或函数，毕竟这些部分本来就是可执行的，所以不会受上述执行权限的限制。这就包括ret2libc等其他的ROP方法。</p>
+<p><strong>前提条件</strong></p>
+<p>由前面分析可知，ret2shell这项技术的前提是需要操作系统关闭内存布局随机化（ASLR）以及需要程序调用栈有可执行权限。</p>
 <h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>运行程序，提示这次没有system()给你直接调用，且文件是动态链接的：</p>
 <p><img src="/2019/03/03/栈溢出之ret2shellcode/3.png" alt=""></p>
 <p><img src="/2019/03/03/栈溢出之ret2shellcode/4.png" alt=""></p>
