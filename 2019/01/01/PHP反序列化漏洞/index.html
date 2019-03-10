@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="PHP的序列化与反序列化通常我们定义了一个类的对象，其中保存了一些属性值，为了方便下次可以继续使用在这个对象或者在其他的文件中可以使用该对象，于是就可以调用serialize()函数将该对象序列化为字符串的形式，将该字符串保存起来，等到需要使用该对象时只需将该字符串传过去并调用unserialize()函数对其反序列化即可。 serialize()：将一个对象转成字符串形式，方便保存以便于下次再次">
-<meta name="keywords" content="PHP,Web安全">
+<meta name="keywords" content="Web安全,PHP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PHP unserialize反序列化漏洞">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/PHP反序列化漏洞/index.html">
@@ -85,10 +85,10 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2019/01/01/PHP内存型木马/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/cPickle反序列化漏洞/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/Linux环境与相关工具/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/XMLDecoder反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
