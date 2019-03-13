@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://Mi1k7ea.github.com/"/>
-  <updated>2019-03-10T07:48:32.618Z</updated>
+  <updated>2019-03-13T15:43:30.106Z</updated>
   <id>https://Mi1k7ea.github.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>AeroCTF writeupup之board tracking system</title>
+    <link href="https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup%E4%B9%8Bboard-tracking-system/"/>
+    <id>https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/</id>
+    <published>2019-03-13T15:08:59.000Z</published>
+    <updated>2019-03-13T15:43:30.106Z</updated>
+    
+    <content type="html"><![CDATA[<p>题目如下，大概意思是开发了一个追踪系统，问是否是有安全漏洞的：</p><p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/1.png" alt=""></p><p>打开页面，看到加载了一段Stats内容：</p><p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/2.png" alt=""></p><p>查看源码发现该段内容是请求了一个URL加载过来的，访问该地址，是包含cgi-bin路径的：</p><p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/3.png" alt=""></p><p>由cgi-bin我们可以联想到大名鼎鼎的Bash远程命令执行漏洞。记得之前看过的一篇文章：<a href="https://www.freebuf.com/vuls/44994.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/44994.html</a></p><p>那就测试一下，在UserAgent注入payload<code>User-Agent: () { :;};echo -e &quot;\r\n$(/usr/bin/whoami)&quot;</code>发现成功执行whoami命令：</p><p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/4.png" alt=""></p><p>接着就使用ls寻找flag相关文件有没有，在当前目录找到stats文件：</p><p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/5.png" alt=""></p><p>cat看下stats文件有啥：</p><p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/7.png" alt=""></p><p>没啥东西，继续用ls看其他目录，没啥进展。</p><p>最后在查看/etc/passwd时找到了这个隐藏的flag：</p><p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/6.png" alt=""></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;题目如下，大概意思是开发了一个追踪系统，问是否是有安全漏洞的：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/2019/03/13/AeroCTF-writeupup之board-tracking-system/1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;打开页面，看到加载了一段St
+      
+    
+    </summary>
+    
+      <category term="WriteUp:Web" scheme="https://Mi1k7ea.github.com/categories/WriteUp-Web/"/>
+    
+    
+      <category term="Web安全" scheme="https://Mi1k7ea.github.com/tags/Web%E5%AE%89%E5%85%A8/"/>
+    
+  </entry>
   
   <entry>
     <title>TAMUctf Web writeup</title>
@@ -535,31 +562,6 @@
     
     
       <category term="Java" scheme="https://Mi1k7ea.github.com/tags/Java/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>PHP伪协议</title>
-    <link href="https://Mi1k7ea.github.com/2019/01/31/PHP%E4%BC%AA%E5%8D%8F%E8%AE%AE/"/>
-    <id>https://Mi1k7ea.github.com/2019/01/31/PHP伪协议/</id>
-    <published>2019-01-31T13:24:25.000Z</published>
-    <updated>2019-02-08T14:28:36.346Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>PHP伪协议在CTF中经常使用到，这里写个简单的Demo小结一下，主要对file://、php://filter、php://input、data://、zip://、compress.bzip2://、compress.zlib://、phar://等协议进行简单的Demo介绍分析。</p><p>简单说一下，file://用于访问本地文件系统读取本地文件；php://访问各个输入/输出流（I/O streams），其中php://filter用于读取文件内容，php://input可以访问请求的原始数据的只读流、同时可将post请求中的数据作为PHP代码执行；zip://，bzip2://，zlib://均属于压缩流，可以访问压缩文件中的子文件，更重要的是不需要指定后缀名；data://即写入数据；phar://即PHP归档。</p><h2 id="简单文件包含Demo代码"><a href="#简单文件包含Demo代码" class="headerlink" title="简单文件包含Demo代码"></a>简单文件包含Demo代码</h2><p>demo.php</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">'&lt;h3&gt;Hi, just a test for php pseudo protocol. :)&lt;/h3&gt;'</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'&lt;p&gt;u can input a param called "file" by GET method.&lt;/p&gt;'</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">"file"</span>]))&#123;</span><br><span class="line">@<span class="keyword">include</span>($_GET[<span class="string">"file"</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure><p>正常访问，提示可以通过GET传入一个file参数包含文件：</p><p><img src="/2019/01/31/PHP伪协议/1.png" alt="文件包含Demo"></p><h2 id="file-协议"><a href="#file-协议" class="headerlink" title="file://协议"></a>file://协议</h2><p>file://协议用于访问本地文件系统，在CTF中通常用来读取本地文件且不受allow_url_fopen与allow_url_include的影响。</p><p>注意：该协议的路径只能输入绝对路径，输入相对路径是不生效的。</p><p>先输入一个文本文件，可以读到该文件内容，比如CTF经常遇到的flag：</p><p><img src="/2019/01/31/PHP伪协议/2.png" alt="file://读取txt文件"></p><p>输入php或JS文件，file://协议会执行该PHP文件里的代码而不是显示该内容，因而该协议不适用于获取文件内容源代码（而常用php://filter伪协议）：</p><p><img src="/2019/01/31/PHP伪协议/3.png" alt="file://读取php文件"></p><p><img src="/2019/01/31/PHP伪协议/4.png" alt="file://读取js文件"></p><h2 id="php-协议"><a href="#php-协议" class="headerlink" title="php://协议"></a>php://协议</h2><p>php://访问各个输入/输出流（I/O streams），在CTF中经常使用的是php://filter和php://input，php://filter用于读取源码，php://input用于执行php代码。</p><p>不需要开启allow_url_fopen，仅php://input、php://stdin、 php://memory和php://temp需要开启allow_url_include。</p><h3 id="php-filter协议"><a href="#php-filter协议" class="headerlink" title="php://filter协议"></a>php://filter协议</h3><p>php://filter是一种元封装器，设计用于数据流打开时的筛选过滤应用。在CTF中主要用于读取文件内容。不需要开启allow_url_fopen和allow_url_include。</p><p>查看之前的test.js文件与PHP文件：</p><p><img src="/2019/01/31/PHP伪协议/5.png" alt="php://filter读取js文件"></p><p><img src="/2019/01/31/PHP伪协议/6.png" alt="php://filter读取php文件"></p><h3 id="php-input协议"><a href="#php-input协议" class="headerlink" title="php://input协议"></a>php://input协议</h3><p>php://input可以访问请求的原始数据的只读流，在CTF中多用于执行php代码。</p><p>不需要开启allow_url_fopen和allow_url_include。</p><p><img src="/2019/01/31/PHP伪协议/7.png" alt="php://input写入phpinfo"></p><p><img src="/2019/01/31/PHP伪协议/8.png" alt="php://input写入system"></p><h2 id="data-协议"><a href="#data-协议" class="headerlink" title="data://协议"></a>data://协议</h2><p>data://即数据，在CTF中主要用于写入代码并包含该代码到当前页面中。</p><p>必须同时开启allow_url_fopen和allow_url_include。</p><p>使用形式如下：</p><p>data:text/plain;base64, \<script>alert(‘xss’)\</script></p><p>data://text/plain;base64, \<script>alert(‘xss’)\</script></p><p>data:text/plain;base64,PHNjcmlwdD5hbGVydCgneHNzJyk8L3NjcmlwdD4=</p><p>data://text/plain;base64,PHNjcmlwdD5hbGVydCgneHNzJyk8L3NjcmlwdD4=</p><p><img src="/2019/01/31/PHP伪协议/9.png" alt="data://协议写入phpinfo"></p><p><img src="/2019/01/31/PHP伪协议/10.png" alt="data://协议写入js代码"></p><h2 id="zip-、bzip2-、zlib-协议"><a href="#zip-、bzip2-、zlib-协议" class="headerlink" title="zip://、bzip2://、zlib://协议"></a>zip://、bzip2://、zlib://协议</h2><p>zip://、bzip2://、zlib://均属于压缩流，可以访问压缩文件中的子文件，更重要的是不需要指定后缀名。</p><p>不需要开启allow_url_fopen和allow_url_include。</p><h3 id="zip-协议"><a href="#zip-协议" class="headerlink" title="zip://协议"></a>zip://协议</h3><p>zip://压缩流，不需要开启allow_url_fopen和allow_url_include。</p><p>使用方法：</p><p>zip:// [压缩文件绝对路径]#[压缩文件内的子文件名]</p><p>文件路径必须为绝对路径。</p><p>上传一个包含PHP代码文件的zip包，只要zip://访问该协议即触发文件包含漏洞、将任意文本文件中的内容当作PHP代码执行：</p><p><img src="/2019/01/31/PHP伪协议/11.png" alt="demo"></p><p>当然可以修改上传的zip文件后缀名为其他如图片后缀，根据特定情况可绕过一些上传文件类型的限制：</p><p><img src="/2019/01/31/PHP伪协议/12.png" alt="demo"></p><h3 id="zlib-协议"><a href="#zlib-协议" class="headerlink" title="zlib://协议"></a>zlib://协议</h3><p>zlib://压缩流，不需要开启allow_url_fopen和allow_url_include。</p><p>使用方法：</p><p>compress.zlib://file</p><p>文件无绝对路径限制。</p><p><img src="/2019/01/31/PHP伪协议/13.png" alt="demo"></p><p><img src="/2019/01/31/PHP伪协议/14.png" alt="demo"></p><h3 id="bzip2-协议"><a href="#bzip2-协议" class="headerlink" title="bzip2://协议"></a>bzip2://协议</h3><p>bzip2://压缩流，不需要开启allow_url_fopen和allow_url_include。</p><p>使用方法：</p><p>compress.bzip2://file</p><p>文件无绝对路径限制。</p><p>可是这里怎么测试都不成功，通过phpinfo查看bzip2://是enable且文件类型和文件路径都进行尝试，PHP版本也换了几个，还是无法显示phpinfo信息，哪位知道原因的大佬请指点一下 : )</p><h2 id="phar-协议"><a href="#phar-协议" class="headerlink" title="phar://协议"></a>phar://协议</h2><p>phar://即PHP归档，常用于解析phar文件内容，最近的CTF中多用于phar反序列化漏洞利用。反序列化漏洞具体的利用可参考<a href="https://blog.csdn.net/SKI_12/article/details/85551194" target="_blank" rel="noopener">https://blog.csdn.net/SKI_12/article/details/85551194</a></p><p><img src="/2019/01/31/PHP伪协议/15.png" alt="demo"></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2 id=&quot;基本概念&quot;&gt;&lt;a href=&quot;#基本概念&quot; class=&quot;headerlink&quot; title=&quot;基本概念&quot;&gt;&lt;/a&gt;基本概念&lt;/h2&gt;&lt;p&gt;PHP伪协议在CTF中经常使用到，这里写个简单的Demo小结一下，主要对file://、php://filter、php:/
-      
-    
-    </summary>
-    
-      <category term="PHP" scheme="https://Mi1k7ea.github.com/categories/PHP/"/>
-    
-    
-      <category term="PHP" scheme="https://Mi1k7ea.github.com/tags/PHP/"/>
     
   </entry>
   

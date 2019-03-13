@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="题目如下，大概意思是开发了一个追踪系统，问是否是有安全漏洞的：  打开页面，看到加载了一段Stats内容：  查看源码发现该段内容是请求了一个URL加载过来的，访问该地址，是包含cgi-bin路径的：  由cgi-bin我们可以联想到大名鼎鼎的Bash远程命令执行漏洞。记得之前看过的一篇文章：https://www.freebuf.com/vuls/44994.html 那就测试一下，在UserA">
+<meta name="keywords" content="Web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AeroCTF writeupup之board tracking system">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="题目如下，大概意思是开发了一个追踪系统，问是否是有安全漏洞的：  打开页面，看到加载了一段Stats内容：  查看源码发现该段内容是请求了一个URL加载过来的，访问该地址，是包含cgi-bin路径的：  由cgi-bin我们可以联想到大名鼎鼎的Bash远程命令执行漏洞。记得之前看过的一篇文章：https://www.freebuf.com/vuls/44994.html 那就测试一下，在UserA">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/6.png">
+<meta property="og:updated_time" content="2019-03-13T15:43:30.106Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AeroCTF writeupup之board tracking system">
+<meta name="twitter:description" content="题目如下，大概意思是开发了一个追踪系统，问是否是有安全漏洞的：  打开页面，看到加载了一段Stats内容：  查看源码发现该段内容是请求了一个URL加载过来的，访问该地址，是包含cgi-bin路径的：  由cgi-bin我们可以联想到大名鼎鼎的Bash远程命令执行漏洞。记得之前看过的一篇文章：https://www.freebuf.com/vuls/44994.html 那就测试一下，在UserA">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>AeroCTF writeupup之board tracking system</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/03/09/TAMUctf-Web-writeup/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&text=AeroCTF writeupup之board tracking system"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&is_video=false&description=AeroCTF writeupup之board tracking system"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=AeroCTF writeupup之board tracking system&body=Check out this article: https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&name=AeroCTF writeupup之board tracking system&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        AeroCTF writeupup之board tracking system
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-13T15:08:59.000Z" itemprop="datePublished">2019-03-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/WriteUp-Web/">WriteUp:Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Web安全/">Web安全</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>题目如下，大概意思是开发了一个追踪系统，问是否是有安全漏洞的：</p>
+<p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/1.png" alt=""></p>
+<p>打开页面，看到加载了一段Stats内容：</p>
+<p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/2.png" alt=""></p>
+<p>查看源码发现该段内容是请求了一个URL加载过来的，访问该地址，是包含cgi-bin路径的：</p>
+<p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/3.png" alt=""></p>
+<p>由cgi-bin我们可以联想到大名鼎鼎的Bash远程命令执行漏洞。记得之前看过的一篇文章：<a href="https://www.freebuf.com/vuls/44994.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/44994.html</a></p>
+<p>那就测试一下，在UserAgent注入payload<code>User-Agent: () { :;};echo -e &quot;\r\n$(/usr/bin/whoami)&quot;</code>发现成功执行whoami命令：</p>
+<p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/4.png" alt=""></p>
+<p>接着就使用ls寻找flag相关文件有没有，在当前目录找到stats文件：</p>
+<p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/5.png" alt=""></p>
+<p>cat看下stats文件有啥：</p>
+<p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/7.png" alt=""></p>
+<p>没啥东西，继续用ls看其他目录，没啥进展。</p>
+<p>最后在查看/etc/passwd时找到了这个隐藏的flag：</p>
+<p><img src="/2019/03/13/AeroCTF-writeupup之board-tracking-system/6.png" alt=""></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&text=AeroCTF writeupup之board tracking system"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&is_video=false&description=AeroCTF writeupup之board tracking system"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=AeroCTF writeupup之board tracking system&body=Check out this article: https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&title=AeroCTF writeupup之board tracking system"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/13/AeroCTF-writeupup之board-tracking-system/&name=AeroCTF writeupup之board tracking system&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
