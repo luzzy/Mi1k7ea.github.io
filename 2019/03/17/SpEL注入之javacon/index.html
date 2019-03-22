@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="本题来自P牛code-breaking中的一道Java题，名为javacon，题目知识点为SpEL注入，这里记下相关笔记。 题目下载地址：https://www.leavesongs.com/media/attachment/2018/11/23/challenge-0.0.1-SNAPSHOT.jar 本地运行：java -jar challenge-0.0.1-SNAPSHOT.jar 访问页">
+<meta name="keywords" content="Web安全,Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpEL注入之javacon">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="本题来自P牛code-breaking中的一道Java题，名为javacon，题目知识点为SpEL注入，这里记下相关笔记。 题目下载地址：https://www.leavesongs.com/media/attachment/2018/11/23/challenge-0.0.1-SNAPSHOT.jar 本地运行：java -jar challenge-0.0.1-SNAPSHOT.jar 访问页">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/1.png">
+<meta property="og:updated_time" content="2019-03-17T11:00:58.865Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpEL注入之javacon">
+<meta name="twitter:description" content="本题来自P牛code-breaking中的一道Java题，名为javacon，题目知识点为SpEL注入，这里记下相关笔记。 题目下载地址：https://www.leavesongs.com/media/attachment/2018/11/23/challenge-0.0.1-SNAPSHOT.jar 本地运行：java -jar challenge-0.0.1-SNAPSHOT.jar 访问页">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>SpEL注入之javacon</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/03/13/AeroCTF-writeupup之board-tracking-system/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回頂部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&text=SpEL注入之javacon"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&is_video=false&description=SpEL注入之javacon"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SpEL注入之javacon&body=Check out this article: https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&name=SpEL注入之javacon&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        SpEL注入之javacon
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-17T08:51:15.000Z" itemprop="datePublished">2019-03-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/WriteUp-Web/">WriteUp:Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Java/">Java</a>, <a class="tag-link" href="/tags/Web安全/">Web安全</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>本题来自P牛code-breaking中的一道Java题，名为javacon，题目知识点为SpEL注入，这里记下相关笔记。</p>
+<p>题目下载地址：<a href="https://www.leavesongs.com/media/attachment/2018/11/23/challenge-0.0.1-SNAPSHOT.jar" target="_blank" rel="noopener">https://www.leavesongs.com/media/attachment/2018/11/23/challenge-0.0.1-SNAPSHOT.jar</a></p>
+<p>本地运行：java -jar challenge-0.0.1-SNAPSHOT.jar</p>
+<p>访问页面，是个登录界面，请求参数带有jsessionid，其是在cookie的属性 ：</p>
+<p><img src="/2019/03/17/SpEL注入之javacon/1.png" alt=""></p>
+<p>随意输入，会提示“登陆失败，用户名或者密码错误！”。</p>
+<p>Java题目，一般都是从代码审计入手，用IDEA打开该jar包，主要看/BOOT-INF/classes目录下的文件即可，发现存在一个application.yml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  thymeleaf:</span></span><br><span class="line"><span class="attr">    encoding:</span> <span class="string">UTF-8</span></span><br><span class="line"><span class="attr">    cache:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">    mode:</span> <span class="string">HTML</span></span><br><span class="line"><span class="attr">keywords:</span></span><br><span class="line"><span class="attr">  blacklist:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">java.+lang</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">Runtime</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">exec.*\(</span></span><br><span class="line"><span class="attr">user:</span></span><br><span class="line"><span class="attr">  username:</span> <span class="string">admin</span></span><br><span class="line"><span class="attr">  password:</span> <span class="string">admin</span></span><br><span class="line"><span class="attr">  rememberMeKey:</span> <span class="string">c0dehack1nghere1</span></span><br></pre></td></tr></table></figure>
+<p>该文件分了3个模块，spring模块定义了HTML模板、UTF-8编码以及无缓存；keywords定义了黑名单，过滤了“java.lang”、“Runtime”、“exec.(”等；user模块定义了用户名和密码，还有一个记住我的值。</p>
+<p>Spring框架的关键在于Controller，看到MainController.class，其中定义了ExpressionParser属性，该属性在getAdvanceValue()函数中会调用来解析字符串内容，由此可知getAdvanceValue()函数是SpEL注入的触发点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainController</span> </span>&#123;</span><br><span class="line">    ExpressionParser parser = <span class="keyword">new</span> SpelExpressionParser();</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">getAdvanceValue</span><span class="params">(String val)</span> </span>&#123;</span><br><span class="line">        String[] var2 = <span class="keyword">this</span>.keyworkProperties.getBlacklist();</span><br><span class="line">        <span class="keyword">int</span> var3 = var2.length;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> var4 = <span class="number">0</span>; var4 &lt; var3; ++var4) &#123;</span><br><span class="line">            String keyword = var2[var4];</span><br><span class="line">            Matcher matcher = Pattern.compile(keyword, <span class="number">34</span>).matcher(val);</span><br><span class="line">            <span class="keyword">if</span> (matcher.find()) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> HttpClientErrorException(HttpStatus.FORBIDDEN);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ParserContext parserContext = <span class="keyword">new</span> TemplateParserContext();</span><br><span class="line">        Expression exp = <span class="keyword">this</span>.parser.parseExpression(val, parserContext);</span><br><span class="line">        SmallEvaluationContext evaluationContext = <span class="keyword">new</span> SmallEvaluationContext();</span><br><span class="line">        <span class="keyword">return</span> exp.getValue(evaluationContext).toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再看看哪里调用的getAdvanceValue()函数，发现是在admin()函数中调用了，传递的参数是username的值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">admin</span><span class="params">(@CookieValue(value = <span class="string">"remember-me"</span>,required = <span class="keyword">false</span>)</span> String rememberMeValue, HttpSession session, Model model) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (rememberMeValue != <span class="keyword">null</span> &amp;&amp; !rememberMeValue.equals(<span class="string">""</span>)) &#123;</span><br><span class="line">    	String username = <span class="keyword">this</span>.userConfig.decryptRememberMe(rememberMeValue);</span><br><span class="line">        <span class="keyword">if</span> (username != <span class="keyword">null</span>) &#123;</span><br><span class="line">            session.setAttribute(<span class="string">"username"</span>, username);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Object username = session.getAttribute(<span class="string">"username"</span>);</span><br><span class="line">    <span class="keyword">if</span> (username != <span class="keyword">null</span> &amp;&amp; !username.toString().equals(<span class="string">""</span>)) &#123;</span><br><span class="line">        model.addAttribute(<span class="string">"name"</span>, <span class="keyword">this</span>.getAdvanceValue(username.toString()));</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hello"</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">"redirect:/login"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">    </span><br><span class="line"><span class="meta">@PostMapping</span>(&#123;<span class="string">"/login"</span>&#125;)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">login</span><span class="params">(@RequestParam(value = <span class="string">"username"</span>,required = <span class="keyword">true</span>)</span> String username, @<span class="title">RequestParam</span><span class="params">(value = <span class="string">"password"</span>,required = <span class="keyword">true</span>)</span> String password, @<span class="title">RequestParam</span><span class="params">(value = <span class="string">"remember-me"</span>,required = <span class="keyword">false</span>)</span> String isRemember, HttpSession session, HttpServletResponse response) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.userConfig.getUsername().contentEquals(username) &amp;&amp; <span class="keyword">this</span>.userConfig.getPassword().contentEquals(password)) &#123;</span><br><span class="line">        session.setAttribute(<span class="string">"username"</span>, username);</span><br><span class="line">        <span class="keyword">if</span> (isRemember != <span class="keyword">null</span> &amp;&amp; !isRemember.equals(<span class="string">""</span>)) &#123;</span><br><span class="line">            Cookie c = <span class="keyword">new</span> Cookie(<span class="string">"remember-me"</span>, <span class="keyword">this</span>.userConfig.encryptRememberMe());</span><br><span class="line">            c.setMaxAge(<span class="number">2592000</span>);</span><br><span class="line">            response.addCookie(c);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"redirect:/"</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"redirect:/login-error"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里研究一下怎么控制这个username的值，先看注解为”/login”的login()函数，其传入3个参数，第三个remember-me为非必须的，在第一个if语句即判断username和password是否是正确的，是则通过调用<code>session.setAttribute(&quot;username&quot;)</code>来设置session中的username值，再判断remember-me的值进行设置，然后重定向到主页面，否则登录失败直接返回错误信息。也就是说，这里是没办法进行SpEL注入的，因为username和password都写不正确如何进入后面的逻辑呢？</p>
+<p>再来看看主页面的代码逻辑即注解为“@GetMapping”的admin()函数。先判断remember-me是否为空，为空时直接调用<code>session.getAttribute(&quot;username&quot;);</code>获取session中即login()函数中设置的username再调用getAdvanceValue()函数，此时因为username是正确的用户名因此无法SpEL注入；若rememberMeValue不为空即login时选择了remember-me，则解码rememberMeValue值为username并通过调用<code>session.setAttribute(&quot;username&quot;)</code>来设置session中的username值，此时的username就可控了。</p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&text=SpEL注入之javacon"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&is_video=false&description=SpEL注入之javacon"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SpEL注入之javacon&body=Check out this article: https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&title=SpEL注入之javacon"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/&name=SpEL注入之javacon&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜單</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目錄</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回頂部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">門面</a></li>
+         
+          <li><a href="/archives/">歸檔</a></li>
+         
+          <li><a href="/categories/">目錄</a></li>
+         
+          <li><a href="/tags/">標籤</a></li>
+         
+          <li><a href="/about/">吾</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">舊文</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
