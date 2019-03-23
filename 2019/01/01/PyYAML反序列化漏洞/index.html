@@ -24,7 +24,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/8.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/9.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/PyYAML反序列化漏洞/10.jpg">
-<meta property="og:updated_time" content="2019-02-24T05:05:39.249Z">
+<meta property="og:updated_time" content="2019-03-23T15:08:31.164Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python PyYAML反序列化漏洞">
 <meta name="twitter:description" content="基本概念（引用百度）YAML是“YAML不是一种标记语言”的外语缩写；但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名。它是一种直观的能够被电脑识别的数据序列化格式，是一个可读性高并且容易被人类阅读，容易和脚本语言交互，用来表达资料序列的编程语言。 PyYAML是Python中YAML语言的编辑器和解释器。 安装：pip install PyYAML 两个函数： yam">
@@ -93,7 +93,7 @@
         <li><a class="icon" href="/2019/01/01/PHP反序列化漏洞/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/HITB_Binary_100_writeup/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/Python安全小工具之反编译pyc文件/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -183,7 +183,7 @@
 <p><img src="/2019/01/01/PyYAML反序列化漏洞/1.jpg" alt=""></p>
 <p>可以看到，User对象经过yaml序列化之后内容为一行字符串，简单解释一下：“!!pythonobject”为yaml标签，yaml.load()会识别该标签并调用相应的方法执行反序列化操作；冒号后面的“__main__”为py文件名，这里为本文件的意思；“User”为序列化的对象类型，后面紧跟的大括号即为该对象的属性及其属性值。</p>
 <p><img src="/2019/01/01/PyYAML反序列化漏洞/2.jpg" alt=""></p>
-<p>更详细的说明可参考官方文档：<a href="https://pyyaml.org/wiki/PyYAMLDocumentation" target="_blank" rel="noopener">https://pyyaml.org/wiki/PyYAMLDocumentation</a></p>
+<p>更详细的说明可参考<a href="https://pyyaml.org/wiki/PyYAMLDocumentation" target="_blank" rel="noopener">官方文档</a>。</p>
 <h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><p>这里编写简单的Demo，一个py文件用于将恶意类序列化为字符串保存到yaml文件中，另一个py文件用于反序列化yaml文件内容为恶意类对象从而达到利用反序列化漏洞的目的。</p>
 <h3 id="yaml-test-py"><a href="#yaml-test-py" class="headerlink" title="yaml_test.py"></a>yaml_test.py</h3><p>先创建一个poc对象再调用yaml.dump()将其序列化为一个字符串，其中第10行代码为将默认的“__main__”替换为该文件名“yaml_test”，目的是为了后面yaml.load()反序列化该字符串的时候会根据yaml文件中的指引去读取yaml_ test.py中的poc这个类，否则无法正确执行：</p>
 <p><img src="/2019/01/01/PyYAML反序列化漏洞/3.jpg" alt=""></p>

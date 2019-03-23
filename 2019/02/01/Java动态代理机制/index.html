@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java动态代理机制/1.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java动态代理机制/2.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/01/Java动态代理机制/3.png">
-<meta property="og:updated_time" content="2019-02-08T14:23:10.231Z">
+<meta property="og:updated_time" content="2019-03-23T14:57:38.933Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java动态代理机制">
 <meta name="twitter:description" content="Java动态代理机制主要通过反射机制来实现的，下面讲解一下动态代理相关内容。 代理模式代理模式是Java中常用的设计模式，主要由公共接口、被代理类和代理类等三部分组成，代理类持有被代理类的实类，代为执行具体的类方法。其中代理类与被代理类有同样的接口。 代理类与被代理类之间通常会存在关联关系，一个代理类的对象与一个被代理类的对象关联，代理类的对象本身并不真正实现服务，而是通过调用被代理类对象的方法来">
@@ -213,7 +213,7 @@
 <p>再次提醒，JDK提供的代理只能是针对接口做代理，也就是说调用newProxyInstance()返创建代理类对象时回的必须要是一个接口。</p>
 <p>观察输出内容：</p>
 <p><img src="/2019/02/01/Java动态代理机制/3.png" alt="动态代理"></p>
-<p>第一行内容：”com.sun.proxy.\$Proxy0”是由 System.out.println(subject.getClass().getName()); 这条语句打印出来的，我们一般会以为返回的这个代理对象会是Subject类型的对象或者是InvocationHandler的对象，然并非，原因在newProxyInstance()方法的第二个参数上，该参数给代理类对象提供了一组接口，而该对象就会实现这组接口，这时可将这个对象强制类型转化为这组接口中的任意一个，因为这里的接口是Subject类型，所以就可以将其转化为Subject类型了。另外，通过 Proxy.newProxyInstance()创建的代理对象是在JVM运行时动态生成的一个对象，并非是InvocationHandler类型，也不是定义的那组接口的类型，而是在运行时动态生成的一个对象，并且命名方式都是以$开头、Proxy为中、最后为数字（表示对象的标号）的形式。</p>
+<p>第一行内容：”com.sun.proxy.\$Proxy0”是由输出subject.getClass().getName())的结果，我们一般会以为返回的这个代理对象会是Subject类型的对象或者是InvocationHandler的对象，然并非，原因在newProxyInstance()方法的第二个参数上，该参数给代理类对象提供了一组接口，而该对象就会实现这组接口，这时可将这个对象强制类型转化为这组接口中的任意一个，因为这里的接口是Subject类型，所以就可以将其转化为Subject类型了。另外，通过 Proxy.newProxyInstance()创建的代理对象是在JVM运行时动态生成的一个对象，并非是InvocationHandler类型，也不是定义的那组接口的类型，而是在运行时动态生成的一个对象，并且命名方式都是以$开头、Proxy为中、最后为数字（表示对象的标号）的形式。</p>
 <p>第二行至第五行内容（后面4行内容是类似的）：”AOP”和”Write Logs”为代理过程中新添加的输出功能；中间的”[*]Send”为代理类对象调用关联的handler中的invoke()方法来执行真实的被代理类的方法；”Method：”输出的是handler中invoke()方法method参数的值，这里可看到为”public abstract void Subject.send()”，说明该方法是来自真实的被代理类对象的接口方法，也就是说，并非是代理类对象直接调用目标方法，而是通过由其关联到的handler对象的invoke()方法中来调用，从而实现代理的方式调用。</p>
 <p>同时因为在代码编译时并不知道被代理的类是哪个，因此实现了动态代理的方式。</p>
 <h3 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h3><p>查看Proxy类的newProxyInstance()函数的实现代码：</p>

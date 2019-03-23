@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/15.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/16.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/17.png">
-<meta property="og:updated_time" content="2019-03-22T14:44:53.821Z">
+<meta property="og:updated_time" content="2019-03-23T14:43:44.820Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Teaser CONFidence CTF Web writeup">
 <meta name="twitter:description" content="这次Web题只做了前两道，最后一道GO的题目不会就没做了。 My admin panel题目地址：http://gameserver.zajebistyc.tf/ 题目描述：I think I’ve found something interesting, but I’m not really a PHP expert. Do you think it’s exploitable? 访问该页面，是">
@@ -199,7 +199,8 @@
 <p>注意，<code>if ($session_data[&#39;hash&#39;] != strtoupper(MD5($cfg_pass))) {</code>这里用的比较符是!=，按照习惯会想到是PHP弱类型。</p>
 <p>随便填otadmin的内容发过去/admin/login.php看看，注意cookie值的构造要满足前面正则的匹配：</p>
 <p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/5.png" alt=""></p>
-<p>这里返回了一串经过运算处理后的内容：0006464640640064000646464640006400640640646400</p>
+<p>这里返回了一串经过运算处理后的内容：</p>
+<p>0006464640640064000646464640006400640640646400</p>
 <p>分析一下，只有0/6/4这几个数字。将运算的那段代码扣下来本地运行一下：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$cfg_pass=<span class="string">"Hello666"</span>;</span><br><span class="line"><span class="keyword">echo</span> MD5($cfg_pass);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"><span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; strlen(MD5(<span class="string">'xDdddddd'</span>)); $i++) &#123;</span><br><span class="line">	<span class="comment">// echo(ord(MD5($cfg_pass)[$i]) &amp; 0xC0);</span></span><br><span class="line">	<span class="keyword">echo</span> MD5($cfg_pass)[$i];</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">	<span class="keyword">echo</span> ord(MD5($cfg_pass)[$i]);</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">	<span class="keyword">echo</span>(ord(MD5($cfg_pass)[$i]) &amp; <span class="number">0xC0</span>);</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;-------------&lt;br&gt;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <p>随便给$cfg_pass变量赋值，然后运行观察，MD5值没啥好说的，到for循环后，先输出MD5的每一位，然后对其调用ord()函数取该字符对于的ASCII码，最后再和0xC0进行&amp;与运算：</p>
@@ -207,7 +208,8 @@
 <p>可以看到，最后&amp;与运算的结果不是0就是64，那就写个小脚本确认一下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> xrange(<span class="number">1</span>,<span class="number">127</span>):</span><br><span class="line">	print(str(x)+<span class="string">":"</span>+str(x&amp;<span class="number">0xC0</span>))</span><br></pre></td></tr></table></figure>
 <p>运行这段代码会发现，1-63与运算后为0，64以后与运算后为64。我们知道，数字0-9的ASCII码为48-57，即数字与运算后结果均为0，而字母A-Za-z的ASCII码都大于64，即字母与运算后结果均为64。</p>
-<p>那么就很明确了，再看看页面返回的值：0006464640640064000646464640006400640640646400。</p>
+<p>那么就很明确了，再看看页面返回的值：</p>
+<p>0006464640640064000646464640006400640640646400</p>
 <p>前面3位是0，后面接着是字母结合数字的混合体。</p>
 <p>这时就可以祭出弱类型了，我们知道<code>123==&quot;123aivmfsjoo90i1jj90i0i031&quot;</code>是恒成立的，因此剩下的问题就变成了只需要暴破该MD5的前3为数字即可绕过得到flag，最终爆破出的payload为<code>Cookie: otadmin={&quot;hash&quot;: 389}</code>：</p>
 <p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/7.png" alt=""></p>

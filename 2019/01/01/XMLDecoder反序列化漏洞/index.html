@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/14.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/15.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/XMLDecoder反序列化漏洞/16.jpg">
-<meta property="og:updated_time" content="2019-02-24T05:05:48.159Z">
+<meta property="og:updated_time" content="2019-03-23T15:20:12.409Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java XMLDecoder反序列化漏洞">
 <meta name="twitter:description" content="基本概念XMLDecoder用于将XMLEncoder创建的xml文档内容反序列化为一个Java对象，其位于java.beans包下。 影响版本XMLDecoder在JDK 1.4~JDK 11中都存在反序列化漏洞安全风险。 Demo1234567891011121314151617181920212223242526272829303132333435363738394041import com">
@@ -96,10 +96,10 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2019/01/01/phar反序列化漏洞/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/SQL注入写WebShell方式小结/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/HITB_Binary_100_writeup/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -193,7 +193,8 @@
 <p>继续往里调试，调用到XMLDecoder.parsingComplete()时，发现里面调用了</p>
 <p>XMLDecoder.this.handler.parse()，其中this.handler即为DocumentHandler，换句话说，就是调用了DocumentHandler.parser()来解析输入的XML文档内容：</p>
 <p><img src="/2019/01/01/XMLDecoder反序列化漏洞/3.jpg" alt=""></p>
-<p>跟踪进去，可以看到DocumentHandler.parser()中调用了SAXParserFactory.newInstance().newSAXParser().parse()来解析XML内容：</p>
+<p>跟踪进去，可以看到DocumentHandler.parser()中调用了如下函数来解析XML内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SAXParserFactory.newInstance().newSAXParser().parse()</span><br></pre></td></tr></table></figure>
 <p><img src="/2019/01/01/XMLDecoder反序列化漏洞/4.jpg" alt=""></p>
 <p>接着设置xmlReader的相关handler，如处理XML内容、实体、错误、文档类型定义、文件等句柄，最后调用xmlReader.parse()解析XML文件内容：</p>
 <p><img src="/2019/01/01/XMLDecoder反序列化漏洞/5.jpg" alt=""></p>
@@ -218,7 +219,8 @@
 <p>再次F7直接执行了代码弹出计算器：</p>
 <p><img src="/2019/01/01/XMLDecoder反序列化漏洞/15.jpg" alt=""></p>
 <p>整体地看一下，整个调用过程大致如下：</p>
-<p>XMLDecoder.readObject() -&gt; XMLDecoder.parsingCompelete() -&gt; DocumentHandler.parse() -&gt; SAXParserFactory.newInstance().newSAXParser().parse() -&gt; xmlReader.parse()<br>可以发现，XMLDecoder类解析XML是调用DocumentHandler类实现的，而DocumentHandler类是基于SAXParser类对XML的解析上的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XMLDecoder.readObject() -&gt; XMLDecoder.parsingCompelete() -&gt; DocumentHandler.parse() -&gt; SAXParserFactory.newInstance().newSAXParser().parse() -&gt; xmlReader.parse()</span><br></pre></td></tr></table></figure>
+<p>可以发现，XMLDecoder类解析XML是调用DocumentHandler类实现的，而DocumentHandler类是基于SAXParser类对XML的解析上的。</p>
 <p>那么可以去分析一下，到底哪个类才是真正的漏洞类。测试一下，可以看出DocumentHandler类才是XMLDecoder反序列化漏洞的根源类：</p>
 <p><img src="/2019/01/01/XMLDecoder反序列化漏洞/16.jpg" alt=""></p>
 <h2 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h2><p>全局搜索XMLDecoder关键字，排查是否调用readObject()函数且参数是否可控。</p>

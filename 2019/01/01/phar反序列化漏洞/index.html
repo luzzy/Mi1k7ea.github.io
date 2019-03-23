@@ -6,13 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="之前做CTF遇到phar反序列化漏洞概念，这里小结一下，主要参考自https://paper.seebug.org/680/ 基本概念phar (PHP Archive) 是PHP里类似于Java中jar的一种打包文件，用于归档。当PHP 版本&amp;gt;=5.3时默认开启支持PHAR文件的。 phar文件默认状态是只读，使用phar文件不需要任何的配置。 而phar://伪协议即PHP归档，用来解析">
+    <meta name="description" content="之前做CTF遇到phar反序列化漏洞概念，这里小结一下。 基本概念phar (PHP Archive) 是PHP里类似于Java中jar的一种打包文件，用于归档。当PHP 版本&amp;gt;=5.3时默认开启支持PHAR文件的。 phar文件默认状态是只读，使用phar文件不需要任何的配置。 而phar://伪协议即PHP归档，用来解析phar文件内容。 phar文件结构1、stub 一个供phar扩展">
 <meta name="keywords" content="Web安全,PHP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="phar反序列化漏洞">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/phar反序列化漏洞/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="之前做CTF遇到phar反序列化漏洞概念，这里小结一下，主要参考自https://paper.seebug.org/680/ 基本概念phar (PHP Archive) 是PHP里类似于Java中jar的一种打包文件，用于归档。当PHP 版本&amp;gt;=5.3时默认开启支持PHAR文件的。 phar文件默认状态是只读，使用phar文件不需要任何的配置。 而phar://伪协议即PHP归档，用来解析">
+<meta property="og:description" content="之前做CTF遇到phar反序列化漏洞概念，这里小结一下。 基本概念phar (PHP Archive) 是PHP里类似于Java中jar的一种打包文件，用于归档。当PHP 版本&amp;gt;=5.3时默认开启支持PHAR文件的。 phar文件默认状态是只读，使用phar文件不需要任何的配置。 而phar://伪协议即PHP归档，用来解析phar文件内容。 phar文件结构1、stub 一个供phar扩展">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/phar反序列化漏洞/1.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/phar反序列化漏洞/2.jpg">
@@ -31,10 +31,10 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/phar反序列化漏洞/15.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/phar反序列化漏洞/16.jpg">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/phar反序列化漏洞/17.jpg">
-<meta property="og:updated_time" content="2019-02-24T05:05:57.378Z">
+<meta property="og:updated_time" content="2019-03-23T15:16:30.076Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="phar反序列化漏洞">
-<meta name="twitter:description" content="之前做CTF遇到phar反序列化漏洞概念，这里小结一下，主要参考自https://paper.seebug.org/680/ 基本概念phar (PHP Archive) 是PHP里类似于Java中jar的一种打包文件，用于归档。当PHP 版本&amp;gt;=5.3时默认开启支持PHAR文件的。 phar文件默认状态是只读，使用phar文件不需要任何的配置。 而phar://伪协议即PHP归档，用来解析">
+<meta name="twitter:description" content="之前做CTF遇到phar反序列化漏洞概念，这里小结一下。 基本概念phar (PHP Archive) 是PHP里类似于Java中jar的一种打包文件，用于归档。当PHP 版本&amp;gt;=5.3时默认开启支持PHAR文件的。 phar文件默认状态是只读，使用phar文件不需要任何的配置。 而phar://伪协议即PHP归档，用来解析phar文件内容。 phar文件结构1、stub 一个供phar扩展">
 <meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/phar反序列化漏洞/1.jpg">
     
     
@@ -97,10 +97,10 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2019/01/01/SQL注入写WebShell方式小结/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/HITB_Binary_100_writeup/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/XMLDecoder反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/cPickle反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -127,7 +127,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.</span> <span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#phar文件结构"><span class="toc-number">1.1.</span> <span class="toc-text">phar文件结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞点"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用条件"><span class="toc-number">2.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo1——反序列化任意代码执行"><span class="toc-number">3.</span> <span class="toc-text">Demo1——反序列化任意代码执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo2——PHP内核哈希表碰撞攻击"><span class="toc-number">4.</span> <span class="toc-text">Demo2——PHP内核哈希表碰撞攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo3——绕过文件幻数检测"><span class="toc-number">5.</span> <span class="toc-text">Demo3——绕过文件幻数检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#防御"><span class="toc-number">6.</span> <span class="toc-text">防御</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.</span> <span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#phar文件结构"><span class="toc-number">1.1.</span> <span class="toc-text">phar文件结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞点"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用条件"><span class="toc-number">2.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo1——反序列化任意代码执行"><span class="toc-number">3.</span> <span class="toc-text">Demo1——反序列化任意代码执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo2——PHP内核哈希表碰撞攻击"><span class="toc-number">4.</span> <span class="toc-text">Demo2——PHP内核哈希表碰撞攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo3——绕过文件幻数检测"><span class="toc-number">5.</span> <span class="toc-text">Demo3——绕过文件幻数检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#防御"><span class="toc-number">6.</span> <span class="toc-text">防御</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -180,7 +180,7 @@
   
 
   <div class="content" itemprop="articleBody">
-    <p>之前做CTF遇到phar反序列化漏洞概念，这里小结一下，主要参考自<a href="https://paper.seebug.org/680/" target="_blank" rel="noopener">https://paper.seebug.org/680/</a></p>
+    <p>之前做CTF遇到phar反序列化漏洞概念，这里小结一下。</p>
 <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>phar (PHP Archive) 是PHP里类似于Java中jar的一种打包文件，用于归档。当PHP 版本&gt;=5.3时默认开启支持PHAR文件的。</p>
 <p>phar文件默认状态是只读，使用phar文件不需要任何的配置。</p>
 <p>而phar://伪协议即PHP归档，用来解析phar文件内容。</p>
@@ -229,8 +229,7 @@
 <p><img src="/2019/01/01/phar反序列化漏洞/9.jpg" alt=""></p>
 <p>或系统命令执行：</p>
 <p><img src="/2019/01/01/phar反序列化漏洞/10.jpg" alt=""></p>
-<h2 id="Demo2——PHP内核哈希表碰撞攻击"><a href="#Demo2——PHP内核哈希表碰撞攻击" class="headerlink" title="Demo2——PHP内核哈希表碰撞攻击"></a>Demo2——PHP内核哈希表碰撞攻击</h2><p>参考自<a href="https://cloud.tencent.com/developer/article/1350367" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1350367</a></p>
-<p>相比于上一种利用方式，这种不需要苛刻的有可用的魔术方法的条件只需可控参数的文件操作函数的条件即可。<br>在PHP内核中，数组是以哈希表的方式实现的，攻击者可以通过巧妙的构造数组元素的key使哈希表退化成单链表（时间复杂度从O(1) =&gt; O(n)）来触发拒绝服务攻击。</p>
+<h2 id="Demo2——PHP内核哈希表碰撞攻击"><a href="#Demo2——PHP内核哈希表碰撞攻击" class="headerlink" title="Demo2——PHP内核哈希表碰撞攻击"></a>Demo2——PHP内核哈希表碰撞攻击</h2><p>相比于上一种利用方式，这种不需要苛刻的有可用的魔术方法的条件只需可控参数的文件操作函数的条件即可。<br>在PHP内核中，数组是以哈希表的方式实现的，攻击者可以通过巧妙的构造数组元素的key使哈希表退化成单链表（时间复杂度从O(1) =&gt; O(n)）来触发拒绝服务攻击。</p>
 <p><img src="/2019/01/01/phar反序列化漏洞/11.jpg" alt=""></p>
 <p>PHP修复此漏洞的方式是限制通过$_GET或$_POST等方式传入的参数数量，但是如果PHP脚本通过json_decode()或unserialize()等方式获取参数，依然将受到此漏洞的威胁。</p>
 <p>phar_dos.php</p>
@@ -260,6 +259,8 @@
 <li>严格检查上传文件的内容，而不是只检查文件头；</li>
 <li>在条件允许的情况下禁用可执行系统命令、代码的危险函数；</li>
 </ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://cloud.tencent.com/developer/article/1350367" target="_blank" rel="noopener">blackhat议题深入 | phar反序列化</a></p>
+<p><a href="https://paper.seebug.org/680/" target="_blank" rel="noopener">利用 phar 拓展 php 反序列化漏洞攻击面</a></p>
 
   </div>
 </article>
@@ -305,7 +306,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.</span> <span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#phar文件结构"><span class="toc-number">1.1.</span> <span class="toc-text">phar文件结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞点"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用条件"><span class="toc-number">2.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo1——反序列化任意代码执行"><span class="toc-number">3.</span> <span class="toc-text">Demo1——反序列化任意代码执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo2——PHP内核哈希表碰撞攻击"><span class="toc-number">4.</span> <span class="toc-text">Demo2——PHP内核哈希表碰撞攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo3——绕过文件幻数检测"><span class="toc-number">5.</span> <span class="toc-text">Demo3——绕过文件幻数检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#防御"><span class="toc-number">6.</span> <span class="toc-text">防御</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.</span> <span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#phar文件结构"><span class="toc-number">1.1.</span> <span class="toc-text">phar文件结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞点"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用条件"><span class="toc-number">2.</span> <span class="toc-text">利用条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo1——反序列化任意代码执行"><span class="toc-number">3.</span> <span class="toc-text">Demo1——反序列化任意代码执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo2——PHP内核哈希表碰撞攻击"><span class="toc-number">4.</span> <span class="toc-text">Demo2——PHP内核哈希表碰撞攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo3——绕过文件幻数检测"><span class="toc-number">5.</span> <span class="toc-text">Demo3——绕过文件幻数检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#防御"><span class="toc-number">6.</span> <span class="toc-text">防御</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">

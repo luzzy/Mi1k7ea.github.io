@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/4.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/5.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/30/常见Web漏洞类型/2.png">
-<meta property="og:updated_time" content="2019-02-08T14:36:33.701Z">
+<meta property="og:updated_time" content="2019-03-23T15:05:10.954Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常见Web漏洞类型总结">
 <meta name="twitter:description" content="这里小结一下常见的Web漏洞类型，待完善。 SQL注入与SQL盲注一、基本概念漏洞定义 　　SQL注入漏洞作为OWASP TOP10中重要的一部分，可见其安全性的危害有多大。简单地说，SQL注入就是通过构建特殊的具有SQL语法的语句，绕到数据库中进而执行相应的操作的漏洞。攻击者利用这个问题，可以访问或修改数据，或者利用潜在的数据库漏洞进行攻击。 成因 　　针对SQL注入的攻击行为可描述为通过在用户">
@@ -216,7 +216,8 @@
 <p>​    适用于WAF采用正则表达式检测所有的敏感字的情况，可以通过注释分开敏感字，如?id=1 un//ion sel//ect 1,2,3 #；至于重写绕过，适用于WAF过滤了一次的情况，如uniunionon，有时候可能还有多次过滤的情况，这时多次尝试也可以。</p>
 <p><strong>5、HTTP参数污染(HPP)：</strong></p>
 <p>​    如?id=1 union select 1,2,3 from users where id=1 # </p>
-<p>​    这时可以改为?id=1 union select 1&amp;id=2,3 from users where id=1 # </p>
+<p>​    这时可以改为</p>
+<p><code>?id=1 union select 1&amp;id=2,3 from users where id=1 #</code> </p>
 <p>​    次数&amp;id=会在查询时变成逗号，具体细节取决于 WAF ；</p>
 <p>​    这个例子也同理：?id=1/<em>/union/&amp;id=/select/&amp;id=/pwd/&amp;id=/from/&amp;id=</em>/users # </p>
 <p>​    如果服务器代码为： select <em> from table where a=”.$_GET[‘a’].” and b=”.$_GET[‘b’].” limit “.$_GET[‘c’]; 那么可以构造这样的注入语句： ?a=1 union/&amp;b=/select 1,pass/&amp;c=/from users # 最终解析为： select from table where a=1 union/ and b=/select 1,pass/limit </em>/from users # 可以看到，这种方式比较适合白盒测试。</p>
@@ -237,13 +238,14 @@
 <p>​    替换，left 用来取字符串左起 1 位的值，strcmp 用来比较两个值，如果比较结果相等就为 0，左边小的话就为-1，否则为 1。</p>
 <p><strong>9、盲注无需or和and</strong></p>
 <p>​    例句：index.php?id=1</p>
-<p>​    当and和or被过滤时，可以将 1修改为是通过语句生成的， index.php?uid=strcmp(left((select+hash+from+users+limit+0,1),1),0x42)+123，123 的时候页面是正确的，现在再盲猜 hash 的第一位，如果第一位等于 0x42 也就是 B，那么strcmp结果为0，0+123=123，所以页面应该是正确的。否则就说明不是 B，就这样猜，不用 and 和 or 了。</p>
+<p>​    当and和or被过滤时，可以将 1修改为是通过语句生成的，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index.php?uid=strcmp(left((select+hash+from+users+limit+0,1),1),0x42)+123</span><br></pre></td></tr></table></figure>
+<p>123 的时候页面是正确的，现在再盲猜 hash 的第一位，如果第一位等于 0x42 也就是 B，那么strcmp结果为0，0+123=123，所以页面应该是正确的。否则就说明不是 B，就这样猜，不用 and 和 or 了。</p>
 <p><strong>10、加括号</strong></p>
-<p>​    如?id=(1)union(select(1),mid(hash,1,32)from(users))   </p>
-<p>​    ?id=(1)union(((((((select(1),hex(hash)from(users))))))))</p>
-<p>​    ?id=(1)or(0x50=0x50)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?id=(1)union(select(1),mid(hash,1,32)from(users))   </span><br><span class="line">?id=(1)union(((((((select(1),hex(hash)from(users))))))))</span><br><span class="line">?id=(1)or(0x50=0x50)</span><br></pre></td></tr></table></figure>
 <p><strong>11、缓冲区溢出绕过</strong></p>
-<p>​    如id=1 and (select 1)=(Select 0xAAAAAAAAAAAAAAAAAAAAA)+UnIoN+SeLeCT+1,2,version(),4,5,database(),user(),8,9,10 #</p>
+<p>​    如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=1 and (select 1)=(Select 0xAAAAAAAAAAAAAAAAAAAAA)+UnIoN+SeLeCT+1,2,version(),4,5,database(),user(),8,9,10 #</span><br></pre></td></tr></table></figure>
 <p>​    其中 A 越多越好，一般要求 1000 个以上。</p>
 <h3 id="三、检测方法"><a href="#三、检测方法" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p><strong>1、基于报错的检测方法</strong></p>
 <p>使用各种符号以及组合： ‘  “  (  %</p>
@@ -614,7 +616,7 @@
 <p>等</p>
 <p>包含日志文件：</p>
 <p>当存在PHP本地文件包含漏洞，但无法上传正常文件时，可以利用Apache日志文件。Apache服务器运行后会生成两个日志文件，这两个文件是access.log(访问日志)和error.log(错误日志)，apache的日志文件记录下我们的操作，并且写到访问日志文件access.log之中，例如：</p>
-<p><a href="http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log" target="_blank" rel="noopener">http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://10.10.10.128/dvwa/vulnerabilities/fi/?page=../../../../Apache-20\logs\access.log</span><br></pre></td></tr></table></figure>
 <p>PHP内置的协议：</p>
 <p><img src="/2019/01/30/常见Web漏洞类型/2.png" alt="php伪协议"></p>
 <h3 id="三、检测方法-3"><a href="#三、检测方法-3" class="headerlink" title="三、检测方法"></a>三、检测方法</h3><p>找到有包含函数的页面，对函数内容进行替换查看结果；</p>
