@@ -14,10 +14,19 @@
 <meta property="og:site_name" content="Mi1k7ea">
 <meta property="og:description" content="Stack smash 在程序加了 canary 保护之后，如果我们读取的 buffer 覆盖了对应的值时，程序就会报错，而一般来说我们并不会关心报错信息。而 stack smash 技巧则就是利用打印这一信息的程序来得到我们想要的内容。这是因为在程序启动 canary 保护之后，如果发现 canary 被修改的话，程序就会执行 __stack_chk_fail 函数来打印 argv[0] 指针所">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-23T15:20:26.528Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/7.png">
+<meta property="og:updated_time" content="2019-03-24T14:54:06.976Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="花式栈溢出之Stack smash">
 <meta name="twitter:description" content="Stack smash 在程序加了 canary 保护之后，如果我们读取的 buffer 覆盖了对应的值时，程序就会报错，而一般来说我们并不会关心报错信息。而 stack smash 技巧则就是利用打印这一信息的程序来得到我们想要的内容。这是因为在程序启动 canary 保护之后，如果发现 canary 被修改的话，程序就会执行 __stack_chk_fail 函数来打印 argv[0] 指针所">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/1.png">
     
     
         
@@ -78,6 +87,8 @@
     <br>
     <span id="actions">
       <ul>
+        
+        <li><a class="icon" href="/2019/03/24/C编写实现Linux反弹shell/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" href="/2019/03/22/图片XSS小结/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
@@ -168,6 +179,32 @@
 <p>所以说如果我们利用栈溢出覆盖 argv[0] 为我们想要输出的字符串的地址，那么在 <code>__fortify_fail</code> 函数中就会输出我们想要的信息。</p>
 </blockquote>
 <h2 id="EKOPARTY-PRE-CTF-2015-Smashing-the-stack-for-fun-and-profit"><a href="#EKOPARTY-PRE-CTF-2015-Smashing-the-stack-for-fun-and-profit" class="headerlink" title="EKOPARTY PRE-CTF 2015: Smashing the stack for fun and profit"></a>EKOPARTY PRE-CTF 2015: Smashing the stack for fun and profit</h2><p>这里结合ekoparty-pre-ctf-2015的一道Pwn题来学习，<a href="https://github.com/ctfs/write-ups-2015/blob/master/ekoparty-pre-ctf-2015/pwn/smashing-the-stack-for-fun-and-profit/pwn100.zip" target="_blank" rel="noopener">题目下载地址</a>。</p>
+<p>在本地运行前，需要在本地先建立一个flag.txt。</p>
+<p>运行程序，先给个有趣的地址，然后给你输入用户名；file查看是静态链接文件；checksec发现开启了NX和Canary：</p>
+<p><img src="/2019/03/23/花式栈溢出之Stack-smash/1.png" alt=""></p>
+<p>IDA看下main()函数，程序会打开本地的flag.txt文件，然后复制该文件描述符到一个buf中，接着输出一个指向该buf的地址并询问你的用户名，通过read()函数获取0x400长度的用户输入的内容，而0x400数值过大，由此可知read()函数存在栈溢出漏洞：</p>
+<p><img src="/2019/03/23/花式栈溢出之Stack-smash/2.png" alt=""></p>
+<p>这样看应该是直接给了获取flag的地址了。</p>
+<p>回到之前安全编译选项检测的结果发现，程序是开了Canary的，根据Canary的原理，其在一个函数入口处从fs段内获取一个随机值，一般存到EBP - 0x4(32位)或RBP - 0x8(64位)的位置，如果攻击者利用栈溢出修改到了这个值，导致该值与存入的值不一致，__stack_chk_fail()函数将抛出异常并退出程序。</p>
+<p>先试下发送大量字符，查看到抛出异常信息，即调用了Canary实现代码中的__libc_message()将__libc_argv[0]打印了出来，这里__libc_argv[0]为本程序名，同时发现程序只是终止了而非栈溢出时的段错误：</p>
+<p><img src="/2019/03/23/花式栈溢出之Stack-smash/3.png" alt=""></p>
+<p>也就是说，只要溢出的内容覆盖了Canary插入的cookie，Canary就会报错，且当前输入200个字符还未达到覆盖到argv[0]的位置。整个栈结构及溢出原理如下图所示：</p>
+<p><img src="/2019/03/23/花式栈溢出之Stack-smash/4.png" alt=""></p>
+<p>下面只需要确定溢出的变量地址距离argv[0]的偏移地址。</p>
+<p><strong>Method1——使用pattern</strong></p>
+<p>之前pattern_create生成的200个字符串并未使程序出现段错误，后面尝试到400个字符串时发生段错误，没有输出Canary出错返回的异常信息而是输出Segmentation fault，即输入字符溢出覆盖了argv[0]地址导致程序无法正常读取该值从而发生错误：</p>
+<p><img src="/2019/03/23/花式栈溢出之Stack-smash/6.png" alt=""></p>
+<p>pattern_offset得到偏移量为376：</p>
+<p><img src="/2019/03/23/花式栈溢出之Stack-smash/5.png" alt=""></p>
+<p><strong>Method2——断点调试</strong></p>
+<p>先在main()函数打断点，运行：</p>
+<p><img src="/2019/03/23/花式栈溢出之Stack-smash/8.png" alt=""></p>
+<p>可以看出0x7fffffffe2bd指向程序名，其自然就是 argv[0]，所以我们修改的内容就是这个地址。同时0x7fffffffdf48处保留着该地址，所以我们真正需要的地址是0x7fffffffdf48。</p>
+<p>……</p>
+<p>编写payload：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./xpl"</span>)</span><br><span class="line">addr = int(sh.recvline().split()[<span class="number">4</span>], <span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">payload = flat([<span class="string">"A"</span> * <span class="number">376</span>, p64(addr)])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">result = sh.recvall()</span><br><span class="line"><span class="keyword">print</span> result</span><br></pre></td></tr></table></figure>
+<p>运行getflag：</p>
+<p><img src="/2019/03/23/花式栈溢出之Stack-smash/7.png" alt=""></p>
 
   </div>
 </article>
