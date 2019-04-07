@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="0x01 简介pwntools是一个CTF Pwn漏洞利用开发库，用于编写各种与Pwn题目进行交互和攻击利用的脚本。其由Python开发，由rapid设计，旨在让使用者简单快速的编写exploit。 0x02 安装安装：pip install pwntools 当然只是在Linux环境适用，建议安装在Ubuntu环境而非Kali，Kali上会有很多问题。其中对Ubuntu 12.04和14.04的">
+<meta name="keywords" content="二进制,Pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwntools笔记">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="0x01 简介pwntools是一个CTF Pwn漏洞利用开发库，用于编写各种与Pwn题目进行交互和攻击利用的脚本。其由Python开发，由rapid设计，旨在让使用者简单快速的编写exploit。 0x02 安装安装：pip install pwntools 当然只是在Linux环境适用，建议安装在Ubuntu环境而非Kali，Kali上会有很多问题。其中对Ubuntu 12.04和14.04的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-07T15:48:04.685Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pwntools笔记">
+<meta name="twitter:description" content="0x01 简介pwntools是一个CTF Pwn漏洞利用开发库，用于编写各种与Pwn题目进行交互和攻击利用的脚本。其由Python开发，由rapid设计，旨在让使用者简单快速的编写exploit。 0x02 安装安装：pip install pwntools 当然只是在Linux环境适用，建议安装在Ubuntu环境而非Kali，Kali上会有很多问题。其中对Ubuntu 12.04和14.04的">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>pwntools笔记</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/04/05/Spring-Data-Rest之cve-2017-8046分析/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&text=pwntools笔记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&is_video=false&description=pwntools笔记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwntools笔记&body=Check out this article: https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&name=pwntools笔记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-简介"><span class="toc-number">1.</span> <span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-安装"><span class="toc-number">2.</span> <span class="toc-text">0x02 安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-各个模块"><span class="toc-number">3.</span> <span class="toc-text">0x03 各个模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#连接方式"><span class="toc-number">3.1.</span> <span class="toc-text">连接方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IO模块"><span class="toc-number">3.2.</span> <span class="toc-text">IO模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ELF文件操作"><span class="toc-number">3.3.</span> <span class="toc-text">ELF文件操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#整数pack与数据unpack"><span class="toc-number">3.4.</span> <span class="toc-text">整数pack与数据unpack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#汇编和反汇编"><span class="toc-number">3.5.</span> <span class="toc-text">汇编和反汇编</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shellcode生成器"><span class="toc-number">3.6.</span> <span class="toc-text">Shellcode生成器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ROP链生成器"><span class="toc-number">3.7.</span> <span class="toc-text">ROP链生成器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GDB调试"><span class="toc-number">3.8.</span> <span class="toc-text">GDB调试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DEBUG日志"><span class="toc-number">3.9.</span> <span class="toc-text">DEBUG日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">4.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        pwntools笔记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-04-07T14:52:27.000Z" itemprop="datePublished">2019-04-07</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Pwn/">Pwn</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Pwn/">Pwn</a>, <a class="tag-link" href="/tags/二进制/">二进制</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-简介"><a href="#0x01-简介" class="headerlink" title="0x01 简介"></a>0x01 简介</h2><p>pwntools是一个CTF Pwn漏洞利用开发库，用于编写各种与Pwn题目进行交互和攻击利用的脚本。其由Python开发，由rapid设计，旨在让使用者简单快速的编写exploit。</p>
+<h2 id="0x02-安装"><a href="#0x02-安装" class="headerlink" title="0x02 安装"></a>0x02 安装</h2><p>安装：pip install pwntools</p>
+<p>当然只是在Linux环境适用，建议安装在Ubuntu环境而非Kali，Kali上会有很多问题。其中对Ubuntu 12.04和14.04的支持最好，但是绝大多数的功能也支持Debian、Arch、FreeBSD、OSX等等。</p>
+<h2 id="0x03-各个模块"><a href="#0x03-各个模块" class="headerlink" title="0x03 各个模块"></a>0x03 各个模块</h2><p>通常在py文件头部写上from pwn import *即可导入所有需要的pwntools工具。</p>
+<h3 id="连接方式"><a href="#连接方式" class="headerlink" title="连接方式"></a>连接方式</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sh = porcess(<span class="string">"./test"</span>)<span class="comment">#连接本地程序</span></span><br><span class="line">sh = remote(<span class="string">"127.0.0.1"</span>,<span class="number">10001</span>)<span class="comment">#远程连接</span></span><br><span class="line">sh.close()<span class="comment">#关闭连接</span></span><br></pre></td></tr></table></figure>
+<h3 id="IO模块"><a href="#IO模块" class="headerlink" title="IO模块"></a>IO模块</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sh.send(data)<span class="comment">#发送数据</span></span><br><span class="line">sh.sendline(data)<span class="comment">#发送一行数据，相当于在数据后面加\n</span></span><br><span class="line">sh.recv(numb = <span class="number">2048</span>, timeout = dufault)<span class="comment">#接受数据，numb指定接收的字节，timeout指定超时时间</span></span><br><span class="line">sh.recvline(keepends=<span class="keyword">True</span>)<span class="comment">#接受一行数据，keepends为是否保留行尾的\n</span></span><br><span class="line">sh.recvuntil(<span class="string">"Hello,World\n"</span>,drop=fasle)<span class="comment">#接受数据直到我们设置的标志出现</span></span><br><span class="line">sh.recvall()<span class="comment">#一直接收直到EOF</span></span><br><span class="line">sh.recvrepeat(timeout = default)<span class="comment">#持续接受直到EOF或timeout</span></span><br><span class="line">sh.interactive()<span class="comment">#直接进行交互，相当于回到shell的模式，在取得shell之后使用</span></span><br></pre></td></tr></table></figure>
+<h3 id="ELF文件操作"><a href="#ELF文件操作" class="headerlink" title="ELF文件操作"></a>ELF文件操作</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>e = ELF(<span class="string">'/bin/cat'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> hex(e.address)  <span class="comment"># 文件装载的基地址</span></span><br><span class="line"><span class="number">0x400000</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> hex(e.symbols[<span class="string">'write'</span>]) <span class="comment"># 函数地址</span></span><br><span class="line"><span class="number">0x401680</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> hex(e.got[<span class="string">'write'</span>]) <span class="comment"># GOT表的地址</span></span><br><span class="line"><span class="number">0x60b070</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> hex(e.plt[<span class="string">'write'</span>]) <span class="comment"># PLT的地址</span></span><br><span class="line"><span class="number">0x401680</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> hex(e.search(<span class="string">'/bin/sh'</span>).next())<span class="comment"># 字符串/bin/sh的地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#libc相关</span></span><br><span class="line">libc = e.libc</span><br><span class="line">libc.address = libc_start_main_addr - libc.symbols[<span class="string">'__libc_start_main'</span>]</span><br><span class="line">libc.symbols[<span class="string">'system'</span>]</span><br><span class="line">next(libc.search(<span class="string">'/bin/sh'</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="整数pack与数据unpack"><a href="#整数pack与数据unpack" class="headerlink" title="整数pack与数据unpack"></a>整数pack与数据unpack</h3><p>pack：p32，p64<br>unpack：u32，u64</p>
+<h3 id="汇编和反汇编"><a href="#汇编和反汇编" class="headerlink" title="汇编和反汇编"></a>汇编和反汇编</h3><p>汇编：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>asm(<span class="string">'nop'</span>)</span><br><span class="line"><span class="string">'\x90'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>asm(<span class="string">'nop'</span>, arch=<span class="string">'arm'</span>)</span><br><span class="line"><span class="string">'\x00\xf0 \xe3'</span></span><br></pre></td></tr></table></figure>
+<p>可以使用context来指定cpu类型以及操作系统：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>context.arch      = <span class="string">'i386'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>context.os        = <span class="string">'linux'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>context.endian    = <span class="string">'little'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>context.word_size = <span class="number">32</span></span><br></pre></td></tr></table></figure>
+<p>使用disasm进行反汇编：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> disasm(<span class="string">'6a0258cd80ebf9'</span>.decode(<span class="string">'hex'</span>))</span><br><span class="line">   <span class="number">0</span>:   <span class="number">6</span>a <span class="number">02</span>                   push   <span class="number">0x2</span></span><br><span class="line">   <span class="number">2</span>:   <span class="number">58</span>                      pop    eax</span><br><span class="line">   <span class="number">3</span>:   cd <span class="number">80</span>                   int    <span class="number">0x80</span></span><br><span class="line">   <span class="number">5</span>:   eb f9                   jmp    <span class="number">0x0</span></span><br></pre></td></tr></table></figure>
+<p>注意，asm需要binutils中的as工具辅助，如果是不同于本机平台的其他平台的汇编，例如在我的x86机器上进行mips的汇编就会出现as工具未找到的情况，这时候需要安装其他平台的cross-binutils。</p>
+<h3 id="Shellcode生成器"><a href="#Shellcode生成器" class="headerlink" title="Shellcode生成器"></a>Shellcode生成器</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> shellcraft.i386.nop().strip(<span class="string">'\n'</span>)</span><br><span class="line">    nop</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> shellcraft.i386.linux.sh()</span><br><span class="line">    /* push <span class="string">'/bin///sh\x00'</span> */</span><br><span class="line">    push <span class="number">0x68</span></span><br><span class="line">    push <span class="number">0x732f2f2f</span></span><br><span class="line">    push <span class="number">0x6e69622f</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>结合asm可以可以得到最终的pyaload：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(os=<span class="string">'linux'</span>,arch=<span class="string">'amd64'</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"></span><br><span class="line">或者</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">shellcode = asm(shellcraft.amd64.linux.sh())</span><br></pre></td></tr></table></figure>
+<p>除了直接执行sh之外，还可以进行其它的一些常用操作例如提权、反向连接等等。</p>
+<h3 id="ROP链生成器"><a href="#ROP链生成器" class="headerlink" title="ROP链生成器"></a>ROP链生成器</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">elf = ELF(<span class="string">'ropasaurusrex'</span>)</span><br><span class="line">rop = ROP(elf)</span><br><span class="line">rop.read(<span class="number">0</span>, elf.bss(<span class="number">0x80</span>))</span><br><span class="line">rop.dump()</span><br><span class="line"><span class="comment"># ['0x0000:        0x80482fc (read)',</span></span><br><span class="line"><span class="comment">#  '0x0004:       0xdeadbeef',</span></span><br><span class="line"><span class="comment">#  '0x0008:              0x0',</span></span><br><span class="line"><span class="comment">#  '0x000c:        0x80496a8']</span></span><br><span class="line">str(rop)</span><br><span class="line"><span class="comment"># '\xfc\x82\x04\x08\xef\xbe\xad\xde\x00\x00\x00\x00\xa8\x96\x04\x08'</span></span><br></pre></td></tr></table></figure>
+<p>使用ROP(elf)来产生一个rop的对象，这时rop链还是空的，需要在其中添加函数。</p>
+<p>因为ROP对象实现了<strong>getattr</strong>的功能，可以直接通过func call的形式来添加函数，rop.read(0, elf.bss(0x80))实际相当于rop.call(‘read’, (0, elf.bss(0x80)))。<br> 通过多次添加函数调用，最后使用str将整个rop chain dump出来就可以了。</p>
+<ul>
+<li>call(resolvable, arguments=()) : 添加一个调用，resolvable可以是一个符号，也可以是一个int型地址，注意后面的参数必须是元组否则会报错，即使只有一个参数也要写成元组的形式(在后面加上一个逗号)</li>
+<li>chain() : 返回当前的字节序列，即payload</li>
+<li>dump() : 直观地展示出当前的rop chain</li>
+<li>raw() : 在rop chain中加上一个整数或字符串</li>
+<li>search(move=0, regs=None, order=’size’) : 按特定条件搜索gadget</li>
+<li>unresolve(value) : 给出一个地址，反解析出符号</li>
+</ul>
+<h3 id="GDB调试"><a href="#GDB调试" class="headerlink" title="GDB调试"></a>GDB调试</h3><p>当在运行py时添加参数M，则会将进程attach到GDB上调试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> args.M:</span><br><span class="line">        gdb.attach(p)</span><br></pre></td></tr></table></figure>
+<h3 id="DEBUG日志"><a href="#DEBUG日志" class="headerlink" title="DEBUG日志"></a>DEBUG日志</h3><p>当 context.log_level被设置为 “DEBUG” , 我们的输入和服务器的输出会被直接输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context.log_level = <span class="string">'DEBUG'</span></span><br></pre></td></tr></table></figure>
+<h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p><a href="https://www.jianshu.com/p/355e4badab50" target="_blank" rel="noopener">pwntools使用</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-简介"><span class="toc-number">1.</span> <span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-安装"><span class="toc-number">2.</span> <span class="toc-text">0x02 安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-各个模块"><span class="toc-number">3.</span> <span class="toc-text">0x03 各个模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#连接方式"><span class="toc-number">3.1.</span> <span class="toc-text">连接方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IO模块"><span class="toc-number">3.2.</span> <span class="toc-text">IO模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ELF文件操作"><span class="toc-number">3.3.</span> <span class="toc-text">ELF文件操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#整数pack与数据unpack"><span class="toc-number">3.4.</span> <span class="toc-text">整数pack与数据unpack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#汇编和反汇编"><span class="toc-number">3.5.</span> <span class="toc-text">汇编和反汇编</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shellcode生成器"><span class="toc-number">3.6.</span> <span class="toc-text">Shellcode生成器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ROP链生成器"><span class="toc-number">3.7.</span> <span class="toc-text">ROP链生成器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GDB调试"><span class="toc-number">3.8.</span> <span class="toc-text">GDB调试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DEBUG日志"><span class="toc-number">3.9.</span> <span class="toc-text">DEBUG日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">4.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&text=pwntools笔记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&is_video=false&description=pwntools笔记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwntools笔记&body=Check out this article: https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&title=pwntools笔记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/04/07/pwntools笔记/&name=pwntools笔记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
