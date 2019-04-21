@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="0x01 PHP session序列化机制当session_start()被调用或者php.ini中session.auto_start为1时，PHP内部调用会话管理器，访问用户session被序列化以后，存储到指定目录（默认为/tmp）。 session序列化及反序列化处理器PHP 内置了多种处理器用于存取 $_SESSION 数据时会对数据进行序列化和反序列化，常用的有以下三种，对应三种不同的">
+<meta name="keywords" content="Web安全,PHP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP session反序列化漏洞">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="0x01 PHP session序列化机制当session_start()被调用或者php.ini中session.auto_start为1时，PHP内部调用会话管理器，访问用户session被序列化以后，存储到指定目录（默认为/tmp）。 session序列化及反序列化处理器PHP 内置了多种处理器用于存取 $_SESSION 数据时会对数据进行序列化和反序列化，常用的有以下三种，对应三种不同的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/4.png">
+<meta property="og:updated_time" content="2019-04-21T15:38:49.447Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PHP session反序列化漏洞">
+<meta name="twitter:description" content="0x01 PHP session序列化机制当session_start()被调用或者php.ini中session.auto_start为1时，PHP内部调用会话管理器，访问用户session被序列化以后，存储到指定目录（默认为/tmp）。 session序列化及反序列化处理器PHP 内置了多种处理器用于存取 $_SESSION 数据时会对数据进行序列化和反序列化，常用的有以下三种，对应三种不同的">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>PHP session反序列化漏洞</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/04/20/花式栈溢出之stack-pivoting/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&text=PHP session反序列化漏洞"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&is_video=false&description=PHP session反序列化漏洞"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PHP session反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&name=PHP session反序列化漏洞&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-PHP-session序列化机制"><span class="toc-number">1.</span> <span class="toc-text">0x01 PHP session序列化机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#session序列化及反序列化处理器"><span class="toc-number">1.1.</span> <span class="toc-text">session序列化及反序列化处理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#与session存储相关的配置项"><span class="toc-number">1.2.</span> <span class="toc-text">与session存储相关的配置项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储机制"><span class="toc-number">1.3.</span> <span class="toc-text">存储机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-PHP-session反序列化漏洞"><span class="toc-number">2.</span> <span class="toc-text">0x02 PHP session反序列化漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞Demo"><span class="toc-number">2.1.</span> <span class="toc-text">漏洞Demo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-题目"><span class="toc-number">3.</span> <span class="toc-text">0x03 题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">4.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        PHP session反序列化漏洞
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-04-21T12:20:37.000Z" itemprop="datePublished">2019-04-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/PHP/">PHP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/PHP/">PHP</a>, <a class="tag-link" href="/tags/Web安全/">Web安全</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-PHP-session序列化机制"><a href="#0x01-PHP-session序列化机制" class="headerlink" title="0x01 PHP session序列化机制"></a>0x01 PHP session序列化机制</h2><p>当session_start()被调用或者php.ini中session.auto_start为1时，PHP内部调用会话管理器，访问用户session被序列化以后，存储到指定目录（默认为/tmp）。</p>
+<h3 id="session序列化及反序列化处理器"><a href="#session序列化及反序列化处理器" class="headerlink" title="session序列化及反序列化处理器"></a>session序列化及反序列化处理器</h3><p>PHP 内置了多种处理器用于存取 $_SESSION 数据时会对数据进行序列化和反序列化，常用的有以下三种，对应三种不同的处理格式：</p>
+<table>
+<thead>
+<tr>
+<th>处理器</th>
+<th>对应的存储格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>php</td>
+<td>键名 ＋ 竖线 ＋ 经过 serialize() 函数反序列处理的值</td>
+</tr>
+<tr>
+<td>php_binary</td>
+<td>键名的长度对应的 ASCII 字符 ＋ 键名 ＋ 经过 serialize() 函数反序列处理的值</td>
+</tr>
+<tr>
+<td>php_serialize  (php&gt;=5.5.4)</td>
+<td>经过 serialize() 函数反序列处理的数组</td>
+</tr>
+</tbody>
+</table>
+<h3 id="与session存储相关的配置项"><a href="#与session存储相关的配置项" class="headerlink" title="与session存储相关的配置项"></a>与session存储相关的配置项</h3><p>配置文件php.ini中含有这几个与session存储相关的配置项：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">session.save_path ="E:/wamp64/tmp"   --设置session的存储路径,默认在/tmp</span><br><span class="line">session.auto_start = 0   --指定会话模块是否在请求开始时启动一个会话,默认为0不启动</span><br><span class="line">session.serialize_handler = php   --定义用来序列化/反序列化的处理器名字。默认使用php</span><br></pre></td></tr></table></figure>
+<p>PHP 提供了 session.serialize_handler 配置选项，通过该选项可以设置序列化及反序列化时使用的处理器，默认为php。如果要修改为其他的引擎，只需要添加代码ini_set(‘session.serialize_handler’, ‘需要设置的引擎’)，如下所示：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">ini_set(<span class="string">'session.serialize_handler'</span>, <span class="string">'php_serialize'</span>);</span><br><span class="line">session_start();</span><br><span class="line"><span class="comment">// do something</span></span><br></pre></td></tr></table></figure>
+<h3 id="存储机制"><a href="#存储机制" class="headerlink" title="存储机制"></a>存储机制</h3><p>php中的session中的内容并不是放在内存中的，而是以文件的方式来存储的，存储方式就是由配置项<code>session.save_handler</code>来进行确定的，默认是以文件的方式存储。</p>
+<p>存储的文件是以<code>sess_sessionid</code>来进行命名的，文件的内容就是session值的序列话之后的内容。</p>
+<p>下面用个简单的Demo看看存储的形式：</p>
+<p>example.php，这时是使用默认的处理器即PHP：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">session_start();</span><br><span class="line">$_SESSION[<span class="string">'m7'</span>] = $_GET[<span class="string">'m7'</span>];</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可在session.save_path对应路径下看到一个新生成的session文件，这里名为sess_cj15cikdujk6uv3bdq6qvonbe7，可以看到存储格式为：键名 ＋ 竖线 ＋ 经过 serialize() 函数反序列处理的值</p>
+<p><img src="/2019/04/21/PHP-session反序列化漏洞/1.png" alt=""></p>
+<p>添加一行代码修改处理器为php_serialize：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">ini_set(<span class="string">'session.serialize_handler'</span>,<span class="string">'php_serialize'</span>);</span><br><span class="line">session_start();</span><br><span class="line">$_SESSION[<span class="string">'m7'</span>] = $_GET[<span class="string">'m7'</span>];</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>格式：经过serialize()函数反序列处理的数组</p>
+<p><img src="/2019/04/21/PHP-session反序列化漏洞/2.png" alt=""></p>
+<p>修改处理器为php_binary：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">ini_set(<span class="string">'session.serialize_handler'</span>,<span class="string">'php_binary'</span>);</span><br><span class="line">session_start();</span><br><span class="line">$_SESSION[<span class="string">'m7'</span>] = $_GET[<span class="string">'m7'</span>];</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可以看到：键名的长度对应的 ASCII 字符 ＋ 键名 ＋ 经过 serialize() 函数反序列处理的值</p>
+<p><img src="/2019/04/21/PHP-session反序列化漏洞/3.png" alt=""></p>
+<h2 id="0x02-PHP-session反序列化漏洞"><a href="#0x02-PHP-session反序列化漏洞" class="headerlink" title="0x02 PHP session反序列化漏洞"></a>0x02 PHP session反序列化漏洞</h2><p>PHP session反序列化漏洞，简单点说，就是当网站序列化并存储Session与反序列化并读取Session的方式不同时就可能导致session反序列化漏洞的产生。</p>
+<h3 id="漏洞Demo"><a href="#漏洞Demo" class="headerlink" title="漏洞Demo"></a>漏洞Demo</h3><p>save.php，和前面的demo一样，这里用的是php_serialize处理器：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">ini_set(<span class="string">'session.serialize_handler'</span>,<span class="string">'php_serialize'</span>);</span><br><span class="line">session_start();</span><br><span class="line">$_SESSION[<span class="string">'m7'</span>] = $_GET[<span class="string">'m7'</span>];</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>session_vul.php，这里用的是默认的php处理器，可以不添加该行：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">ini_set(<span class="string">'session.serialize_handler'</span>,<span class="string">'php'</span>);</span><br><span class="line">session_start();</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mi1k7ea</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> $a;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="keyword">$this</span>-&gt;a);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// function __destruct()&#123;</span></span><br><span class="line">    <span class="comment">//  system($this-&gt;a);</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="comment">// function __sleep()&#123;</span></span><br><span class="line">	<span class="comment">// 	eval($this-&gt;a);</span></span><br><span class="line">	<span class="comment">// 	return array('a');</span></span><br><span class="line">	<span class="comment">// &#125;</span></span><br><span class="line">	<span class="comment">// function __wakeup()&#123;</span></span><br><span class="line">	<span class="comment">// 	eval($this-&gt;a);</span></span><br><span class="line">	<span class="comment">// &#125;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>访问包含恶意构造序列化对象的URL：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">save.php?m7=|O:7:&quot;mi1k7ea&quot;:1:&#123;s:1:&quot;a&quot;;s:10:&quot;phpinfo();&quot;;&#125;</span><br></pre></td></tr></table></figure>
+<p>打开session文件可看到序列化存储的内容，再访问session_vul.php即可看到php代码被执行了：</p>
+<p><img src="/2019/04/21/PHP-session反序列化漏洞/4.png" alt=""></p>
+<p>这是因为php引擎会以|作为key和value的分隔符，将a:1:{s:2:”m7”;s:45:”作为SESSION的key，将O:7:”mi1k7ea”:1:{s:1:”a”;s:10:”phpinfo();”;}作为value，然后进行反序列化，就会实例化mi1k7ea对象，最后就会执行__destruct()函数中的eval()方法，相当于执行如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$_SESSION[<span class="string">'m7'</span>] = <span class="keyword">new</span> mi1k7ea();</span><br><span class="line">$_SESSION[<span class="string">'m7'</span>]-&gt;a = <span class="string">'phpinfo();'</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="0x03-题目"><a href="#0x03-题目" class="headerlink" title="0x03 题目"></a>0x03 题目</h2><p>…</p>
+<h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p>…</p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-PHP-session序列化机制"><span class="toc-number">1.</span> <span class="toc-text">0x01 PHP session序列化机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#session序列化及反序列化处理器"><span class="toc-number">1.1.</span> <span class="toc-text">session序列化及反序列化处理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#与session存储相关的配置项"><span class="toc-number">1.2.</span> <span class="toc-text">与session存储相关的配置项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储机制"><span class="toc-number">1.3.</span> <span class="toc-text">存储机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-PHP-session反序列化漏洞"><span class="toc-number">2.</span> <span class="toc-text">0x02 PHP session反序列化漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞Demo"><span class="toc-number">2.1.</span> <span class="toc-text">漏洞Demo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-题目"><span class="toc-number">3.</span> <span class="toc-text">0x03 题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">4.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&text=PHP session反序列化漏洞"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&is_video=false&description=PHP session反序列化漏洞"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PHP session反序列化漏洞&body=Check out this article: https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&title=PHP session反序列化漏洞"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/04/21/PHP-session反序列化漏洞/&name=PHP session反序列化漏洞&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

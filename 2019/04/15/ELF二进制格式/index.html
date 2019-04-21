@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="在Linux、BSD变体以及其他OS中，ELF格式可用于可执行文件、共享库、目标文件、coredump文件，甚至内核引导镜像文件。在Linux中，程序就是以ELF二进制的格式执行的。 0x01 ELF文件类型一个ELF文件可以被标记为一下几种类型之一。  ET_NONE：未知类型。这个标记表明文件类型不确定，或者未定义。 ET_REL：重定位文件。ELF类型标记为relocatable意味着该文件">
+<meta name="keywords" content="二进制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ELF二进制格式">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="在Linux、BSD变体以及其他OS中，ELF格式可用于可执行文件、共享库、目标文件、coredump文件，甚至内核引导镜像文件。在Linux中，程序就是以ELF二进制的格式执行的。 0x01 ELF文件类型一个ELF文件可以被标记为一下几种类型之一。  ET_NONE：未知类型。这个标记表明文件类型不确定，或者未定义。 ET_REL：重定位文件。ELF类型标记为relocatable意味着该文件">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-17T13:35:58.781Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ELF二进制格式">
+<meta name="twitter:description" content="在Linux、BSD变体以及其他OS中，ELF格式可用于可执行文件、共享库、目标文件、coredump文件，甚至内核引导镜像文件。在Linux中，程序就是以ELF二进制的格式执行的。 0x01 ELF文件类型一个ELF文件可以被标记为一下几种类型之一。  ET_NONE：未知类型。这个标记表明文件类型不确定，或者未定义。 ET_REL：重定位文件。ELF类型标记为relocatable意味着该文件">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>ELF二进制格式</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/04/20/花式栈溢出之stack-pivoting/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/04/12/中级ROP之ret2csu/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&text=ELF二进制格式"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&is_video=false&description=ELF二进制格式"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ELF二进制格式&body=Check out this article: https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&name=ELF二进制格式&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ELF文件类型"><span class="toc-number">1.</span> <span class="toc-text">0x01 ELF文件类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-ELF程序头"><span class="toc-number">2.</span> <span class="toc-text">0x02 ELF程序头</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-PT-LOAD"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 PT_LOAD</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ELF二进制格式
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-04-15T13:39:27.000Z" itemprop="datePublished">2019-04-15</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/二进制基础/">二进制基础</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/二进制/">二进制</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>在Linux、BSD变体以及其他OS中，ELF格式可用于可执行文件、共享库、目标文件、coredump文件，甚至内核引导镜像文件。在Linux中，程序就是以ELF二进制的格式执行的。</p>
+<h2 id="0x01-ELF文件类型"><a href="#0x01-ELF文件类型" class="headerlink" title="0x01 ELF文件类型"></a>0x01 ELF文件类型</h2><p>一个ELF文件可以被标记为一下几种类型之一。</p>
+<ul>
+<li>ET_NONE：未知类型。这个标记表明文件类型不确定，或者未定义。</li>
+<li>ET_REL：重定位文件。ELF类型标记为relocatable意味着该文件被标记为了一段可重定位的代码，有时也称为目标文件。可重定位目标文件通常是还未被链接到可执行程序的一段位置独立的代码（position independent code）。在编译完代码之后通常可以看到一个.o格式的文件，这种文件包含了创建可执行文件所需要的代码和数据。</li>
+<li>ET_EXEC：可执行文件。executable，表明该文件被标记为可执行文件，也称为程序，是一个进程开始执行的入口。</li>
+<li>ET_DYN：共享目标文件。dynamic，意味着文件被标记为了一个动态的可链接的目标文件，也称为共享库。这类共享库会在程序运行时被装载并链接到程序的进程镜像中。</li>
+<li>ET_CORE：核心文件。在程序崩溃或者进程传递了一个SIGSEGV信号（分段违规）时，会在核心文件中记录整个进程的镜像信息。可以使用GDB读取这类文件来辅助调试并查找程序崩溃的原因。</li>
+</ul>
+<p>使用readelf -h命令查看ELF文件，可以看到原始的ELF文件头。ELF文件头从文件的0偏移量开始，是除了文件头之后剩余部分文件的一个映射。文件头主要标记了ELF类型、结构和程序开始执行的入口地址，并提供了其他ELF头（节头和程序头）的偏移量。</p>
+<p>可以通过查看<a href="http://www.man7.org/linux/man-pages/man5/elf.5.html" target="_blank" rel="noopener">Linux的ELF（5）手册</a>来了解ELF头部结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EI_NIDENT 16</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> e_ident[EI_NIDENT];</span><br><span class="line">    <span class="keyword">uint16_t</span>      e_type;</span><br><span class="line">    <span class="keyword">uint16_t</span>      e_machine;</span><br><span class="line">    <span class="keyword">uint32_t</span>      e_version;</span><br><span class="line">    ElfN_Addr     e_entry;</span><br><span class="line">    ElfN_Off      e_phoff;</span><br><span class="line">    ElfN_Off      e_shoff;</span><br><span class="line">    <span class="keyword">uint32_t</span>      e_flags;</span><br><span class="line">    <span class="keyword">uint16_t</span>      e_ehsize;</span><br><span class="line">    <span class="keyword">uint16_t</span>      e_phentsize;</span><br><span class="line">    <span class="keyword">uint16_t</span>      e_phnum;</span><br><span class="line">    <span class="keyword">uint16_t</span>      e_shentsize;</span><br><span class="line">    <span class="keyword">uint16_t</span>      e_shnum;</span><br><span class="line">    <span class="keyword">uint16_t</span>      e_shstrndx;</span><br><span class="line">&#125; ElfN_Ehdr;</span><br></pre></td></tr></table></figure>
+<h2 id="0x02-ELF程序头"><a href="#0x02-ELF程序头" class="headerlink" title="0x02 ELF程序头"></a>0x02 ELF程序头</h2><p>ELF程序头是对二进制文件中<strong>段</strong>的描述，是程序装载必需的一部分。</p>
+<p>段（segment）是在内核装载时被解析的，描述了磁盘上可执行文件的内存布局以及如何映射到内存中。可以通过引用原始ELF头中名为e_phoff（程序头表偏移量）来得到程序头表（如前面的ElfN_Ehdr结构中所示）。</p>
+<p>程序头描述了可执行文件（包括共享库）中的段及其类型。</p>
+<p>Elf32_Phdr结构体如下，它构成了32位ELF可执行程序头表的一个程序头条目：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span>   p_type;</span><br><span class="line">    Elf32_Off  p_offset;</span><br><span class="line">    Elf32_Addr p_vaddr;</span><br><span class="line">    Elf32_Addr p_paddr;</span><br><span class="line">    <span class="keyword">uint32_t</span>   p_filesz;</span><br><span class="line">    <span class="keyword">uint32_t</span>   p_memsz;</span><br><span class="line">    <span class="keyword">uint32_t</span>   p_flags;</span><br><span class="line">    <span class="keyword">uint32_t</span>   p_align;</span><br><span class="line">&#125; Elf32_Phdr;</span><br></pre></td></tr></table></figure>
+<p>下面说下5种常见的程序头类型。</p>
+<h3 id="2-1-PT-LOAD"><a href="#2-1-PT-LOAD" class="headerlink" title="2.1 PT_LOAD"></a>2.1 PT_LOAD</h3><p>一个可执行文件至少有一个PT_LOAD类型的段，该段描述的是可装载的段，即该类段将被装载或者映射到内存中。</p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ELF文件类型"><span class="toc-number">1.</span> <span class="toc-text">0x01 ELF文件类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-ELF程序头"><span class="toc-number">2.</span> <span class="toc-text">0x02 ELF程序头</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-PT-LOAD"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 PT_LOAD</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&text=ELF二进制格式"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&is_video=false&description=ELF二进制格式"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ELF二进制格式&body=Check out this article: https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&title=ELF二进制格式"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/04/15/ELF二进制格式/&name=ELF二进制格式&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

