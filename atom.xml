@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://Mi1k7ea.github.com/"/>
-  <updated>2019-04-23T14:15:39.653Z</updated>
+  <updated>2019-04-27T15:16:01.775Z</updated>
   <id>https://Mi1k7ea.github.com/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>堆基础</title>
+    <link href="https://Mi1k7ea.github.com/2019/04/27/%E5%A0%86%E5%9F%BA%E7%A1%80/"/>
+    <id>https://Mi1k7ea.github.com/2019/04/27/堆基础/</id>
+    <published>2019-04-27T14:49:52.000Z</published>
+    <updated>2019-04-27T15:16:01.775Z</updated>
+    
+    <content type="html"><![CDATA[<p>网上太多关于这方面的文章了，这里不再重新造轮子了，直接引用ctf wiki以及其他的一些文章的说明，自己再添点东西就好。</p><h2 id="0x01-何为堆"><a href="#0x01-何为堆" class="headerlink" title="0x01 何为堆"></a>0x01 何为堆</h2><blockquote><p>在程序运行过程中，堆可以提供动态分配的内存，允许程序申请大小未知的内存。堆其实就是程序虚拟地址空间的一块连续的线性区域，它由低地址向高地址方向增长。我们一般称管理堆的那部分程序为堆管理器。</p><p>堆管理器处于用户程序与内核中间，主要做以下工作</p><ol><li>响应用户的申请内存请求，向操作系统申请内存，然后将其返回给用户程序。同时，为了保持内存管理的高效性，内核一般都会预先分配很大的一块连续的内存，然后让堆管理器通过某种算法管理这块内存。只有当出现了堆空间不足的情况，堆管理器才会再次与操作系统进行交互。</li><li>管理用户所释放的内存。一般来说，用户释放的内存并不是直接返还给操作系统的，而是由堆管理器进行管理。这些释放的内存可以来响应用户新申请的内存的请求。</li></ol><p>Linux 中早期的堆分配与回收由 Doug Lea 实现，但它在并行处理多个线程时，会共享进程的堆内存空间。因此，为了安全性，一个线程使用堆时，会进行加锁。然而，与此同时，加锁会导致其它线程无法使用堆，降低了内存分配和回收的高效性。同时，如果在多线程使用时，没能正确控制，也可能影响内存分配和回收的正确性。Wolfram Gloger 在 Doug Lea 的基础上进行改进使其可以支持多线程，这个堆分配器就是 ptmalloc 。在 glibc-2.3.x. 之后，glibc 中集成了 ptmalloc2。</p><p>目前 Linux 标准发行版中使用的堆分配器是 glibc 中的堆分配器：ptmalloc2。ptmalloc2 主要是通过 malloc/free 函数来分配和释放内存块。</p><p>需要注意的是，在内存分配与使用的过程中，Linux 有这样的一个基本内存管理思想，<strong>只有当真正访问一个地址的时候，系统才会建立虚拟页面与物理页面的映射关系</strong>。 所以虽然操作系统已经给程序分配了很大的一块内存，但是这块内存其实只是虚拟内存。只有当用户使用到相应的内存时，系统才会真正分配物理页面给用户使用。</p></blockquote><h2 id="0x02-堆的基本操作"><a href="#0x02-堆的基本操作" class="headerlink" title="0x02 堆的基本操作"></a>0x02 堆的基本操作</h2><p>这里主要说下基本的堆操作（包括堆的分配，回收，堆分配背后的系统调用）以及堆目前的多线程支持等。</p><h3 id="malloc"><a href="#malloc" class="headerlink" title="malloc"></a>malloc</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">malloc(size_t n)</span><br></pre></td></tr></table></figure><p>malloc 函数返回对应大小字节的内存块的指针。此外，该函数还对一些异常情况进行了处理</p><ul><li>当 n=0 时，返回当前系统允许的堆的最小内存块。</li><li>当 n 为负数时，由于在大多数系统上，<strong>size_t 是无符号数（这一点非常重要）</strong>，所以程序就会申请很大的内存空间，但通常来说都会失败，因为系统没有那么多的内存可以分配。</li></ul><h3 id="free"><a href="#free" class="headerlink" title="free"></a>free</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free(void* p)</span><br></pre></td></tr></table></figure><p>free 函数会释放由 p 所指向的内存块。这个内存块有可能是通过 malloc 函数得到的，也有可能是通过相关的函数 realloc 得到的。</p><p>此外，该函数也同样对异常情况进行了处理</p><ul><li><strong>当 p 为空指针时，函数不执行任何操作。</strong></li><li>当 p 已经被释放之后，再次释放会出现乱七八糟的效果，这其实就是 <code>double free</code>。</li><li>除了被禁用 (mallopt) 的情况下，当释放很大的内存空间时，程序会将这些内存空间还给系统，以便于减小程序所使用的内存空间。</li></ul><h3 id="内存分配背后的系统调用"><a href="#内存分配背后的系统调用" class="headerlink" title="内存分配背后的系统调用"></a>内存分配背后的系统调用</h3><blockquote><p>在前面提到的函数中，无论是 malloc 函数还是 free 函数，我们动态申请和释放内存时，都经常会使用，但是它们并不是真正与系统交互的函数。这些函数背后的系统调用主要是 <a href="http://man7.org/linux/man-pages/man2/sbrk.2.html" target="_blank" rel="noopener">(s)brk</a> 函数以及 <a href="http://man7.org/linux/man-pages/man2/mmap.2.html" target="_blank" rel="noopener">mmap, munmap</a> 函数。</p><p>如下图所示，我们主要考虑对堆进行申请内存块的操作。</p></blockquote><p><img src="/2019/04/27/堆基础/1.png" alt=""></p><h4 id="s-brk"><a href="#s-brk" class="headerlink" title="(s)brk"></a>(s)brk</h4><blockquote><p>对于堆的操作，操作系统提供了 brk 函数，glibc 库提供了 sbrk 函数，我们可以通过增加 <a href="https://en.wikipedia.org/wiki/Sbrk" target="_blank" rel="noopener">brk</a> 的大小来向操作系统申请内存。初始时，堆的起始地址 <a href="http://elixir.free-electrons.com/linux/v3.8/source/include/linux/mm_types.h#L365" target="_blank" rel="noopener">start_brk</a> 以及堆的当前末尾 <a href="http://elixir.free-electrons.com/linux/v3.8/source/include/linux/mm_types.h#L365" target="_blank" rel="noopener">brk</a> 指向同一地址。根据是否开启 ASLR，两者的具体位置会有所不同</p><ul><li>不开启 ASLR 保护时，start_brk 以及 brk 会指向 data/bss 段的结尾。</li><li>开启 ASLR 保护时，start_brk 以及 brk 也会指向同一位置，只是这个位置是在 data/bss 段结尾后的随机偏移处。</li></ul><p>具体效果如下图（这个图片与网上流传的基本一致，这里是因为要画一张大图，所以自己单独画了下）所示</p></blockquote><p><img src="/2019/04/27/堆基础/2.png" alt=""></p><p>示例：</p><p>…</p><h4 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h4><blockquote><p>malloc 会使用 <a href="http://lxr.free-electrons.com/source/mm/mmap.c?v=3.8#L1285" target="_blank" rel="noopener">mmap</a> 来创建独立的匿名映射段。匿名映射的目的主要是可以申请以 0 填充的内存，并且这块内存仅被调用进程所使用。</p></blockquote><p>示例：</p><p>…</p><h3 id="多线程支持"><a href="#多线程支持" class="headerlink" title="多线程支持"></a>多线程支持</h3><blockquote><p>在原来的 dlmalloc 实现中，当两个线程同时要申请内存时，只有一个线程可以进入临界区申请内存，而另外一个线程则必须等待直到临界区中不再有线程。这是因为所有的线程共享一个堆。在 glibc 的 ptmalloc 实现中，比较好的一点就是支持了多线程的快速访问。在新的实现中，所有的线程共享多个堆。</p></blockquote><p>示例：</p><p>…</p><h2 id="0x03-堆相关数据结构"><a href="#0x03-堆相关数据结构" class="headerlink" title="0x03 堆相关数据结构"></a>0x03 堆相关数据结构</h2><p>…</p><h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/glibc-heap/heap_overview/" target="_blank" rel="noopener">堆概述</a></p><p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/glibc-heap/heap_structure/" target="_blank" rel="noopener">堆相关数据结构</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;网上太多关于这方面的文章了，这里不再重新造轮子了，直接引用ctf wiki以及其他的一些文章的说明，自己再添点东西就好。&lt;/p&gt;
+&lt;h2 id=&quot;0x01-何为堆&quot;&gt;&lt;a href=&quot;#0x01-何为堆&quot; class=&quot;headerlink&quot; title=&quot;0x01 何为堆
+      
+    
+    </summary>
+    
+      <category term="二进制基础" scheme="https://Mi1k7ea.github.com/categories/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9F%BA%E7%A1%80/"/>
+    
+    
+      <category term="二进制" scheme="https://Mi1k7ea.github.com/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/"/>
+    
+      <category term="堆溢出" scheme="https://Mi1k7ea.github.com/tags/%E5%A0%86%E6%BA%A2%E5%87%BA/"/>
+    
+  </entry>
   
   <entry>
     <title>PHP session反序列化漏洞</title>
@@ -525,35 +553,6 @@
       
       
         &lt;h2 id=&quot;ret2syscall&quot;&gt;&lt;a href=&quot;#ret2syscall&quot; class=&quot;headerlink&quot; title=&quot;ret2syscall&quot;&gt;&lt;/a&gt;ret2syscall&lt;/h2&gt;&lt;p&gt;ret2syscall，即控制程序执行系统调用，获取shell。&lt;/
-      
-    
-    </summary>
-    
-      <category term="Pwn" scheme="https://Mi1k7ea.github.com/categories/Pwn/"/>
-    
-    
-      <category term="二进制" scheme="https://Mi1k7ea.github.com/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/"/>
-    
-      <category term="栈溢出" scheme="https://Mi1k7ea.github.com/tags/%E6%A0%88%E6%BA%A2%E5%87%BA/"/>
-    
-      <category term="Pwn" scheme="https://Mi1k7ea.github.com/tags/Pwn/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>栈溢出之ret2shellcode</title>
-    <link href="https://Mi1k7ea.github.com/2019/03/03/%E6%A0%88%E6%BA%A2%E5%87%BA%E4%B9%8Bret2shellcode/"/>
-    <id>https://Mi1k7ea.github.com/2019/03/03/栈溢出之ret2shellcode/</id>
-    <published>2019-03-03T10:52:58.000Z</published>
-    <updated>2019-03-05T15:04:22.654Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h2><p>ret2shellcode，即控制程序执行shellcode代码——<strong>修改函数返回地址，让其指向溢出数据中的一段指令</strong>。</p><p>shellcode指的是用于完成某个功能的汇编代码，常见的功能主要是获取目标系统的 shell。一般来说，shellcode 需要我们自己填充。另外，要想执行 shellcode，需要shellcode所在的区域具有可执行权限。</p><p>ret2shellcode的实现在于：在溢出数据内包含一段攻击指令，用攻击指令的起始地址覆盖掉返回地址。</p><blockquote><p><strong>payload :</strong> padding1 + address of shellcode + padding2 + shellcode</p></blockquote><p><img src="/2019/03/03/栈溢出之ret2shellcode/1.png" alt=""></p><p>padding1 处的数据可以随意填充（注意如果利用字符串程序输入溢出数据不要包含 “\x00” ，否则向程序传入溢出数据时会造成截断），长度应该刚好覆盖函数的基地址。address of shellcode 是后面 shellcode 起始处的地址，用来覆盖返回地址。padding2 处的数据也可以随意填充，长度可以任意。shellcode 应该为十六进制的机器码格式，但有个前提是shellcode所在的代码段需要具有可执行权限。</p><p><strong>一个问题——shellcode地址如何确定？</strong></p><p>我们可以在调试工具里查看返回地址的位置（可以查看 ebp 的内容然后再加4（32位机）），可是在调试工具里的这个地址和正常运行时并不一致，这是运行时环境变量等因素有所不同造成的。所以这种情况下我们只能得到大致但不确切的 shellcode 起始地址，<strong>解决办法是在 padding2 里填充若干长度的 “\x90”</strong>。这个机器码对应的指令是 NOP (No Operation)，也就是告诉 CPU 什么也不做，然后跳到下一条指令。<strong>有了这一段 NOP 的填充，只要返回地址能够命中这一段中的任意位置，都可以无副作用地跳转到 shellcode 的起始处，所以这种方法被称为 NOP Sled</strong>。这样我们就可以通过增加 NOP 填充来配合试验 shellcode 起始地址。</p><p>操作系统可以将函数调用栈的起始地址设为随机化（这种技术被称为内存布局随机化，即ASLR），这样程序每次运行时函数返回地址会随机变化。反之如果操作系统关闭了上述的随机化（这是技术可以生效的前提），那么程序每次运行时函数返回地址会是相同的，这样我们可以通过输入无效的溢出数据来生成core文件，再通过调试工具在core文件中找到返回地址的位置，从而确定 shellcode 的起始地址。</p><p>最后可以拼接出最终的溢出数据，输入至程序来执行 shellcode 了：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/2.png" alt=""></p><p>这种方法生效的一个前提是在函数调用栈上的数据（shellcode）要有可执行的权限（另一个前提是上面提到的关闭内存布局随机化）。很多时候操作系统会关闭函数调用栈的可执行权限，这样 shellcode 的方法就失效了，不过我们还可以尝试使用内存里已有的指令或函数，毕竟这些部分本来就是可执行的，所以不会受上述执行权限的限制。这就包括ret2libc等其他的ROP方法。</p><p><strong>前提条件</strong></p><p>由前面分析可知，ret2shell这项技术的前提是需要操作系统关闭内存布局随机化（ASLR）以及需要程序调用栈有可执行权限。</p><h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>运行程序，提示这次没有system()给你直接调用，且文件是动态链接的：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/3.png" alt=""></p><p><img src="/2019/03/03/栈溢出之ret2shellcode/4.png" alt=""></p><p>checksec可以看出源程序没有开启任何保护：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/5.png" alt=""></p><p>IDA打开查看，程序仍然是基本的栈溢出漏洞，不过这次还同时将对应的字符串复制到buf2处，简单地说，就是程序允许用户输入一段内容，然后程序将该内容复制到buf2中：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/6.png" alt=""></p><p>点击查看可知buf2在bss段：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/7.png" alt=""></p><p>string窗口确实如题目所示，没有直接提供system(“/bin/sh”)给我们调用了：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/8.png" alt=""></p><p>为了明确是否可以将shellcode写入buf2中执行，通过vmmap可以看到bss段对应的地址具有可执行权限（先main下断点、r再vmmap）：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/9.png" alt=""></p><p>可以看到，buf2变量所在的bss段是可读可写可执行的，因此这里可以输入shellcode、然后程序将shellcode复制至此处，最后在函数返回地址处踩掉该地址跳转至buf2执行shellcode。整个过程即为ret2shellcode原理。</p><p>使用GDB pattern字符串溢出计算变量v4到函数返回地址的偏移量为112，即0x70：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/11.png" alt=""></p><p>编写payload，使用pwntools的asm(shellcraft.sh())可以直接简便地生成汇编代码形式的反弹shell的shellcode：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2shellcode"</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">buf2_addr = <span class="number">0x0804a080</span></span><br><span class="line">payload = flat([shellcode.ljust(<span class="number">0x70</span>, <span class="string">"A"</span>), buf2_addr])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure><p>运行直接getshell：</p><p><img src="/2019/03/03/栈溢出之ret2shellcode/10.png" alt=""></p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://zhuanlan.zhihu.com/p/25816426" target="_blank" rel="noopener">手把手教你栈溢出从入门到放弃（上）</a></p><p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/basic-rop/#ret2shellcode" target="_blank" rel="noopener">ret2shellcode</a></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2 id=&quot;ret2shellcode&quot;&gt;&lt;a href=&quot;#ret2shellcode&quot; class=&quot;headerlink&quot; title=&quot;ret2shellcode&quot;&gt;&lt;/a&gt;ret2shellcode&lt;/h2&gt;&lt;p&gt;ret2shellcode，即控制程序执行shell
       
     
     </summary>
