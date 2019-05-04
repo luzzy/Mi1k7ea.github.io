@@ -14,12 +14,14 @@
 <meta property="og:site_name" content="Mi1k7ea">
 <meta property="og:description" content="这里主要介绍一下Linux下ELF文件的一些安全防御机制及其原理，其在二进制安全和Pwn上经常会碰到，至于各个类型的绕过技巧后面会补充。 NX（DEP）NX即No-eXecute（不可执行）的意思，NX（即Windows上类似的DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/09/ELF安全防御机制小结/1.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/02/09/ELF安全防御机制小结/1.jpg">
-<meta property="og:updated_time" content="2019-02-09T05:24:22.866Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/02/09/ELF安全防御机制小结/2.png">
+<meta property="og:updated_time" content="2019-05-01T07:23:23.322Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ELF安全防御机制小结">
 <meta name="twitter:description" content="这里主要介绍一下Linux下ELF文件的一些安全防御机制及其原理，其在二进制安全和Pwn上经常会碰到，至于各个类型的绕过技巧后面会补充。 NX（DEP）NX即No-eXecute（不可执行）的意思，NX（即Windows上类似的DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/02/09/ELF安全防御机制小结/1.jpg">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/02/09/ELF安全防御机制小结/1.png">
     
     
         
@@ -167,9 +169,17 @@
 <p>通常开启了NX后，即使有栈溢出漏洞也执行不了写在栈上的shellcode，但是可通过ROP方式来绕过NX跳转至其他地方执行。</p>
 <p>gcc编译器默认开启了NX选项，如果需要关闭NX选项，可以给gcc编译器添加-z execstack参数。例如：gcc -z execstack -o test test.c</p>
 <p>在Windows下，类似的概念为DEP（数据执行保护），在最新版的Visual Studio中默认开启了DEP编译选项。</p>
+<p>原理如图：</p>
+<p><img src="/2019/02/09/ELF安全防御机制小结/1.png" alt="NX"></p>
 <p>网上找的示例图：</p>
 <p><img src="/2019/02/09/ELF安全防御机制小结/1.jpg" alt="NX"></p>
-<h2 id="PIE（ASLR）"><a href="#PIE（ASLR）" class="headerlink" title="PIE（ASLR）"></a>PIE（ASLR）</h2><p>PIE（Position-Independent Executables）位置无关的可执行文件，和Windows下的ASLR（Address Space Layout Randomization)机制类似，PIE enabled表示程序开启地址随机化选、意味着程序每次运行的时候地址都会变化，而如果没有开PIE的话那么No PIE (0x400000)，括号内的数据就是程序的基地址。</p>
+<h2 id="PIE（ASLR）"><a href="#PIE（ASLR）" class="headerlink" title="PIE（ASLR）"></a>PIE（ASLR）</h2><p>（1）ASLR（Address Space Layout Randomization）：地址随机化，通常用来防御return2libc攻击，有以下3种配置：</p>
+<p>​         0 - 表示关闭进程地址空间随机化。</p>
+<p>​         1 - 表示将mmap的基址，stack和vdso页面随机化。</p>
+<p>​         2 - 表示在1的基础上增加栈（heap）的随机化。</p>
+<p>（2）PIE（Position-Independent Executables）：位置无关的可执行文件，和Windows下的ASLR（Address Space Layout Randomization)机制类似，PIE enabled表示程序开启地址随机化选、意味着程序每次运行的时候地址都会变化。主要是为了解决二进制本身地址已知的问题，可用来防御return2elf和其他已知地址读写问题。</p>
+<p>默认情况下，PIE未开启，x86加载的基地址为0x8048000，而x64加载的基址为0x400000。</p>
+<p>开启PIE后，elf中相对偏移不变，但加载机制每次均变化。</p>
 <p>一般情况下NX（DEP）和PIE（ASLR）会同时工作。</p>
 <p>PIE机制有以下三种情况：</p>
 <p>​         0 - 表示关闭进程地址空间随机化。</p>
@@ -178,8 +188,13 @@
 <p>可以防范基于Ret2libc方式的针对DEP的攻击。ASLR和DEP配合使用，能有效阻止攻击者在堆栈上运行恶意代码。</p>
 <p>Built as PIE：位置独立的可执行区域PIE。这样使得在利用缓冲溢出和移动操作系统中存在的其他内存崩溃缺陷时采用面向返回的编程ROP（return-oriented programming）方法变得难得多。</p>
 <p>liunx下关闭PIE的命令如下：sudo -s echo 0 &gt; /proc/sys/kernel/randomize_va_space</p>
-<h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p>RELRO（Relocation Read Only）重定向只读，实现就是由linker指定binary的一块经过dynamic linker处理过 relocation之后的区域为只读。通过设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，保护库函数的调用不受攻击者重定位的影响，从而减少对GOT（Global Offset Table）攻击。</p>
-<p>RELRO有Partial RELRO和FULL RELRO两个选项，如果开启FULL RELRO，意味着无法修改GOT表；如果为Partial RELRO，说明对GOT表具有写权限。</p>
+<h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p>RELRO（Relocation Read Only）重定向只读，实现就是由linker指定binary的一块经过dynamic linker处理过 relocation之后的区域为只读，用来防御hijack GOT攻击。通过设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，保护库函数的调用不受攻击者重定位的影响，从而减少对GOT（Global Offset Table）攻击。</p>
+<p>动态函数在第一次懒加载过程中，会使用到重定位表格进行符号搜索，并将搜索到的函数信息保存到重定位项中，第二次直接跳转到重定位项中。而攻击者可以修改重定位表格或重定位项来实现hijack GOT表攻击。</p>
+<p>RELRO有Partial RELRO和FULL RELRO两个选项，如果开启FULL RELRO，意味着无法修改GOT表；如果为Partial RELRO，说明对GOT表具有写权限。在Linux下默认开启状态。</p>
+<ul>
+<li>Partial RELRO：重定位表格只读，重定位项可读写；</li>
+<li>FULL RELRO：重定位表格和重定位项均为只读（但会导致符号懒加载失效，同时会带来启动时的效率下降）；</li>
+</ul>
 <p>可通过ROP绕过。</p>
 <h2 id="FORTIFY"><a href="#FORTIFY" class="headerlink" title="FORTIFY"></a>FORTIFY</h2><p>Fortify 技术是GCC在编译源码时判断程序的哪些buffer会存在可能的溢出，在buffer大小已知的情况下，GCC会把 strcpy、memcpy,、memset等函数自动替换成相应的 __strcpy_chk(dst, src, dstlen)等函数，达到防止缓冲区溢出的作用。</p>
 <p>FORTIFY_SOURCE机制对格式化字符串有两个限制：</p>
@@ -191,6 +206,14 @@
 <p>如果开启了-D_FORTIFY_SOURCE=2，那么调用__printf_chk函数的时候会检查format string中是否存在%n，如果存在%n 而且format string是在一个可写的segment中的（不是在read-only内存段中），那么程序会报错并终止。如果是开启-D_FORTIFY_SOURCE=1，那么就不会报错。</p>
 <h2 id="CANARY（Stack）"><a href="#CANARY（Stack）" class="headerlink" title="CANARY（Stack）"></a>CANARY（Stack）</h2><p>Stack，栈溢出检查，用Canary是否变化来检测，其中Canary found表示开启。</p>
 <p>Canary是一种缓冲区溢出攻击缓解手段：启用栈保护后，函数开始执行的时候会先往栈里插入cookie信息，当函数真正返回的时候会验证cookie信息是否合法，如果不合法就停止程序运行。攻击者在覆盖返回地址的时候往往也会将cookie信息给覆盖掉，导致栈保护检查失败而阻止shellcode的执行。在Linux将cookie信息称为Canary。</p>
+<p>如图：</p>
+<p><img src="/2019/02/09/ELF安全防御机制小结/2.png" alt=""></p>
+<p>在GCC中开启Canary有3中选项：</p>
+<ul>
+<li>禁用Canary：gcc -fno-stack-protector -o test test.c</li>
+<li>启用Canary，但只为局部变量中含有char数组的函数插入保护代码：gcc -fstack-protector -o test test.c</li>
+<li>启用Canary，为所有函数插入保护代码：gcc -fstack-protector-all -o test test.c</li>
+</ul>
 <p>如果栈中开启Canary found，那么就不能用直接用溢出的方法覆盖栈中返回地址，而且要通过改写指针与局部变量、leak canary、overwrite canary的方法来绕过。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.jianshu.com/p/6e528b33e37a" target="_blank" rel="noopener">Pwn基础知识笔记</a></p>
 <p><a href="https://blog.csdn.net/axiejundong/article/details/73065023?utm_source=blogxgwz8" target="_blank" rel="noopener">软件常用安全防护手段 checksec 总结</a></p>
