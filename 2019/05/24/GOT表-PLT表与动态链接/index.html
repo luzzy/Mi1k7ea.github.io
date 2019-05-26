@@ -6,18 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="0x01 GOT表和PLT表… 0x02 动态链接…">
+    <meta name="description" content="当一个程序被加载进内存时，动态链接器会把需要的共享库加载并绑定到该进程的地址空间中。 共享库在被编译到可执行文件中时是位置独立的，因此很容易被重定位到进程的地址空间中。一个共享库就是一个动态的ELF目标文件。在终端输入readelf -h libc.so命令，会看到e_type（ELF文件类型）是ET_DYN。动态目标文件与可执行文件非常类似，是由程序解释器加载的，通常没有PT_INTERP段，因">
 <meta name="keywords" content="二进制">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GOT表,PLT表与动态链接">
+<meta property="og:title" content="ELF动态链接,PLT和GOT">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="0x01 GOT表和PLT表… 0x02 动态链接…">
+<meta property="og:description" content="当一个程序被加载进内存时，动态链接器会把需要的共享库加载并绑定到该进程的地址空间中。 共享库在被编译到可执行文件中时是位置独立的，因此很容易被重定位到进程的地址空间中。一个共享库就是一个动态的ELF目标文件。在终端输入readelf -h libc.so命令，会看到e_type（ELF文件类型）是ET_DYN。动态目标文件与可执行文件非常类似，是由程序解释器加载的，通常没有PT_INTERP段，因">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-05-24T15:29:10.596Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/1.png">
+<meta property="og:updated_time" content="2019-05-26T15:48:13.321Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="GOT表,PLT表与动态链接">
-<meta name="twitter:description" content="0x01 GOT表和PLT表… 0x02 动态链接…">
+<meta name="twitter:title" content="ELF动态链接,PLT和GOT">
+<meta name="twitter:description" content="当一个程序被加载进内存时，动态链接器会把需要的共享库加载并绑定到该进程的地址空间中。 共享库在被编译到可执行文件中时是位置独立的，因此很容易被重定位到进程的地址空间中。一个共享库就是一个动态的ELF目标文件。在终端输入readelf -h libc.so命令，会看到e_type（ELF文件类型）是ET_DYN。动态目标文件与可执行文件非常类似，是由程序解释器加载的，通常没有PT_INTERP段，因">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/1.png">
     
     
         
@@ -37,7 +39,7 @@
         
     
     <!-- title -->
-    <title>GOT表,PLT表与动态链接</title>
+    <title>ELF动态链接,PLT和GOT</title>
     <!-- styles -->
     <link rel="stylesheet" href="/css/style.css">
     <!-- persian styles -->
@@ -94,20 +96,20 @@
     <div id="share" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&text=GOT表,PLT表与动态链接"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&is_video=false&description=GOT表,PLT表与动态链接"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=GOT表,PLT表与动态链接&body=Check out this article: https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&name=GOT表,PLT表与动态链接&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&text=ELF动态链接,PLT和GOT"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&is_video=false&description=ELF动态链接,PLT和GOT"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ELF动态链接,PLT和GOT&body=Check out this article: https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&name=ELF动态链接,PLT和GOT&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-GOT表和PLT表"><span class="toc-number">1.</span> <span class="toc-text">0x01 GOT表和PLT表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-动态链接"><span class="toc-number">2.</span> <span class="toc-text">0x02 动态链接</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-辅助向量"><span class="toc-number">1.</span> <span class="toc-text">0x01 辅助向量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-GOT表和PLT表"><span class="toc-number">2.</span> <span class="toc-text">0x02 GOT表和PLT表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-number">3.</span> <span class="toc-text">0x03 参考</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -119,7 +121,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        GOT表,PLT表与动态链接
+        ELF动态链接,PLT和GOT
     </h1>
 
 
@@ -160,9 +162,34 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="0x01-GOT表和PLT表"><a href="#0x01-GOT表和PLT表" class="headerlink" title="0x01 GOT表和PLT表"></a>0x01 GOT表和PLT表</h2><p>…</p>
-<h2 id="0x02-动态链接"><a href="#0x02-动态链接" class="headerlink" title="0x02 动态链接"></a>0x02 动态链接</h2><p>…</p>
-
+    <p>当一个程序被加载进内存时，动态链接器会把需要的共享库加载并绑定到该进程的地址空间中。</p>
+<p>共享库在被编译到可执行文件中时是位置独立的，因此很容易被重定位到进程的地址空间中。一个共享库就是一个动态的ELF目标文件。在终端输入readelf -h libc.so命令，会看到e_type（ELF文件类型）是ET_DYN。动态目标文件与可执行文件非常类似，是由程序解释器加载的，通常没有PT_INTERP段，因而不会触发程序解释器。</p>
+<p>当一个共享库被加载进一个进程的地址空间中时，一定有指向其他共享库的重定位。动态链接器会修改可执行文件中的GOT（Global Offset Table全局偏移表）。GOT位于数据段中（.got.plt节），因为GOT必须是可写的（至少最初是可写的，可以将只读重定位看做是一种安全特性），因而位于数据段中。动态链接器会使用解析好的共享库地址来修改GOT。</p>
+<h2 id="0x01-辅助向量"><a href="#0x01-辅助向量" class="headerlink" title="0x01 辅助向量"></a>0x01 辅助向量</h2><p>通过系统调用sys_execve()将程序加载到内存中时，对应的可执行文件会被映射到内存的地址空间，并为该进程的地址空间分配一个栈。这个栈会用特定的方式向动态链接器传递信息。这种特定的对信息的设置和安排即为辅助向量（auxv）。</p>
+<p>如下x86结构中，占地存放了以下信息：</p>
+<p><img src="/2019/05/24/GOT表-PLT表与动态链接/1.png" alt=""></p>
+<p>辅助向量是一系列ElfN_auxv_t的结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> HAVE_ELF32_AUXV_T </span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> </span></span><br><span class="line"><span class="class">&#123;</span> </span><br><span class="line">  <span class="keyword">uint32_t</span> a_type;	<span class="comment">/* Entry type */</span> </span><br><span class="line">  <span class="keyword">union</span> </span><br><span class="line">    &#123; </span><br><span class="line">      <span class="keyword">uint32_t</span> a_val;	<span class="comment">/* Integer value */</span> </span><br><span class="line">      <span class="comment">/* We use to have pointer elements added here.  We cannot do that, </span></span><br><span class="line"><span class="comment">	though, since it does not work when using 32-bit definitions </span></span><br><span class="line"><span class="comment">	on 64-bit platforms and vice versa.  */</span> </span><br><span class="line">    &#125; a_un; </span><br><span class="line">&#125; Elf32_auxv_t; </span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> </span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> HAVE_ELF64_AUXV_T </span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> </span></span><br><span class="line"><span class="class">&#123;</span> </span><br><span class="line">  <span class="keyword">uint64_t</span> a_type;	<span class="comment">/* Entry type */</span> </span><br><span class="line">  <span class="keyword">union</span> </span><br><span class="line">    &#123; </span><br><span class="line">      <span class="keyword">uint64_t</span> a_val;	<span class="comment">/* Integer value */</span> </span><br><span class="line">      <span class="comment">/* We use to have pointer elements added here.  We cannot do that, </span></span><br><span class="line"><span class="comment">	though, since it does not work when using 32-bit definitions </span></span><br><span class="line"><span class="comment">	on 64-bit platforms and vice versa.  */</span> </span><br><span class="line">    &#125; a_un; </span><br><span class="line">&#125; Elf64_auxv_t; </span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>a_type指定了辅助向量的条目类型，a_val为辅助向量的值。</p>
+<p>下面是动态链接器所需要的一些最重要的条目类型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AT_EXECFD	2		<span class="comment">/* File descriptor of program */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AT_PHDR		3		<span class="comment">/* Program headers for program */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AT_PHENT	4		<span class="comment">/* Size of program header entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AT_PHNUM	5		<span class="comment">/* Number of program headers */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AT_PAGESZ	6		<span class="comment">/* System page size */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AT_ENTRY	9		<span class="comment">/* Entry point of program */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AT_UID		11		<span class="comment">/* Real uid */</span></span></span><br></pre></td></tr></table></figure>
+<p>动态链接器从栈中检索可执行程序相关的信息，如程序头、程序入口地址等。上面列出的只是从/usr/include/elf.h中挑选出的几个辅助向量条目类型。</p>
+<p>辅助向量是由内核函数create_elf_tables()设定的，该函数在Linux的源码/usr/src/linux/fs/binfmt_elf.c中。</p>
+<p>内核的执行过程和如下描述类似：</p>
+<ol>
+<li>sys_execve()</li>
+<li>调用do_execve_common()</li>
+<li>调用search_binary_handler()</li>
+<li>调用load_elf_binary()</li>
+<li>调用create_elf_tables()</li>
+</ol>
+<p>下面是/usr/src/linux/fs/binfmt_elf.c中的函数create_elf_tables()的代码，这段代码会添加辅助向量条目：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);</span><br><span class="line">NEW_AUX_ENT(AT_PHDR, load_addr + exec-&gt;e_phoff);</span><br><span class="line">NEW_AUX_ENT(AT_PHENT, <span class="keyword">sizeof</span> (struct elf_phdr));</span><br><span class="line">NEW_AUX_ENT(AT_PHNUM, exec-&gt;e_phnum);</span><br><span class="line">NEW_AUX_ENT(AT_BASE, interp_load_addr);</span><br><span class="line">NEW_AUX_ENT(AT_ENTRY, exec-&gt;e_entry);</span><br></pre></td></tr></table></figure>
+<p>可以看到，ELF的入口点和程序头地址，以及其他的值，是与内核中的NEW_AUX_ENT()宏一起入栈的。</p>
+<p>程序被加载进内存，辅助向量被填充好之后，控制权就交给了动态链接器。动态链接器会解析要链接到进程地址空间的用于共享库的符号和重定位。默认情况下，可执行文件会动态链接GNU C库libc.so。</p>
+<p>ldd命令能显示出一个给定的可执行文件所依赖的共享库列表。</p>
+<h2 id="0x02-GOT表和PLT表"><a href="#0x02-GOT表和PLT表" class="headerlink" title="0x02 GOT表和PLT表"></a>0x02 GOT表和PLT表</h2><p>…</p>
+<h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2>
   </div>
 </article>
 
@@ -205,21 +232,21 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-GOT表和PLT表"><span class="toc-number">1.</span> <span class="toc-text">0x01 GOT表和PLT表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-动态链接"><span class="toc-number">2.</span> <span class="toc-text">0x02 动态链接</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-辅助向量"><span class="toc-number">1.</span> <span class="toc-text">0x01 辅助向量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-GOT表和PLT表"><span class="toc-number">2.</span> <span class="toc-text">0x02 GOT表和PLT表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-number">3.</span> <span class="toc-text">0x03 参考</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&text=GOT表,PLT表与动态链接"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&is_video=false&description=GOT表,PLT表与动态链接"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=GOT表,PLT表与动态链接&body=Check out this article: https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=GOT表,PLT表与动态链接"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&name=GOT表,PLT表与动态链接&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&text=ELF动态链接,PLT和GOT"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&is_video=false&description=ELF动态链接,PLT和GOT"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ELF动态链接,PLT和GOT&body=Check out this article: https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&title=ELF动态链接,PLT和GOT"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/05/24/GOT表-PLT表与动态链接/&name=ELF动态链接,PLT和GOT&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
