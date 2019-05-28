@@ -1,169 +1,299 @@
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.8.0">
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="0x01 何为SAXReader官方描述：  Flexible XML framework for Java.   即灵活的Java XML框架，用于解析XML格式的内容。 0x02 常规用法Demo需要下载dom4j的jar包：https://dom4j.github.io/ 先定义一个user.xml，用于让DocumentBuilder来解析： 123456&amp;lt;?xml version=">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="Mi1k7ea">
+
+
+
+<meta name="description" content="已完结.">
 <meta name="keywords" content="Web安全,Java,XML注入">
 <meta property="og:type" content="article">
 <meta property="og:title" content="XML注入之SAXReader">
 <meta property="og:url" content="https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="0x01 何为SAXReader官方描述：  Flexible XML framework for Java.   即灵活的Java XML框架，用于解析XML格式的内容。 0x02 常规用法Demo需要下载dom4j的jar包：https://dom4j.github.io/ 先定义一个user.xml，用于让DocumentBuilder来解析： 123456&amp;lt;?xml version=">
+<meta property="og:description" content="已完结.">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/1.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/2.png">
-<meta property="og:updated_time" content="2019-05-26T11:02:31.342Z">
+<meta property="og:updated_time" content="2019-05-28T14:15:59.666Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XML注入之SAXReader">
-<meta name="twitter:description" content="0x01 何为SAXReader官方描述：  Flexible XML framework for Java.   即灵活的Java XML框架，用于解析XML格式的内容。 0x02 常规用法Demo需要下载dom4j的jar包：https://dom4j.github.io/ 先定义一个user.xml，用于让DocumentBuilder来解析： 123456&amp;lt;?xml version=">
+<meta name="twitter:description" content="已完结.">
 <meta name="twitter:image" content="https://mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/1.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>XML注入之SAXReader</title>
-    <!-- styles -->
-    <link rel="stylesheet" href="/css/style.css">
-    <!-- persian styles -->
-    
-      <link rel="stylesheet" href="/css/rtl.css">
-    
-    <!-- rss -->
-    
-    
-</head>
 
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">主页</a></li>
-         
-          <li><a href="/categories/">目录</a></li>
-         
-          <li><a href="/tags/">标签</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="https://blog.csdn.net/ski_12/">CSDN</a></li>
-         
-          <li><a href="/atom.xml">RSS</a></li>
-        
-      </ul>
-    </span>
-    <br>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/05/26/XML注入之SAXParser/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/05/24/GOT表-PLT表与动态链接/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&text=XML注入之SAXReader"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&is_video=false&description=XML注入之SAXReader"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=XML注入之SAXReader&body=Check out this article: https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&name=XML注入之SAXReader&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-</ul>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-何为SAXReader"><span class="toc-number">1.</span> <span class="toc-text">0x01 何为SAXReader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-常规用法Demo"><span class="toc-number">2.</span> <span class="toc-text">0x02 常规用法Demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-XML注入漏洞验证"><span class="toc-number">3.</span> <span class="toc-text">0x03 XML注入漏洞验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-检测方法"><span class="toc-number">4.</span> <span class="toc-text">0x04 检测方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-防御方法"><span class="toc-number">5.</span> <span class="toc-text">0x05 防御方法</span></a></li></ol>
-    </div>
-  </span>
+
+    <link rel="alternate" href="/atom.xml" title="Mi1k7ea" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>XML注入之SAXReader | Mi1k7ea</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Mi1k7ea</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="true">
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">Home</a></li>
+                        
+                            <li><a href="/archives/">Articles</a></li>
+                        
+                            <li><a href="/tags/">Tags</a></li>
+                        
+                            <li><a href="/about/">About</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:mi1k7ea@163.com" title="Email"></a>
+                            
+                                <a class="fa CSDN" href="https://blog.csdn.net/ski_12/" title="CSDN"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AWD/">AWD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-C/">C/C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLI/">SQLI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL注入/">SQL注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XML注入/">XML注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/">XSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二进制/">二进制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆溢出/">堆溢出</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全开发/">安全开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/栈溢出/">栈溢出</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+
+                
+                
+                <section class="switch-part switch-part3">
+                
+                    <div id="js-aboutme">安全界咸鱼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
 </div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Mi1k7ea</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Mi1k7ea</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">Home</a></li>
+                
+                    <li><a href="/archives/">Articles</a></li>
+                
+                    <li><a href="/tags/">Tags</a></li>
+                
+                    <li><a href="/about/">About</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:mi1k7ea@163.com" title="Email"></a>
+                            
+                                <a class="fa CSDN" target="_blank" href="https://blog.csdn.net/ski_12/" title="CSDN"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-XML注入之SAXReader" class="article article-type-post" itemscope="" itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/05/24/XML注入之SAXReader/" class="article-date">
+      <time datetime="2019-05-24T13:42:39.000Z" itemprop="datePublished">2019-05-24</time>
+</a>
 
+
+    </div>
+  
+  <div class="article-inner">
     
-    <div class="content index py4">
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
         
-        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        XML注入之SAXReader
+  
+    <h1 class="article-title" itemprop="name">
+      XML注入之SAXReader
     </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-        <span itemprop="name">Mi1k7ea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-05-24T13:42:39.000Z" itemprop="datePublished">2019-05-24</time>
-        
-      
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fas fa-archive"></i>
-        <a class="category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Java/">Java</a>, <a class="tag-link" href="/tags/Web安全/">Web安全</a>, <a class="tag-link" href="/tags/XML注入/">XML注入</a>
-    </div>
-    <div class="article-tag">
-        <i class="fas fa-eye"></i>
-        阅读量：<span id="busuanzi_value_page_pv"></span>
-    </div>
-
-
-    </div>
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h2 id="0x01-何为SAXReader"><a href="#0x01-何为SAXReader" class="headerlink" title="0x01 何为SAXReader"></a>0x01 何为SAXReader</h2><p>官方描述：</p>
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XML注入/">XML注入</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="0x01-何为SAXReader"><a href="#0x01-何为SAXReader" class="headerlink" title="0x01 何为SAXReader"></a>0x01 何为SAXReader</h2><p>官方描述：</p>
 <blockquote>
 <p>Flexible XML framework for Java. </p>
 </blockquote>
@@ -189,124 +319,216 @@
 <p>3、除了setFeature()的设置外，检查Reader在read()解析xml数据之前是否采用setEntityResolver()的方式来设置自定义实体解析方式；</p>
 <h2 id="0x05-防御方法"><a href="#0x05-防御方法" class="headerlink" title="0x05 防御方法"></a>0x05 防御方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">saxReader.setFeature(<span class="string">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <span class="keyword">true</span>);</span><br><span class="line">saxReader.setFeature(<span class="string">"http://xml.org/sax/features/external-general-entities"</span>, <span class="keyword">false</span>);</span><br><span class="line">saxReader.setFeature(<span class="string">"http://xml.org/sax/features/external-parameter-entities"</span>, <span class="keyword">false</span>);</span><br><span class="line">saxReader.setFeature(<span class="string">"http://apache.org/xml/features/nonvalidating/load-external-dtd"</span>, <span class="keyword">false</span>);</span><br></pre></td></tr></table></figure>
 
+      
+    </div>
+    
   </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/05/24/XML注入之SAXReader/">XML注入之SAXReader</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Mi1k7ea</a></p>
+        <p><span>发布时间:</span>2019-05-24, 21:42:39</p>
+        <p><span>最后更新:</span>2019-05-28, 22:15:59</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/05/24/XML注入之SAXReader/" title="XML注入之SAXReader">https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2019/05/26/XML注入之SAXParser/">
+                    XML注入之SAXParser
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/05/24/GOT表-PLT表与动态链接/">
+                    ELF动态链接,PLT和GOT
+                </a>
+            </div>
+        
+    </nav>
+
+  
 </article>
 
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-何为SAXReader"><span class="toc-number">1.</span> <span class="toc-text">0x01 何为SAXReader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-常规用法Demo"><span class="toc-number">2.</span> <span class="toc-text">0x02 常规用法Demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-XML注入漏洞验证"><span class="toc-number">3.</span> <span class="toc-text">0x03 XML注入漏洞验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-检测方法"><span class="toc-number">4.</span> <span class="toc-text">0x04 检测方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-防御方法"><span class="toc-number">5.</span> <span class="toc-text">0x05 防御方法</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
 
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<br><br>
-<div id="vcomments"></div>
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
     <script>
-        new Valine({
-            av: AV,
-            el: '#vcomments',
-            appId: 'Jyl0XQwm2jIH31Tx16dygCNv-gzGzoHsz',
-            appKey: 'Iqq1VTg9X5EfKJt3MMIj8MMB',
-            placeholder: '大佬亲临寒站，可否指点一二',
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"XML注入之SAXReader　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2019/05/26/XML注入之SAXParser/" title="上一篇: XML注入之SAXParser">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/05/24/GOT表-PLT表与动态链接/" title="下一篇: ELF动态链接,PLT和GOT">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/05/26/XML注入之SAXBuilder/">XML注入之SAXBuilder</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/26/XML注入之SAXParser/">XML注入之SAXParser</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/24/XML注入之SAXReader/">XML注入之SAXReader</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/24/GOT表-PLT表与动态链接/">ELF动态链接,PLT和GOT</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/04/PHP对象注入之pop链构造/">PHP对象注入之pop链构造</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/27/堆基础/">堆基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/21/PHP-session反序列化漏洞/">PHP session反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/花式栈溢出之stack-pivoting/">花式栈溢出之stack pivoting</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/15/ELF二进制格式/">ELF二进制格式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/12/中级ROP之ret2csu/">栈溢出之ret2csu</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/09/蒸米ROP学习笔记/">蒸米32位及64位ROP笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/07/pwntools笔记/">pwntools笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/05/Spring-Data-Rest之cve-2017-8046分析/">浅析Spring Data Rest之cve-2017-8046</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/31/0CTF-Web-writeup/">0CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/29/Securinets-CTF-Web-writeup/">Securinets CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/24/C编写实现Linux反弹shell/">C编写实现Linux反弹shell</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/23/花式栈溢出之Stack-smash/">花式栈溢出之Stack smash</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/22/图片XSS小结/">图片XSS小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/">Teaser CONFidence CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/17/SpEL注入之javacon/">SpEL注入之javacon</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/13/AeroCTF-writeupup之board-tracking-system/">AeroCTF writeupup之board tracking system</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/09/TAMUctf-Web-writeup/">TAMUctf Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/08/TAMUctf-Pwn-writeup/">TAMUctf Pwn writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/05/栈溢出之ret2libc/">栈溢出之ret2libc</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出之ret2syscall/">栈溢出之ret2syscall</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出之ret2shellcode/">栈溢出之ret2shellcode</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/ROP之ret2text/">ROP基础及栈溢出之ret2text</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出基本原理/">栈溢出基本原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈及栈帧/">栈基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/24/CSP策略及绕过技巧小结/">CSP策略及绕过技巧小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/21/一道绕过CSP的XSS题目/">一道绕过CSP的XSS题目</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/19/一些加载XSS-Payload的标签/">一些加载XSS Payload的标签</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/16/个人XSS-payload收集/">个人XSS payload收集</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/15/XSS闯关之xss-haozi-me/">XSS闯关之xss.haozi.me</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/13/XML注入之DocumentBuilder/">XML注入之DocumentBuilder与XXE攻击防御</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/09/ELF安全防御机制小结/">ELF安全防御机制小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/06/Java反序列化漏洞/">Java反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/03/Java序列化和反序列化机制/">Java序列化和反序列化机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/01/Java动态代理机制/">Java动态代理机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/01/Java反射机制/">Java反射机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/31/PHP伪协议/">PHP伪协议</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/30/常见Web漏洞类型/">常见Web漏洞类型总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/28/IA-32寄存器/">IA-32（Intel Architecture 32位）寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Sqli-labs-writeup/">Sqli-labs Less1-20</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/SQL注入写WebShell方式小结/">SQL注入写WebShell方式小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Python安全小工具之反编译pyc文件/">Python安全小工具之反编译pyc文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Linux环境与相关工具/">Linux环境与相关工具</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PHP反序列化漏洞/">PHP unserialize反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PyYAML反序列化漏洞/">Python PyYAML反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/通过DVWA学习DOM型XSS/">DVWA之DOM型XSS</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/HITB_Binary_100_writeup/">HITB Binary 100 writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/">Windows下的一种PHP隐藏后门姿势</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/XMLDecoder反序列化漏洞/">Java XMLDecoder反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/cPickle反序列化漏洞/">Python cPickle反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/phar反序列化漏洞/">phar反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PHP内存型木马/">PHP内存型木马</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2019 Mi1k7ea
+            </div>
+            <div class="footer-right">
+                Welcome to M1ik7ea's blog <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 6;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
         })
     </script>
 
 
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
 
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">主页</a></li>
-         
-          <li><a href="/categories/">目录</a></li>
-         
-          <li><a href="/tags/">标签</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="https://blog.csdn.net/ski_12/">CSDN</a></li>
-         
-          <li><a href="/atom.xml">RSS</a></li>
-        
-      </ul>
-    </div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-何为SAXReader"><span class="toc-number">1.</span> <span class="toc-text">0x01 何为SAXReader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-常规用法Demo"><span class="toc-number">2.</span> <span class="toc-text">0x02 常规用法Demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-XML注入漏洞验证"><span class="toc-number">3.</span> <span class="toc-text">0x03 XML注入漏洞验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-检测方法"><span class="toc-number">4.</span> <span class="toc-text">0x04 检测方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-防御方法"><span class="toc-number">5.</span> <span class="toc-text">0x05 防御方法</span></a></li></ol>
-    </div>
 
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&text=XML注入之SAXReader"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&is_video=false&description=XML注入之SAXReader"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=XML注入之SAXReader&body=Check out this article: https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&title=XML注入之SAXReader"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://Mi1k7ea.github.com/2019/05/24/XML注入之SAXReader/&name=XML注入之SAXReader&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="false"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="false"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="false"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="false"></i> 返回顶部</a>
-    </div>
-
-  </div>
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
 </div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy; 2019 Mi1k7ea
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
   </div>
-  <span id="busuanzi_container_site_pv"> 
-    <i class="fas fa-eye"></i>
-    访客：<span id="busuanzi_value_site_uv"></span>
-  </span>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">主页</a></li>
-         
-          <li><a href="/categories/">目录</a></li>
-         
-          <li><a href="/tags/">标签</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="https://blog.csdn.net/ski_12/">CSDN</a></li>
-         
-          <li><a href="/atom.xml">RSS</a></li>
-        
-      </ul>
-    </nav>
-  </div>
-</footer>
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    </div>
-    <!-- styles -->
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-    <!-- jquery -->
-<script src="/lib/jquery/jquery.min.js"></script>
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-<script src="/js/main.js"></script>
-<!-- search -->
-
-<!-- Google Analytics -->
-
-<!-- Baidu Analytics -->
-
-<!-- Disqus Comments -->
-
-
 </body>
 </html>
