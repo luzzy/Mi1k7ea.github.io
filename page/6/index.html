@@ -82,7 +82,9 @@
 </script>
 
 
-    <script> yiliaConfig.jquery_ui = [false]; </script>
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
 
 
 
@@ -111,7 +113,7 @@
 
         
             <form id="search-form">
-            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="true">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
             <i class="fa fa-times" onclick="resetSearch()"></i>
             </form>
             <div id="local-search-result"></div>
@@ -591,10 +593,10 @@
 
 
   
-    <article id="post-PHP内存型木马" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-PHP反序列化漏洞" class="article article-type-post" itemscope="" itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/01/01/PHP内存型木马/" class="article-date">
+      <a href="/2019/01/01/PHP反序列化漏洞/" class="article-date">
       <time datetime="2018-12-31T17:01:01.000Z" itemprop="datePublished">2019-01-01</time>
 </a>
 
@@ -610,7 +612,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/01/PHP内存型木马/">PHP内存型木马</a>
+      <a class="article-title" href="/2019/01/01/PHP反序列化漏洞/">PHP unserialize反序列化漏洞</a>
     </h1>
   
 
@@ -635,12 +637,12 @@
 
       
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AWD/">AWD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
     </div>
 
       
         <p class="article-more-link">
-          <a href="/2019/01/01/PHP内存型木马/#more">more >></a>
+          <a href="/2019/01/01/PHP反序列化漏洞/#more">more >></a>
         </p>
       
       <div class="clearfix"></div>
@@ -748,7 +750,7 @@
     
 </script>
 
-<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>
   </div>
 </body>

