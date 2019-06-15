@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/06/09/探讨XXE防御之setFeature设置/5.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/06/09/探讨XXE防御之setFeature设置/6.png">
 <meta property="og:image" content="https://mi1k7ea.github.com/2019/06/09/探讨XXE防御之setFeature设置/7.png">
-<meta property="og:updated_time" content="2019-06-12T15:31:29.879Z">
+<meta property="og:updated_time" content="2019-06-15T01:21:19.524Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="探讨XXE防御之setFeature设置">
 <meta name="twitter:description" content="已完结.">
@@ -433,7 +433,14 @@
 <p><img src="/2019/06/09/探讨XXE防御之setFeature设置/6.png" alt=""></p>
 <p>但是换成解析外部普通实体时，就报错了：</p>
 <p><img src="/2019/06/09/探讨XXE防御之setFeature设置/7.png" alt=""></p>
-<h3 id="Bypass小结"><a href="#Bypass小结" class="headerlink" title="Bypass小结"></a>Bypass小结</h3><p>……</p>
+<h3 id="Bypass小结"><a href="#Bypass小结" class="headerlink" title="Bypass小结"></a>Bypass小结</h3><p>配置补全或出错，如disallow-doctype-decl设置为false等，相当于没防御，看情况而定。</p>
+<p>下面就单一的几种设置看看，具体几种的组合的Bypass自行考虑即可：</p>
+<ul>
+<li>如果disallow-doctype-decl设置为true，无法Bypass；</li>
+<li>如果external-general-entities设置为false，则只能解析内部实体而无法解析外部实体，此时能利用的只有XXE DoS攻击，但要看具体的JDK版本；</li>
+<li>如果external-parameter-entities设置为false，则解析内部实体、外部普通实体而无法解析外部参数实体，此时可以进行外部普通实体的形式来攻击或者XXE DoS；</li>
+<li>如果load-external-dtd设置为false，则解析内部实体、外部参数实体而无法解析外部普通实体，此时可以进行外部参数实体的形式来攻击或者XXE DoS；</li>
+</ul>
 <h2 id="0x02-参考"><a href="#0x02-参考" class="headerlink" title="0x02 参考"></a>0x02 参考</h2><p><a href="http://xerces.apache.org/xerces2-j/features.html" target="_blank" rel="noopener">Feature</a></p>
 <p><a href="https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.md" target="_blank" rel="noopener">XML_External_Entity_Prevention_Cheat_Sheet</a></p>
 
@@ -447,7 +454,7 @@
         <p><span>本文标题:</span><a href="/2019/06/09/探讨XXE防御之setFeature设置/">探讨XXE防御之setFeature设置</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Mi1k7ea</a></p>
         <p><span>发布时间:</span>2019-06-09, 09:58:56</p>
-        <p><span>最后更新:</span>2019-06-12, 23:31:29</p>
+        <p><span>最后更新:</span>2019-06-15, 09:21:19</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2019/06/09/探讨XXE防御之setFeature设置/" title="探讨XXE防御之setFeature设置">https://Mi1k7ea.github.com/2019/06/09/探讨XXE防御之setFeature设置/</a>
             <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/06/09/探讨XXE防御之setFeature设置/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
