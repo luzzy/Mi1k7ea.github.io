@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="Mi1k7ea">
+
+
+
+<meta name="description" content="已完结.">
+<meta name="keywords" content="安全开发,AWD,Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AWD文件监控脚本">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/06/30/AWD文件监控脚本/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="已完结.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/30/AWD文件监控脚本/1.png">
+<meta property="og:updated_time" content="2019-06-30T03:40:12.964Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AWD文件监控脚本">
+<meta name="twitter:description" content="已完结.">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/06/30/AWD文件监控脚本/1.png">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Mi1k7ea" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>AWD文件监控脚本 | Mi1k7ea</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Mi1k7ea</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">Home</a></li>
+                        
+                            <li><a href="/archives/">Articles</a></li>
+                        
+                            <li><a href="/tags/">Classification</a></li>
+                        
+                            <li><a href="/about/">About</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:mi1k7ea@163.com" title="Email"></a>
+                            
+                                <a class="fa CSDN" href="https://blog.csdn.net/ski_12/" title="CSDN"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AWD/">AWD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-C/">C/C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLI/">SQLI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL注入/">SQL注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSTI/">SSTI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpEL注入/">SpEL注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XML注入/">XML注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/">XSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二进制/">二进制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/命令注入/">命令注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆溢出/">堆溢出</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全开发/">安全开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/栈溢出/">栈溢出</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/沙箱逃逸/">沙箱逃逸</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+
+                
+                
+                <section class="switch-part switch-part3">
+                
+                    <div id="js-aboutme">安全界咸鱼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Mi1k7ea</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Mi1k7ea</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">Home</a></li>
+                
+                    <li><a href="/archives/">Articles</a></li>
+                
+                    <li><a href="/tags/">Classification</a></li>
+                
+                    <li><a href="/about/">About</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:mi1k7ea@163.com" title="Email"></a>
+                            
+                                <a class="fa CSDN" target="_blank" href="https://blog.csdn.net/ski_12/" title="CSDN"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-AWD文件监控脚本" class="article article-type-post" itemscope="" itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/06/30/AWD文件监控脚本/" class="article-date">
+      <time datetime="2019-06-30T03:18:21.000Z" itemprop="datePublished">2019-06-30</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      AWD文件监控脚本
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Python/">Python</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AWD/">AWD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安全开发/">安全开发</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>参考网上的脚本做了一些小的修改。</p>
+<p>原理是利用pyinotify库实现文件监控，在EventHandler类的各个方法中调用一些自定义的方法来实现个人定制的文件监控功能，具体的可参考官方文档。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">from</span> pyinotify <span class="keyword">import</span> WatchManager, Notifier,ProcessEvent</span><br><span class="line"><span class="keyword">from</span> pyinotify <span class="keyword">import</span> IN_DELETE, IN_CREATE, IN_MOVED_TO, IN_ATTRIB, IN_MODIFY</span><br><span class="line"></span><br><span class="line">dir_path = <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EventHandler</span><span class="params">(ProcessEvent)</span>:</span></span><br><span class="line">		<span class="string">"""事件处理"""</span></span><br><span class="line">		<span class="comment">#创建新文件，自动删除</span></span><br><span class="line">		<span class="function"><span class="keyword">def</span> <span class="title">process_IN_CREATE</span><span class="params">(self, event)</span>:</span></span><br><span class="line">			<span class="keyword">print</span> <span class="string">"[!] Create : "</span> + event.pathname</span><br><span class="line">			DeleteFileOrDir(event.pathname)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#文件被删除，如rm命令，自动恢复原文件</span></span><br><span class="line">		<span class="function"><span class="keyword">def</span> <span class="title">process_IN_DELETE</span><span class="params">(self, event)</span>:</span></span><br><span class="line">			<span class="keyword">print</span> <span class="string">"[!] Delete : "</span> + event.pathname</span><br><span class="line">			<span class="comment"># CanNotDel(event.pathname)</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#文件属性被修改，如chmod、chown命令</span></span><br><span class="line">		<span class="function"><span class="keyword">def</span> <span class="title">process_IN_ATTRIB</span><span class="params">(self, event)</span>:</span></span><br><span class="line">			<span class="keyword">print</span> <span class="string">"[!] Attribute been modified:"</span> + event.pathname</span><br><span class="line"></span><br><span class="line">		<span class="comment">#文件被移来，如mv、cp命令，自动删除</span></span><br><span class="line">		<span class="function"><span class="keyword">def</span> <span class="title">process_IN_MOVED_TO</span><span class="params">(self, event)</span>:</span></span><br><span class="line">			<span class="keyword">print</span> <span class="string">"[!] File or dir been moved to here: "</span> + event.pathname</span><br><span class="line">			DeleteFileOrDir(event.pathname)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#文件被修改，如vm、echo命令，自动恢复原文件</span></span><br><span class="line">		<span class="function"><span class="keyword">def</span> <span class="title">process_IN_MODIFY</span><span class="params">(self, event)</span>:</span></span><br><span class="line">			<span class="keyword">print</span> <span class="string">"[!] Modify : "</span> + event.pathname</span><br><span class="line">			CanNotModify(event.pathname)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">DeleteFileOrDir</span><span class="params">(target)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> os.path.isdir(target):</span><br><span class="line">		fileslist = os.listdir(target)</span><br><span class="line">		<span class="keyword">try</span>:</span><br><span class="line">			os.system(<span class="string">'cp '</span> + str(target) + <span class="string">' /tmp/evil_files/'</span>)</span><br><span class="line">		<span class="keyword">except</span>:</span><br><span class="line">			<span class="keyword">pass</span></span><br><span class="line">		<span class="keyword">for</span> files <span class="keyword">in</span> fileslist:</span><br><span class="line">			DeleteFileOrDir(target + <span class="string">"/"</span> + files)</span><br><span class="line">		<span class="keyword">try</span>:</span><br><span class="line">			os.rmdir(target)</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"	 &gt;&gt;&gt; Delete directory successfully: "</span> + target</span><br><span class="line">		<span class="keyword">except</span>:</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"	 [-] Delete directory failed: "</span> + target</span><br><span class="line">	<span class="keyword">if</span> os.path.isfile(target):</span><br><span class="line">		<span class="keyword">try</span>:</span><br><span class="line">			os.system(<span class="string">'cp '</span> + str(target) + <span class="string">' /tmp/evil_files/'</span>)</span><br><span class="line">		<span class="keyword">except</span>:</span><br><span class="line">			<span class="keyword">pass</span></span><br><span class="line">		<span class="keyword">try</span>:</span><br><span class="line">			os.remove(target)</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"	 &gt;&gt;&gt; Delete file successfully"</span> + target</span><br><span class="line">		<span class="keyword">except</span>:</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"	 [-] Delete file failed:  "</span> + target</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_md5</span><span class="params">(f)</span>:</span></span><br><span class="line">	m = hashlib.md5()</span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">		<span class="comment">#如果不用二进制打开文件，则需要先编码</span></span><br><span class="line">		<span class="comment">#data = f.read(1024).encode('utf-8')</span></span><br><span class="line">		data = f.read(<span class="number">1024</span>)  <span class="comment">#将文件分块读取</span></span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		m.update(data)</span><br><span class="line">	<span class="keyword">return</span> m.hexdigest()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">CompareFile</span><span class="params">(file1, file2)</span>:</span></span><br><span class="line">	<span class="keyword">with</span> open(file1, <span class="string">'rb'</span>) <span class="keyword">as</span> f1, open(file2, <span class="string">'rb'</span>) <span class="keyword">as</span> f2:</span><br><span class="line">		file1_md5 = get_file_md5(f1)</span><br><span class="line">		file2_md5 = get_file_md5(f2)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> file1_md5 != file2_md5:</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">CanNotModify</span><span class="params">(target)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> os.path.exists(target):</span><br><span class="line">		<span class="keyword">if</span> os.path.isfile(target):</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"dir path: "</span> + dir_path</span><br><span class="line">			target_new = <span class="string">"/tmp/backup/"</span> + str(target).split(dir_path)[<span class="number">1</span>]</span><br><span class="line">			isChanged = CompareFile(str(target), target_new)</span><br><span class="line">			<span class="keyword">if</span> isChanged:</span><br><span class="line">				<span class="keyword">try</span>:</span><br><span class="line">					os.system(<span class="string">'cp '</span> + str(target) + <span class="string">' /tmp/evil_files/'</span>)</span><br><span class="line">				<span class="keyword">except</span> Exception, e:</span><br><span class="line">					<span class="keyword">pass</span></span><br><span class="line">				<span class="keyword">try</span>:</span><br><span class="line">					os.system(<span class="string">"cat "</span> + target_new + <span class="string">" &gt; "</span> + str(target))</span><br><span class="line">					<span class="keyword">print</span> <span class="string">"	 &gt;&gt;&gt; Recover file successfully"</span></span><br><span class="line">				<span class="keyword">except</span> Exception, e:</span><br><span class="line">					<span class="keyword">print</span> <span class="string">"	 [-] Recover file failed:  "</span> + target</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">CanNotDel</span><span class="params">(target)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(target):</span><br><span class="line">		<span class="keyword">try</span>:</span><br><span class="line">			target_new = <span class="string">"/tmp/backup/"</span> + str(target).split(dir_path)[<span class="number">1</span>]</span><br><span class="line">			os.system(<span class="string">"cat "</span> + target_new + <span class="string">" &gt; "</span> + str(target))</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"	 &gt;&gt;&gt; Recover file successfully"</span></span><br><span class="line">		<span class="keyword">except</span> Exception, e:</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"	 [-] Recover file failed:  "</span> + target</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Monitor</span><span class="params">(path)</span>:</span></span><br><span class="line">	wm = WatchManager()</span><br><span class="line">	mask = IN_DELETE | IN_CREATE | IN_MOVED_TO | IN_ATTRIB | IN_MODIFY</span><br><span class="line">	notifier = Notifier(wm, EventHandler())</span><br><span class="line">	wm.add_watch(path, mask,rec=<span class="keyword">True</span>)</span><br><span class="line">	<span class="keyword">print</span> <span class="string">'[+] Now Starting Monitor:  %s'</span>%(path)</span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">		<span class="keyword">try</span>:</span><br><span class="line">			notifier.process_events()</span><br><span class="line">			<span class="keyword">if</span> notifier.check_events():</span><br><span class="line">				notifier.read_events()</span><br><span class="line">		<span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">			notifier.stop()</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">						</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">		os.system(<span class="string">'mkdir /tmp/evil_files/'</span>)</span><br><span class="line">		os.system(<span class="string">'mkdir /tmp/backup/'</span>)</span><br><span class="line">	<span class="keyword">except</span>:</span><br><span class="line">		<span class="keyword">print</span> <span class="string">'Oh.'</span></span><br><span class="line">	parser = argparse.ArgumentParser(</span><br><span class="line">		usage=<span class="string">"%(prog)s -w [path]"</span>,</span><br><span class="line">		description=(<span class="string">'''</span></span><br><span class="line"><span class="string">			Introduce：Simple Directory Monitor!  by ssooking'''</span>)</span><br><span class="line">	)</span><br><span class="line">	parser.add_argument(<span class="string">'-w'</span>,<span class="string">'--watch'</span>,action=<span class="string">"store"</span>,dest=<span class="string">"path"</span>,default=<span class="string">"/var/www/html/"</span>,help=<span class="string">"directory to watch,default is /var/www/html"</span>)</span><br><span class="line">	args=parser.parse_args()</span><br><span class="line">	dir_path = str(args.path)</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"dir path: "</span> + dir_path</span><br><span class="line">	cmd = <span class="string">'cp -r '</span> + str(args.path)</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"dir path: "</span> + dir_path</span><br><span class="line">	cmd = <span class="string">'cp -r '</span> + str(args.path) + <span class="string">'* /tmp/backup/'</span></span><br><span class="line">	os.system(cmd)</span><br><span class="line">	Monitor(args.path)</span><br></pre></td></tr></table></figure>
+<p>代码的功能应该一目了然。</p>
+<p>有个问题，AWD实际情况中未必有pyinotify这个库或者根本没有Python环境，一种解决方案是自己准备好Python和pyinotify库的源码安装包。</p>
+<p>除此之外，我们可以将Python文件提前编译成32位和64位的ELF文件，即到即用就OK了。</p>
+<p>这里用到一个名为pyinstaller的库，安装很简单：pip install pyinstaller</p>
+<p>使用也很简单：pyinstaller -F ./Monitor.py</p>
+<p>编译完成后，在dist子目录中可以找到目标可执行文件。</p>
+<p><strong>注意：pyinstaller在不用系统环境编译出来的可执行文件是存在区别，在Windows上编译生成的是EXE文件，在Linux上编译生成的是ELF文件，而在32位系统才会生成32位可执行文件、在64位系统生成64位可执行文件。</strong></p>
+<p><img src="/2019/06/30/AWD文件监控脚本/1.png" alt=""></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/06/30/AWD文件监控脚本/">AWD文件监控脚本</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Mi1k7ea</a></p>
+        <p><span>发布时间:</span>2019-06-30, 11:18:21</p>
+        <p><span>最后更新:</span>2019-06-30, 11:40:12</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/06/30/AWD文件监控脚本/" title="AWD文件监控脚本">https://Mi1k7ea.github.com/2019/06/30/AWD文件监控脚本/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/06/30/AWD文件监控脚本/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2019/06/30/命令注入Bypass技巧小结/">
+                    命令注入Bypass技巧小结
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/06/27/一道Bypass正则过滤的反序列化漏洞题目/">
+                    一道Bypass正则过滤的反序列化漏洞题目
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"AWD文件监控脚本　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2019/06/30/命令注入Bypass技巧小结/" title="上一篇: 命令注入Bypass技巧小结">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/06/27/一道Bypass正则过滤的反序列化漏洞题目/" title="下一篇: 一道Bypass正则过滤的反序列化漏洞题目">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/06/30/命令注入Bypass技巧小结/">命令注入Bypass技巧小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/30/AWD文件监控脚本/">AWD文件监控脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/27/一道Bypass正则过滤的反序列化漏洞题目/">一道Bypass正则过滤的反序列化漏洞题目</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/27/从一道CTF题看如何利用本地DTD文件实现XXE攻击/">从一道CTF题看如何通过本地DTD文件利用XXE实现回显</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/25/浅析DOM型XSS/">浅析DOM型XSS</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/21/PHP弱类型小结/">PHP弱类型及相关函数Bypass小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/20/PHP变量覆盖漏洞/">PHP变量覆盖漏洞小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/09/巧用get-defined-functions隐藏WebShell/">巧用get_defined_functions隐藏WebShell</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/09/探讨XXE防御之setFeature设置/">探讨XXE防御之setFeature设置</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/">从RCTF nextphp看PHP7.4的FFI绕过disable_functions</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/">浅谈几种Bypass disable_functions的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/02/浅析Python-Flask-SSTI/">浅析Python Flask SSTI</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/31/Python沙箱逃逸小结/">Python沙箱逃逸小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/26/XML注入之SAXBuilder/">XML注入之SAXBuilder</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/26/XML注入之SAXParser/">XML注入之SAXParser</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/24/XML注入之SAXReader/">XML注入之SAXReader</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/24/GOT表-PLT表与动态链接/">ELF动态链接,PLT和GOT</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/04/PHP对象注入之pop链构造/">PHP对象注入之pop链构造</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/27/堆基础/">堆基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/21/PHP-session反序列化漏洞/">PHP session反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/花式栈溢出之stack-pivoting/">花式栈溢出之stack pivoting</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/15/ELF二进制格式/">ELF二进制格式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/12/中级ROP之ret2csu/">栈溢出之ret2csu</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/09/蒸米ROP学习笔记/">蒸米32位及64位ROP笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/07/pwntools笔记/">pwntools笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/05/Spring-Data-Rest之cve-2017-8046分析/">浅析Spring Data Rest之cve-2017-8046</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/31/0CTF-Web-writeup/">0CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/29/Securinets-CTF-Web-writeup/">Securinets CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/24/C编写实现Linux反弹shell/">C编写实现Linux反弹shell</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/23/花式栈溢出之Stack-smash/">花式栈溢出之Stack smash</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/22/图片XSS小结/">图片XSS小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/">Teaser CONFidence CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/17/SpEL注入之javacon/">SpEL注入之javacon</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/13/AeroCTF-writeupup之board-tracking-system/">AeroCTF writeupup之board tracking system</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/09/TAMUctf-Web-writeup/">TAMUctf Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/08/TAMUctf-Pwn-writeup/">TAMUctf Pwn writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/05/栈溢出之ret2libc/">栈溢出之ret2libc</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出之ret2syscall/">栈溢出之ret2syscall</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出之ret2shellcode/">栈溢出之ret2shellcode</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/ROP之ret2text/">ROP基础及栈溢出之ret2text</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出基本原理/">栈溢出基本原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈及栈帧/">栈基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/24/CSP策略及绕过技巧小结/">CSP策略及绕过技巧小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/21/一道绕过CSP的XSS题目/">一道绕过CSP的XSS题目</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/19/一些加载XSS-Payload的标签/">一些加载XSS Payload的标签</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/16/个人XSS-payload收集/">个人XSS payload收集</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/15/XSS闯关之xss-haozi-me/">XSS闯关之xss.haozi.me</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/13/XML注入之DocumentBuilder/">XML注入之DocumentBuilder与XXE攻击防御</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/09/ELF安全防御机制小结/">ELF安全防御机制小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/06/Java反序列化漏洞/">Java反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/03/Java序列化和反序列化机制/">Java序列化和反序列化机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/01/Java动态代理机制/">Java动态代理机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/01/Java反射机制/">Java反射机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/31/PHP伪协议/">PHP伪协议</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/30/常见Web漏洞类型/">常见Web漏洞类型总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/28/IA-32寄存器/">IA-32（Intel Architecture 32位）寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Sqli-labs-writeup/">Sqli-labs Less1-20</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/XMLDecoder反序列化漏洞/">Java XMLDecoder反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/通过DVWA学习DOM型XSS/">DVWA之DOM型XSS</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/SQL注入写WebShell方式小结/">SQL注入写WebShell方式小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PHP内存型木马/">PHP内存型木马</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Linux环境与相关工具/">Linux环境与相关工具</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PHP反序列化漏洞/">PHP unserialize反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/">Windows下的一种PHP隐藏后门姿势</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PyYAML反序列化漏洞/">Python PyYAML反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/HITB_Binary_100_writeup/">HITB Binary 100 writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/phar反序列化漏洞/">phar反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/cPickle反序列化漏洞/">Python cPickle反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Python安全小工具之反编译pyc文件/">Python安全小工具之反编译pyc文件</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2019 Mi1k7ea
+            </div>
+            <div class="footer-right">
+                Welcome to M1ik7ea's blog <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 4;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
