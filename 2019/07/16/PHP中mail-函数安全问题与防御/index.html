@@ -15,32 +15,22 @@
 
 
 
-<meta name="description" content="已完结.">
-<meta name="keywords" content="Web安全,JavaScript">
+<meta name="description" content="未完待续...">
+<meta name="keywords" content="Web安全,PHP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DVWA之JavaScript攻击">
-<meta property="og:url" content="https://Mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/index.html">
+<meta property="og:title" content="PHP中mail()函数安全问题与防御">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/07/16/PHP中mail-函数安全问题与防御/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
-<meta property="og:description" content="已完结.">
+<meta property="og:description" content="未完待续...">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/1.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/2.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/3.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/4.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/5.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/6.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/7.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/8.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/9.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/10.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/11.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/12.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/13.png">
-<meta property="og:updated_time" content="2019-07-02T13:46:37.284Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/16/PHP中mail-函数安全问题与防御/E:/software/hexo/blog/source/_posts/%E6%B5%85%E8%B0%88escapeshellarg%E4%B8%8E%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/16/PHP中mail-函数安全问题与防御/E:/software/hexo/blog/source/_posts/%E6%B5%85%E8%B0%88escapeshellarg%E4%B8%8E%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/16/PHP中mail-函数安全问题与防御/E:/software/hexo/blog/source/_posts/%E6%B5%85%E8%B0%88escapeshellarg%E4%B8%8E%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5/12.png">
+<meta property="og:updated_time" content="2019-07-17T16:00:19.256Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DVWA之JavaScript攻击">
-<meta name="twitter:description" content="已完结.">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/1.png">
+<meta name="twitter:title" content="PHP中mail()函数安全问题与防御">
+<meta name="twitter:description" content="未完待续...">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/07/16/PHP中mail-函数安全问题与防御/E:/software/hexo/blog/source/_posts/%E6%B5%85%E8%B0%88escapeshellarg%E4%B8%8E%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5/5.png">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -72,7 +62,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>DVWA之JavaScript攻击 | Mi1k7ea</title>
+<title>PHP中mail()函数安全问题与防御 | Mi1k7ea</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -262,11 +252,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
 </nav>
-      <div class="body-wrap"><article id="post-DVWA之JavaScript攻击" class="article article-type-post" itemscope="" itemprop="blogPost">
+      <div class="body-wrap"><article id="post-PHP中mail-函数安全问题与防御" class="article article-type-post" itemscope="" itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/07/02/DVWA之JavaScript攻击/" class="article-date">
-      <time datetime="2019-07-02T12:21:28.000Z" itemprop="datePublished">2019-07-02</time>
+      <a href="/2019/07/16/PHP中mail-函数安全问题与防御/" class="article-date">
+      <time datetime="2019-07-16T14:23:52.000Z" itemprop="datePublished">2019-07-16</time>
 </a>
 
 
@@ -281,7 +271,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      DVWA之JavaScript攻击
+      PHP中mail()函数安全问题与防御
     </h1>
   
 
@@ -290,13 +280,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/WriteUp-Web/">WriteUp:Web</a>
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -306,52 +296,90 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>JavaScript攻击属于Web前端安全，不存在黑盒测试的概念，直接可以对JS进行白盒代码审计。</p>
-<p>DVWA中的JavaScript攻击的场景是基于token由前端JS生成而引起的一系列问题。</p>
-<h2 id="0x01-Low-Level"><a href="#0x01-Low-Level" class="headerlink" title="0x01 Low Level"></a>0x01 Low Level</h2><p>页面如下，要求输入success来达到目的：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/1.png" alt=""></p>
-<p>直接输入success提交，会显示invalid token：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/2.png" alt=""></p>
-<p>查看页面源代码，看到是调用generate_token()函数，其中的token值是由md5(rot13(phrase))得到的，并且表单中存在一项隐藏的表项token：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/3.png" alt=""></p>
-<p>可以看到，token是通过JS在客户端生成。而题目的意思应该就是让token的值和phrase经过某些加密操作后的值相等即可。</p>
-<p>那就简单了，先在Console直接得到正确的token值：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/4.png" alt=""></p>
-<p>在前端直接篡改token的值即可：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/5.png" alt=""></p>
-<p>再输入success，OK：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/6.png" alt=""></p>
-<p>最后，我们看下index.php源码，确认确实是通过比较加密phrase后的值与token的值是否相等来看是否JS攻击成功：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ($phrase == <span class="string">"success"</span>) &#123;</span><br><span class="line">			<span class="keyword">switch</span>( $_COOKIE[ <span class="string">'security'</span> ] ) &#123;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">'low'</span>:</span><br><span class="line">					<span class="keyword">if</span> ($token == md5(str_rot13(<span class="string">"success"</span>))) &#123;</span><br><span class="line">						$message = <span class="string">"&lt;p style='color:red'&gt;Well done!&lt;/p&gt;"</span>;</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						$message = <span class="string">"&lt;p&gt;Invalid token.&lt;/p&gt;"</span>;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">'medium'</span>:</span><br><span class="line">					<span class="keyword">if</span> ($token == strrev(<span class="string">"XXsuccessXX"</span>)) &#123;</span><br><span class="line">						$message = <span class="string">"&lt;p style='color:red'&gt;Well done!&lt;/p&gt;"</span>;</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						$message = <span class="string">"&lt;p&gt;Invalid token.&lt;/p&gt;"</span>;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">'high'</span>:</span><br><span class="line">					<span class="keyword">if</span> ($token == hash(<span class="string">"sha256"</span>, hash(<span class="string">"sha256"</span>, <span class="string">"XX"</span> . strrev(<span class="string">"success"</span>)) . <span class="string">"ZZ"</span>)) &#123;</span><br><span class="line">						$message = <span class="string">"&lt;p style='color:red'&gt;Well done!&lt;/p&gt;"</span>;</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						$message = <span class="string">"&lt;p&gt;Invalid token.&lt;/p&gt;"</span>;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">default</span>:</span><br><span class="line">					$vulnerabilityFile = <span class="string">'impossible.php'</span>;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			$message = <span class="string">"&lt;p&gt;You got the phrase wrong.&lt;/p&gt;"</span>;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="0x02-Medium-Level"><a href="#0x02-Medium-Level" class="headerlink" title="0x02 Medium Level"></a>0x02 Medium Level</h2><p>和前面类似，只是换了JS代码，在表单处单独调用JS文件：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/7.png" alt=""></p>
-<p>访问该JS文件：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">do_something</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> t=<span class="string">""</span>,n=e.length<span class="number">-1</span>;n&gt;=<span class="number">0</span>;n--)t+=e[n];</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;do_elsesomething(<span class="string">"XX"</span>)&#125;,<span class="number">300</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">do_elsesomething</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">"token"</span>).value=do_something(e+<span class="built_in">document</span>.getElementById(<span class="string">"phrase"</span>).value+<span class="string">"XX"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码逻辑在调用setTimeout()，setTimeout()方法用于在指定的毫秒数后调用函数或计算表达式。这里调用do_elsesomething()函数，而do_elsesomething()函数中有生成token的代码，其中将传入参数e、前端表单输入的phrase值以及”XX”字符串进行拼接再调用do_something()函数进行字符串翻转处理。</p>
-<p>那就这样吧：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/8.png" alt=""></p>
-<p>改下JS即可：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/9.png" alt=""></p>
-<h2 id="0x03-High-Level"><a href="#0x03-High-Level" class="headerlink" title="0x03 High Level"></a>0x03 High Level</h2><p>再看下high的，调用了high.js：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/10.png" alt=""></p>
-<p>查看high.js，发现不是人看的代码：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/11.png" alt=""></p>
-<p>这是因为做了混淆，访问<a href="http://deobfuscatejavascript.com/" target="_blank" rel="noopener">解码网站</a>来转换成人民群众可看懂的形式，下面只列出关键的代码，前面省略的部分是算法部分：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">do_something</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> t = <span class="string">""</span>, n = e.length - <span class="number">1</span>; n &gt;= <span class="number">0</span>; n--) t += e[n];</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">token_part_3</span>(<span class="params">t, y = <span class="string">"ZZ"</span></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">"token"</span>).value = sha256(<span class="built_in">document</span>.getElementById(<span class="string">"token"</span>).value + y)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">token_part_2</span>(<span class="params">e = <span class="string">"YY"</span></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">"token"</span>).value = sha256(e + <span class="built_in">document</span>.getElementById(<span class="string">"token"</span>).value)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">token_part_1</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">"token"</span>).value = do_something(<span class="built_in">document</span>.getElementById(<span class="string">"phrase"</span>).value)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">"phrase"</span>).value = <span class="string">""</span>;</span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    token_part_2(<span class="string">"XX"</span>)</span><br><span class="line">&#125;, <span class="number">300</span>);</span><br><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">"send"</span>).addEventListener(<span class="string">"click"</span>, token_part_3);</span><br><span class="line">token_part_1(<span class="string">"ABCD"</span>, <span class="number">44</span>);</span><br></pre></td></tr></table></figure>
-<p>几个函数调用顺序及生成token的步骤如下：</p>
-<p>1、执行token_part_1()，取phrase值并进行字符串翻转处理；</p>
-<p>2、延迟300ms后执行token_part_2()，传入参数字符串’XX’和token值拼接并调用sha256()加密；</p>
-<p>3、点击按钮时执行token_part_3()，将token值和字符串’ZZ’拼接并调用sha256()加密，从而得到最终的token；</p>
-<p>一波操作如下，先将转换过来的JS前一部分关于sha256算法定义代码输入实现初始化，方便后面直接调用sha256()：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/12.png" alt=""></p>
-<p>然后按照前面的分析得到token值：</p>
-<p><img src="/2019/07/02/DVWA之JavaScript攻击/13.png" alt=""></p>
-<p>最后修改token的值为ec7ef8687050b6fe803867ea696734c67b541dfafb286a0b1239f42ac5b0aa84即可。</p>
-<h2 id="0x04-Impossible-Level"><a href="#0x04-Impossible-Level" class="headerlink" title="0x04 Impossible Level"></a>0x04 Impossible Level</h2><p>页面显示一句话：</p>
+        <h2 id="0x01-函数简介"><a href="#0x01-函数简介" class="headerlink" title="0x01 函数简介"></a>0x01 函数简介</h2><p>(PHP 4, PHP 5, PHP 7)</p>
+<p>mail()函数允许您从脚本中直接发送电子邮件。如果邮件的投递被成功地接收，则返回 true，否则返回 false。</p>
+<p>函数定义如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mail ( string $to , string $subject , string $message [, mixed $additional_headers [, string $additional_parameters ]] ) : bool</span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">to</td>
+<td style="text-align:left">必需。规定邮件的接收者。</td>
+</tr>
+<tr>
+<td style="text-align:left">subject</td>
+<td style="text-align:left">必需。规定邮件的主题。该参数不能包含任何换行字符。</td>
+</tr>
+<tr>
+<td style="text-align:left">message</td>
+<td style="text-align:left">必需。规定要发送的消息。</td>
+</tr>
+<tr>
+<td style="text-align:left">additional_headers</td>
+<td style="text-align:left">可选。规定额外的报头，比如 From, Cc 以及 Bcc。</td>
+</tr>
+<tr>
+<td style="text-align:left">additional_parameters</td>
+<td style="text-align:left">可选。规定 sendmail 程序的额外参数。</td>
+</tr>
+</tbody>
+</table>
+<p>在Linux系统上，mail()函数是默认调用sendmail程序发送邮件的。而这里我们看到，通过mail()函数的第五个参数即additional_parameters可以传递给发送程序sendmail额外参数。</p>
+<p>发送一封简单的邮件的Demo代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$txt = <span class="string">"First line of text\nSecond line of text"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果一行大于 70 个字符，请使用 wordwrap()。</span></span><br><span class="line">$txt = wordwrap($txt,<span class="number">70</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送邮件</span></span><br><span class="line">mail(<span class="string">"somebody@example.com"</span>,<span class="string">"My subject"</span>,$txt);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="0x02-安全问题"><a href="#0x02-安全问题" class="headerlink" title="0x02 安全问题"></a>0x02 安全问题</h2><p>在PHP中，mail()函数无论是自身问题或者助攻其他漏洞方面都是出现很多它的身影的。</p>
+<p>我们从参数开始说起，其实可以明显看到mail()函数的前三个必须的参数是不存在类似其他参数所存在的注入风险的，安全问题主要集中在后面两个参数。</p>
+<h3 id="垃圾邮件发送"><a href="#垃圾邮件发送" class="headerlink" title="垃圾邮件发送"></a>垃圾邮件发送</h3><p>可控点：第一个参数to</p>
+<p>要说在mail()函数的三个必须的参数中是否有安全风险，那就是第一个参数即to。</p>
+<p>当to参数可由用户从外部输入来控制时，攻击者就可以利用to参数来设定受害者的邮箱来不断地发送垃圾邮件。对服务端本身危害不大，但值得注意。</p>
+<h3 id="邮件头注入"><a href="#邮件头注入" class="headerlink" title="邮件头注入"></a>邮件头注入</h3><p>可控点：第四个参数additional_headers</p>
+<p>前提条件：PHP 5.4.42 和 5.5.27 之前</p>
+<p>我们知道additional_headers参数是用于添加额外的报头，由于邮件标题由CRLF换行符\r\n来分隔的，因此当未初始化第四个参数时，攻击者可以使用这些字符来附加其他电子邮件标题。此攻击称为电子邮件头注入（或短电子邮件注入）。通过向注入CC:或BCC:标头添加多个电子邮件地址来发送多个垃圾邮件可能会被滥用。</p>
+<h3 id="参数注入"><a href="#参数注入" class="headerlink" title="参数注入"></a>参数注入</h3><p>可控点：第五个参数additional_parameters</p>
+<p>我们知道，mail()函数的第五个参数即additional_parameters可以传递给发送程序sendmail额外参数。</p>
+<p>sendmail是Linux中发送邮件的程序。在其额外参数中，支持主要选项有以下三种：</p>
 <blockquote>
-<p>You can never trust anything that comes from the user or prevent them from messing with it and so there is no impossible level.</p>
+<ol>
+<li><p>-O option = value<br>QueueDirectory = queuedir 选择队列消息</p>
+</li>
+<li><p>-X logfile<br>这个参数可以指定一个目录来记录发送邮件时的详细日志情况，我们正式利用这个参数来达到我们的目的。</p>
+</li>
+<li><p>-f from email<br>这个参数可以让我们指定我们发送邮件的邮箱地址。</p>
+</li>
+<li><p>-C file</p>
+<p>这个参数用File变量指定的备用配置文件启动sendmail命令。</p>
+</li>
+</ol>
 </blockquote>
-<p>永远不要相信用户输入的内容，哈哈哈。</p>
+<h4 id="利用1——向Web目录写日志shell"><a href="#利用1——向Web目录写日志shell" class="headerlink" title="利用1——向Web目录写日志shell"></a>利用1——向Web目录写日志shell</h4><p>主要原理就是利用mail()第五个参数additional_parameters向sendmail程序发送额外参数-O QueueDirectory=queuedir和-X logfile，其中logfile即详细日志文件设置为Web目录中的PHP文件，而邮件中有部分内容设置为恶意PHP代码，当访问该文件时就会在Web目录生成PHP日志文件、其中详细记录包含了恶意PHP代码，再访问该PHP日志文件即可触发恶意代码执行：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$to = <span class="string">"mi1k@7ea.com"</span>;</span><br><span class="line">$subject = <span class="string">"hhhhhh"</span>;</span><br><span class="line">$message = <span class="string">"&lt;?php phpinfo();?&gt;"</span>;</span><br><span class="line">$headers = <span class="string">"CC: alan@7ea.com"</span>;</span><br><span class="line">$options = <span class="string">"-O QueueDirectory=/tmp -X /var/www/html/log-shell.php"</span>;</span><br><span class="line">mail($to, $subject, $message, $headers, $options);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>访问该文件后，过段时间（等sendmail程序反应）查看在当前Web目录生成了log-shell.php文件，其中包含我们输入的php代码：</p>
+<p><img src="/2019/07/16/PHP中mail-函数安全问题与防御/E:/software/hexo/blog/source/_posts/%E6%B5%85%E8%B0%88escapeshellarg%E4%B8%8E%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5/5.png" alt=""></p>
+<p>直接访问log-shell.php即可触发代码执行：</p>
+<p><img src="/2019/07/16/PHP中mail-函数安全问题与防御/E:/software/hexo/blog/source/_posts/%E6%B5%85%E8%B0%88escapeshellarg%E4%B8%8E%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5/6.png" alt=""></p>
+<h4 id="利用2——读取任意文件内容"><a href="#利用2——读取任意文件内容" class="headerlink" title="利用2——读取任意文件内容"></a>利用2——读取任意文件内容</h4><p>看个参数注入原意为向指定输入邮箱发送mail.txt文件内容，但是应用escapeshellcmd()的方式不对，不能防止用户输入在参数选项的位置，会导致参数注入问题：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?</span></span><br><span class="line">system(<span class="string">"/usr/sbin/sendmail -t -i -f"</span>.escapeshellcmd($_GET[c]).<span class="string">' &lt; mail.txt'</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>利用-C参数选项读取任意文件内容，输入<a href="mailto:payload`a@b.com" target="_blank" rel="noopener">payload`a@b.com</a> -C/etc/passwd -X/tmp/output.txt`：</p>
+<p><img src="/2019/07/16/PHP中mail-函数安全问题与防御/E:/software/hexo/blog/source/_posts/%E6%B5%85%E8%B0%88escapeshellarg%E4%B8%8E%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5/12.png" alt=""></p>
+<h3 id="escapeshellarg-逃逸"><a href="#escapeshellarg-逃逸" class="headerlink" title="escapeshellarg()逃逸"></a>escapeshellarg()逃逸</h3><p>对于第五个参数addiional_parameters外部可控即存在参数注入的问题，有小伙伴会通过调用escapeshellarg()来对addiional_parameters参数进行过滤，但是由于在mail()函数的源码中是会调用escapeshellcmd()函数来过滤addiional_parameters参数的，从而导致了escapeshellarg&gt;escapeshellcmd参数注入，逃逸了escapeshellarg()的过滤。</p>
+<p>具体原理和Demo参考：<a href="https://www.mi1k7ea.com/2019/07/04/浅谈escapeshellarg与参数注入/" target="_blank" rel="noopener">《浅谈escapeshellarg逃逸与参数注入》</a></p>
+<h3 id="不安全的FILTER-VALIDATE-EMAIL"><a href="#不安全的FILTER-VALIDATE-EMAIL" class="headerlink" title="不安全的FILTER_VALIDATE_EMAIL"></a>不安全的FILTER_VALIDATE_EMAIL</h3><p>…</p>
+<h2 id="0x03-防御方法"><a href="#0x03-防御方法" class="headerlink" title="0x03 防御方法"></a>0x03 防御方法</h2><p>主要针对几个参数进行防御：</p>
+<ul>
+<li>to参数：除非特定场景，一般不让用户从外部输入；</li>
+<li>subject参数：安全使用；</li>
+<li>message参数：安全使用；</li>
+<li>headers参数：若用户可从外部输入，则过滤\r和\n字符，防御CRLF注入；</li>
+<li>parameters参数：尽量不使用用户输入，实在不行要按照业务场景进行严格过滤；</li>
+</ul>
+<h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p><a href="https://blog.ripstech.com/2017/why-mail-is-dangerous-in-php/" target="_blank" rel="noopener">Why mail() is dangerous in PHP</a></p>
 
       
     </div>
@@ -360,13 +388,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/07/02/DVWA之JavaScript攻击/">DVWA之JavaScript攻击</a></p>
+        <p><span>本文标题:</span><a href="/2019/07/16/PHP中mail-函数安全问题与防御/">PHP中mail()函数安全问题与防御</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Mi1k7ea</a></p>
-        <p><span>发布时间:</span>2019-07-02, 20:21:28</p>
-        <p><span>最后更新:</span>2019-07-02, 21:46:37</p>
+        <p><span>发布时间:</span>2019-07-16, 22:23:52</p>
+        <p><span>最后更新:</span>2019-07-18, 00:00:19</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/07/02/DVWA之JavaScript攻击/" title="DVWA之JavaScript攻击">https://Mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/07/02/DVWA之JavaScript攻击/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/07/16/PHP中mail-函数安全问题与防御/" title="PHP中mail()函数安全问题与防御">https://Mi1k7ea.github.com/2019/07/16/PHP中mail-函数安全问题与防御/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/07/16/PHP中mail-函数安全问题与防御/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -378,16 +406,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2019/07/02/浅析preg-replace与preg-match/">
-                    浅析preg_replace与preg_match
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2019/06/30/XSS从弹框到RCE/">
-                    XSS从弹框到RCE（IE）
+                <a href="/2019/07/04/浅谈escapeshellarg与参数注入/">
+                    浅谈escapeshellarg逃逸与参数注入
                 </a>
             </div>
         
@@ -399,7 +421,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Low-Level"><span class="toc-number">1.</span> <span class="toc-text">0x01 Low Level</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Medium-Level"><span class="toc-number">2.</span> <span class="toc-text">0x02 Medium Level</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-High-Level"><span class="toc-number">3.</span> <span class="toc-text">0x03 High Level</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Impossible-Level"><span class="toc-number">4.</span> <span class="toc-text">0x04 Impossible Level</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-函数简介"><span class="toc-number">1.</span> <span class="toc-text">0x01 函数简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-安全问题"><span class="toc-number">2.</span> <span class="toc-text">0x02 安全问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#垃圾邮件发送"><span class="toc-number">2.1.</span> <span class="toc-text">垃圾邮件发送</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#邮件头注入"><span class="toc-number">2.2.</span> <span class="toc-text">邮件头注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参数注入"><span class="toc-number">2.3.</span> <span class="toc-text">参数注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用1——向Web目录写日志shell"><span class="toc-number">2.3.1.</span> <span class="toc-text">利用1——向Web目录写日志shell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用2——读取任意文件内容"><span class="toc-number">2.3.2.</span> <span class="toc-text">利用2——读取任意文件内容</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#escapeshellarg-逃逸"><span class="toc-number">2.4.</span> <span class="toc-text">escapeshellarg()逃逸</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不安全的FILTER-VALIDATE-EMAIL"><span class="toc-number">2.5.</span> <span class="toc-text">不安全的FILTER_VALIDATE_EMAIL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-防御方法"><span class="toc-number">3.</span> <span class="toc-text">0x03 防御方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">4.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
         
     </div>
     <style>
@@ -435,7 +457,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"DVWA之JavaScript攻击　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"PHP中mail()函数安全问题与防御　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -455,15 +477,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/07/02/浅析preg-replace与preg-match/" title="上一篇: 浅析preg_replace与preg_match">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2019/06/30/XSS从弹框到RCE/" title="下一篇: XSS从弹框到RCE（IE）">
+            <a href="/2019/07/04/浅谈escapeshellarg与参数注入/" title="下一篇: 浅谈escapeshellarg逃逸与参数注入">
                 <i class="fa fa-angle-right"></i>
             </a>
         
