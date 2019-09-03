@@ -997,18 +997,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Python安全小工具之反编译pyc文件]]></title>
-    <url>%2F2019%2F01%2F01%2FPython%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6%2F</url>
-    <content type="text"><![CDATA[有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。 1234567891011121314151617181920212223242526272829303132#coding=utf-8import osimport sysimport uncompyle6def Decompile(path): if os.path.exists(path): for parent,dirs,files in os.walk(path): for file in files: file_name,ext = os.path.splitext(file) if ext == ".pyc": file_path = os.path.join(parent,file) print "[*]Decompiling:", file_path cmd = "uncompyle6 " + file_path + " &gt; " + parent + "\\" + file_name + ".py" try: os.system(cmd) print "[+]Decompile successful.\n" except Exception as e: print e print "[*]Finished." else: print "[-]Wrong Directory Path."def main(): if len(sys.argv) != 2: print "[*]Usage: python decompile.py [Directory Path]" else: path = sys.argv[1] Decompile(path)if __name__ == "__main__": main() 运行效果：]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>安全开发</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[Python PyYAML反序列化漏洞]]></title>
     <url>%2F2019%2F01%2F01%2FPyYAML%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%2F</url>
     <content type="text"><![CDATA[基本概念（引用百度）YAML是“YAML不是一种标记语言”的外语缩写；但为了强调这种语言以数据做为中心，而不是以置标语言为重点，而用返璞词重新命名。它是一种直观的能够被电脑识别的数据序列化格式，是一个可读性高并且容易被人类阅读，容易和脚本语言交互，用来表达资料序列的编程语言。 PyYAML是Python中YAML语言的编辑器和解释器。 安装：pip install PyYAML 两个函数： yaml.dump()：将一个Python对象序列化生成为yaml文档。 yaml.load()：将一个yaml文档反序列化为一个Python对象。 简单的用例： 可以看到，User对象经过yaml序列化之后内容为一行字符串，简单解释一下：“!!pythonobject”为yaml标签，yaml.load()会识别该标签并调用相应的方法执行反序列化操作；冒号后面的“__main__”为py文件名，这里为本文件的意思；“User”为序列化的对象类型，后面紧跟的大括号即为该对象的属性及其属性值。 更详细的说明可参考官方文档。 Demo这里编写简单的Demo，一个py文件用于将恶意类序列化为字符串保存到yaml文件中，另一个py文件用于反序列化yaml文件内容为恶意类对象从而达到利用反序列化漏洞的目的。 yaml_test.py先创建一个poc对象再调用yaml.dump()将其序列化为一个字符串，其中第10行代码为将默认的“__main__”替换为该文件名“yaml_test”，目的是为了后面yaml.load()反序列化该字符串的时候会根据yaml文件中的指引去读取yaml_ test.py中的poc这个类，否则无法正确执行： yaml_test2.py直接yaml.load()读取目标yaml文件，由!!python/object标签解析其中的名为yaml_test的module中的poc类，最后执行了该类对象的__init__()方法从而执行了命令： 漏洞根源分析到$PYTHON_HOME/lib/site-packages/yaml/constructor.py中查看3个特殊Python标签的源码。 !!python/object标签： !!python/object/new标签： !!python/object/apply标签： 可以看到，!!python/object/new标签的代码实现其实就是!!python/object/apply标签的代码实现，只是最后newobj参数值不同而已。这3个Python标签中都是调用了make_python_instance()函数，查看该函数： 可以看到，在该函数是会根据参数来动态创建新的Python类对象或通过引用module的类创建对象，从而可以执行任意命令。 通用payload只要存在yaml.load()且参数可控，则可以利用yaml反序列化漏洞，payload列举如下，当然不止如下： 附上测试代码： 1234567891011import yamlpayload = '!!python/object/apply:subprocess.check_output [[calc.exe]]'#payload = '!!python/object/apply:subprocess.check_output ["calc.exe"]'#payload = '!!python/object/apply:subprocess.check_output [["calc.exe"]]'#payload = '!!python/object/apply:os.system ["calc.exe"]'#payload = '!!python/object/new:subprocess.check_output [["calc.exe"]]'#payload = '!!python/object/new:os.system ["calc.exe"]'yaml.load(payload) 一个疑问点？为什么“!!python/object”标签不好使，明明Demo用的是这个标签，但通用payload中无法执行该payload？看了一些网上的文章也没有分析原因，其实查看官方文档就知道怎么回事了： 可以看到，!!python/object标签的使用格式和另外两个根本就是两码事，其接收参数是使用大括号{}而非中括号[]，且并没有对参数args进行接收。也就是说，!!python/object标签只针对于对象类进行使用。 检测方法全局搜索Python代码中是否包含“import yaml”，若包含则进一步排查是否调用yaml.load()且参数是可控的。 防御方法使用安全函数yaml.safe_load()替代yaml.load()即可。]]></content>
@@ -1029,6 +1017,18 @@
       </categories>
       <tags>
         <tag>二进制</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Python安全小工具之反编译pyc文件]]></title>
+    <url>%2F2019%2F01%2F01%2FPython%E5%AE%89%E5%85%A8%E5%B0%8F%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%8F%8D%E7%BC%96%E8%AF%91pyc%E6%96%87%E4%BB%B6%2F</url>
+    <content type="text"><![CDATA[有时需要查看某个Python Web目录内Python源码，但dump下来只有pyc文件而没有py文件，这时需要我们反编译pyc文件为py文件。为了方便就写个脚本遍历目录内的pyc文件并进行反编译。 1234567891011121314151617181920212223242526272829303132#coding=utf-8import osimport sysimport uncompyle6def Decompile(path): if os.path.exists(path): for parent,dirs,files in os.walk(path): for file in files: file_name,ext = os.path.splitext(file) if ext == ".pyc": file_path = os.path.join(parent,file) print "[*]Decompiling:", file_path cmd = "uncompyle6 " + file_path + " &gt; " + parent + "\\" + file_name + ".py" try: os.system(cmd) print "[+]Decompile successful.\n" except Exception as e: print e print "[*]Finished." else: print "[-]Wrong Directory Path."def main(): if len(sys.argv) != 2: print "[*]Usage: python decompile.py [Directory Path]" else: path = sys.argv[1] Decompile(path)if __name__ == "__main__": main() 运行效果：]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>安全开发</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
