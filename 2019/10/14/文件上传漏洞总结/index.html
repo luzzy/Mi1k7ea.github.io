@@ -1,0 +1,626 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="Web安全,文件上传,">
+  
+
+  
+    <meta name="description" content="d2VsY29tZSB0byBteSBibG9n">
+  
+  
+  
+  <link rel="icon" type="image/x-icon" href="/kanxi.jpg">
+  
+  <title>文件上传攻击框架 [ Mi1k7ea ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    
+      <img class="avatar" src="/j.jpg">
+    
+    <span class="title" style="text-transform:none">Mi1k7ea</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="post" class="pure-menu-link">文章</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/archives" style="color:#202020;" class="pure-menu-link">归档</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories" style="color:#202020;" class="pure-menu-link">分类</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/tags" style="color:#202020;" class="pure-menu-link">标签</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Web安全" class="pure-menu-link">Web安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Web安全基础/" style="color:#202020;" class="pure-menu-link">Web安全基础&amp;Tricks</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/PHP/" style="color:#202020;" class="pure-menu-link">PHP</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Java/" style="color:#202020;" class="pure-menu-link">Java</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Python/" style="color:#202020;" class="pure-menu-link">Python</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/JavaScript/" style="color:#202020;" class="pure-menu-link">JavaScript</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Web/" style="color:#202020;" class="pure-menu-link">WriteUp Web</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="二进制安全" class="pure-menu-link">二进制安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/二进制基础/" style="color:#202020;" class="pure-menu-link">二进制基础</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Pwn/" style="color:#202020;" class="pure-menu-link">Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/C-C/" style="color:#202020;" class="pure-menu-link">C/C++</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Pwn/" style="color:#202020;" class="pure-menu-link">WriteUp Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Reverse/" style="color:#202020;" class="pure-menu-link">WriteUp Reverse</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="渗透测试" class="pure-menu-link">渗透测试</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">null</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="about" class="pure-menu-link">关于</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/about" style="color:#202020;" class="pure-menu-link">Mi1k7ea</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="https://blog.csdn.net/ski_12" style="color:#202020;" class="pure-menu-link">CSDN博客</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/atom.xml" style="color:#202020;" class="pure-menu-link">订阅</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+  </ul>
+   
+</nav>
+
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        文件上传攻击框架
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2019-10-14T14:17:33.000Z">
+        2019-10-14
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/文件上传/">文件上传</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <h2 id="0x00-概述"><a href="#0x00-概述" class="headerlink" title="0x00 概述"></a>0x00 概述</h2><p>文件上传漏洞是Web安全漏洞中严重性最高的漏洞之一，通过攻击者通过文件上传漏洞就可以上传WebShell，从而控制整台Web服务器。</p>
+<p>这里对文件上传漏洞进行归纳分类，将典型的检测机制和绕过方法，以及一些通用的攻击框架进行梳理。</p>
+<h2 id="0x01-客户端-JavaScript检测"><a href="#0x01-客户端-JavaScript检测" class="headerlink" title="0x01 客户端-JavaScript检测"></a>0x01 客户端-JavaScript检测</h2><h3 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h3><p>JavaScript检测即前端检测，通常是当前上传页面含有专门检测上传文件的JavaScript代码，一般是对文件后缀名进行检测。</p>
+<h3 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a>绕过方法</h3><p>通常有两种方法。</p>
+<p>第一种是使用Burp代理，上传WebShell文件时页面弹框显示文件不合法，但Burp中没有任何请求报文，说明只是前端JS进行检测，此时可以修改为正常文件的后缀名后再页面上传、然后再通过Burp拦截修改后缀名即可绕过。</p>
+<p>第二种是直接在浏览器中直接对页面HTML代码进行修改，将调用的相关的JS检测代码去掉即可正常上传WebShell文件。</p>
+<h3 id="案例参考"><a href="#案例参考" class="headerlink" title="案例参考"></a>案例参考</h3><p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x01-Pass-01-JS%E6%A0%A1%E9%AA%8C%E7%BB%95%E8%BF%87">Upload-Labs Pass-01</a></p>
+<h2 id="0x02-服务端-MIME类型检测"><a href="#0x02-服务端-MIME类型检测" class="headerlink" title="0x02 服务端-MIME类型检测"></a>0x02 服务端-MIME类型检测</h2><h3 id="检测方法-1"><a href="#检测方法-1" class="headerlink" title="检测方法"></a>检测方法</h3><p>MIME类型检测，即服务端对请求报文Content-Type头的检测，一般采取白名单的方式来进行检测，如只能上传图像文件的话就Content-Type头就必须为image/jpeg或image/png或image/gif。</p>
+<h3 id="绕过方法-1"><a href="#绕过方法-1" class="headerlink" title="绕过方法"></a>绕过方法</h3><p>使用Burp代理，在上传WebShell的时候截断修改请求头Content-Type头的值为白名单限定的MIME类型即可绕过。</p>
+<h3 id="案例参考-1"><a href="#案例参考-1" class="headerlink" title="案例参考"></a>案例参考</h3><p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x02-Pass-02-MIME%E7%B1%BB%E5%9E%8B%E7%BB%95%E8%BF%87">Upload Labs Pass-02</a></p>
+<h2 id="0x03-服务端-目录路径检测"><a href="#0x03-服务端-目录路径检测" class="headerlink" title="0x03 服务端-目录路径检测"></a>0x03 服务端-目录路径检测</h2><h3 id="检测方法-2"><a href="#检测方法-2" class="headerlink" title="检测方法"></a>检测方法</h3><p>一般是检测上传的目录路径是否合法。</p>
+<h3 id="绕过方法-2"><a href="#绕过方法-2" class="headerlink" title="绕过方法"></a>绕过方法</h3><p>若路径可控，则可以使用0x00或%00截断来绕过。</p>
+<p>%00截断是用于GET方式中的，而0x00截断则是用于非GET的需要在二进制代码上直接修改的方式如POST。</p>
+<p>其实00截断的根源是在于<code>move_uploaded_file(file,newloc)</code>函数的第二个参数newloc可被00截断攻击，而该函数的限制条件为：</p>
+<ul>
+<li>PHP版本 &lt; 5.3.4；</li>
+<li>PHP的魔术引号即magic_quotes_gpc为Off关闭状态；</li>
+</ul>
+<h3 id="案例参考-2"><a href="#案例参考-2" class="headerlink" title="案例参考"></a>案例参考</h3><p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x0B-Pass-11-%E5%88%A9%E7%94%A8-00%E6%88%AA%E6%96%AD%E7%BB%95%E8%BF%87">Upload Labs Pass-11 利用%00截断绕过</a></p>
+<p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x0C-Pass-12-%E5%88%A9%E7%94%A80x00%E6%88%AA%E6%96%AD%E7%BB%95%E8%BF%87">Upload Labs Pass-12 利用0x00截断绕过</a></p>
+<h2 id="0x04-服务端-文件扩展名检测"><a href="#0x04-服务端-文件扩展名检测" class="headerlink" title="0x04 服务端-文件扩展名检测"></a>0x04 服务端-文件扩展名检测</h2><h3 id="检测方法-3"><a href="#检测方法-3" class="headerlink" title="检测方法"></a>检测方法</h3><p>对于文件扩展名即后缀名的检测，一般有两种方式，黑名单和白名单。一般来说，白名单的方式更安全、更能难被攻击者绕过。</p>
+<p>常见黑名单：</p>
+<table>
+<thead>
+<tr>
+<th>文件类型</th>
+<th>扩展名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTML</td>
+<td>html、htm、sthml、shtm</td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>php、php2、php3、php4、php5、phtml、pwml</td>
+</tr>
+<tr>
+<td>ASP</td>
+<td>asp、aspx、ascx、ashx、asa、cer、cdx</td>
+</tr>
+<tr>
+<td>JSP</td>
+<td>jsp、jspx、jspf</td>
+</tr>
+<tr>
+<td>其他</td>
+<td>xml、ini、htaccess、cgi、pl、js、exe、bat、swf</td>
+</tr>
+</tbody>
+</table>
+<p>常见白名单：</p>
+<table>
+<thead>
+<tr>
+<th>文件类型</th>
+<th>扩展名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>图像</td>
+<td>png、jpeg、jpg、gif、bmp</td>
+</tr>
+<tr>
+<td>文档</td>
+<td>doc、docx、xls、xlsx、csv、ppt、pptx、zip、rar、7z、gz、bz2、md</td>
+</tr>
+<tr>
+<td>Flash</td>
+<td>swf、fla</td>
+</tr>
+<tr>
+<td>Media</td>
+<td>swf、flv、mp3、mp4、wav、wma</td>
+</tr>
+</tbody>
+</table>
+<h3 id="绕过方法-3"><a href="#绕过方法-3" class="headerlink" title="绕过方法"></a>绕过方法</h3><p>针对黑名单的绕过方法：特殊可解析后缀、大小写、<code>.</code>、<code>$::DATA</code>、空格、嵌套、<code>/.</code>、.htaccess、解析漏洞。</p>
+<p>针对白名单的绕过方法：00截断、解析漏洞。</p>
+<h3 id="案例参考-3"><a href="#案例参考-3" class="headerlink" title="案例参考"></a>案例参考</h3><p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x04-Pass-04-%E5%88%A9%E7%94%A8-htaccess%E7%BB%95%E8%BF%87">Upload Labs Pass-4 利用.htaccess绕过</a></p>
+<p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x13-Pass-19-%E5%88%A9%E7%94%A8move-uploaded-file-0x00%E6%88%AA%E6%96%AD%E7%BB%95%E8%BF%87">Upload Labs Pass-19 多种方法绕过</a></p>
+<p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x14-Pass-20-%E6%95%B0%E7%BB%84-%E7%BB%95%E8%BF%87">Upload Labs Pass-20 数组+/.绕过</a></p>
+<h2 id="0x05-服务端-文件内容检测"><a href="#0x05-服务端-文件内容检测" class="headerlink" title="0x05 服务端-文件内容检测"></a>0x05 服务端-文件内容检测</h2><h3 id="检测方法-4"><a href="#检测方法-4" class="headerlink" title="检测方法"></a>检测方法</h3><p>包括3个以下方面。</p>
+<p><strong>文件幻数检测</strong></p>
+<p>即文件头检测，主要是检测文件内容开始处的文件幻数，比如图片类型的文件幻数如下：</p>
+<p>JPG文件：Value = FF D8 FF E0 00 10 4A 46 49 46</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/1.png" alt=""></p>
+<p>GIF文件：Value = 47 49 46 38 39 61</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/2.png" alt=""></p>
+<p>PNG文件：Value = 89 50 4E 47</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/3.png" alt=""></p>
+<p><strong>文件相关信息检测</strong></p>
+<p>图像文件相关信息检测常用的就是getimagesize()函数和exif_imagetype()函数等。</p>
+<p>getimagesize()函数的返回结果类型是个数字，其中索引2表示的是图像的类型，返回的是数字，其中1 = GIF，2 = JPG，3 = PNG，4 = SWF，5 = PSD，6 = BMP，7 = TIFF(intel byte order)，8 = TIFF(motorola byte order)，9 = JPC，10 = JP2，11 = JPX，12 = JB2，13 = SWC，14 = IFF，15 = WBMP，16 = XBM。</p>
+<p>exif_imagetype()：读取一个图像的第一个字节并检查其签名。</p>
+<p><strong>文件加载检测</strong></p>
+<p>一般是调用API或函数去进行文件加载检测。常见的是图像渲染和二次渲染。</p>
+<p>二次渲染的原理是调用imagecreatefromjpeg()函数对图像进行二次编译即进行了二次渲染。</p>
+<p>imagecreatefromjpeg()：由文件或URL创建一个新图象。</p>
+<h3 id="绕过方法-4"><a href="#绕过方法-4" class="headerlink" title="绕过方法"></a>绕过方法</h3><p><strong>针对文件幻数检测的绕过</strong></p>
+<p>只需在后门代码前面插入如前面列的文件幻数的内容即可。</p>
+<p>当然，用图片马的方法可以通杀，更方便（只校验文件幻数的话，图片马可以不用正常显示都OK）。</p>
+<p>Windows中可通过如下命令生成图片马：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy normal.jpg /b + shell.php /a webshell.jpg</span><br></pre></td></tr></table></figure>
+<p>更多的可参考Upload Labs靶场作者的博客：<a href="http://gv7.me/articles/2017/picture-trojan-horse-making-method/" target="_blank" rel="noopener">图片木马制作大法</a></p>
+<p><strong>针对文件相关信息检测的绕过</strong></p>
+<p>基本的绕过原理就是，先把文件头部分伪造好，再在幻数加上了一些文件信息，比如GIF文件中添加的信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GIF89a</span><br><span class="line">(...some binary data for image...)</span><br><span class="line">&lt;?php phpinfo(); ?&gt;</span><br><span class="line">(... skipping the rest of binary data ...)</span><br></pre></td></tr></table></figure>
+<p>当然，用图片马的方法可以通杀，但是是需要能够正常显示的图片马。</p>
+<p><strong>针对文件加载检测的绕过</strong></p>
+<p>对于图像渲染，直接用正常显示的图片马就能绕过；</p>
+<p>对于二次渲染，同样用图片马可成功绕过上传，但需要对经过二次渲染后的图像中未进行二次编译的位置进行分析，再往该位置插入恶意PHP代码。GIF文件直接手工即可插入、操作较为简单，JPG和PNG都有工具脚本直接实现后门代码的插入实现图片马绕过。</p>
+<h3 id="案例参考-4"><a href="#案例参考-4" class="headerlink" title="案例参考"></a>案例参考</h3><p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x0D-Pass-13-%E5%88%A9%E7%94%A8%E5%9B%BE%E7%89%87%E9%A9%AC%E7%BB%95%E8%BF%87%E6%96%87%E4%BB%B6%E5%A4%B4%E6%A3%80%E6%B5%8B">Upload Labs Pass-13 利用图片马绕过文件头检测</a></p>
+<p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x0E-Pass-14-%E5%88%A9%E7%94%A8%E5%9B%BE%E7%89%87%E9%A9%AC%E7%BB%95%E8%BF%87getimagesize-%E5%92%8Cimage-type-to-extension">Upload Labs Pass-14 利用图片马绕过getimagesize()和image_type_to_extension()</a></p>
+<p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x0F-Pass-15-%E5%88%A9%E7%94%A8%E5%9B%BE%E7%89%87%E9%A9%AC%E7%BB%95%E8%BF%87exif-imagetype">Upload Labs Pass-15 利用图片马绕过exif_imagetype()</a></p>
+<p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x10-Pass-16-%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93%E7%BB%95%E8%BF%87">Upload Labs Pass-16 二次渲染绕过</a></p>
+<h2 id="0x06-解析漏洞"><a href="#0x06-解析漏洞" class="headerlink" title="0x06 解析漏洞"></a>0x06 解析漏洞</h2><h3 id="Web应用程序解析漏洞"><a href="#Web应用程序解析漏洞" class="headerlink" title="Web应用程序解析漏洞"></a>Web应用程序解析漏洞</h3><h4 id="Apache解析漏洞"><a href="#Apache解析漏洞" class="headerlink" title="Apache解析漏洞"></a>Apache解析漏洞</h4><h5 id="未知扩展名解析漏洞"><a href="#未知扩展名解析漏洞" class="headerlink" title="未知扩展名解析漏洞"></a>未知扩展名解析漏洞</h5><p>其实该漏洞是由于用户配置不当产生的，与具体Apache版本无关。</p>
+<p>通过module方式部署的Apache+PHP的环境存在如下解析问题。</p>
+<p>解析：test.php.abc（其中abc为任意不属于黑名单且也不属于Apache解析白名单的名称）</p>
+<p>描述：一个文件名为x1.x2.x3的文件，Apache 会从x3的位置往x1的位置开始尝试解析，如果x3不属于Apache能解析的扩展名，那么Apache会尝试去解析x2的位置，这样 一直往前尝试，直到遇到一个能解析的扩展名为止。</p>
+<p>与其说这是漏洞，不如说是Apache的特性，就是我们平常所说的从右向左解析是一样的。</p>
+<p>通常，该用户配置实在php.conf文件中配置的，我本地phpStudy环境是C:\phpStudy\Apache\conf\extra\httpd-php.conf文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LoadFile &quot;C:/phpStudy/php/php-5.2.17/php5ts.dll&quot;</span><br><span class="line">LoadModule php5_module &quot;C:/phpStudy/php/php-5.2.17/php5apache2_4.dll&quot;</span><br><span class="line">&lt;IfModule php5_module&gt;</span><br><span class="line">PHPIniDir &quot;C:/phpStudy/php/php-5.2.17/&quot;</span><br><span class="line">&lt;/IfModule&gt;</span><br><span class="line">LoadFile &quot;C:/phpStudy/php/php-5.2.17/libmysql.dll&quot;</span><br><span class="line">LoadFile &quot;C:/phpStudy/php/php-5.2.17/libmcrypt.dll&quot;</span><br><span class="line"></span><br><span class="line">&lt;FilesMatch &quot;\.php$&quot;&gt;</span><br><span class="line">    SetHandler application/x-httpd-php</span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的配置是没问题的，但如果用户将<code>\.php$</code>修改为如<code>\.php</code>时就会存在解析漏洞。</p>
+<h5 id="换行解析漏洞（CVE-2017-15715）"><a href="#换行解析漏洞（CVE-2017-15715）" class="headerlink" title="换行解析漏洞（CVE-2017-15715）"></a>换行解析漏洞（CVE-2017-15715）</h5><p>Apache通过mod_php来运行脚本，其2.4.0-2.4.29中存在Apache换行解析漏洞，在解析php时xxx.php\x0A将被按照PHP后缀进行解析，导致绕过一些服务器的安全策略。</p>
+<p>本地Apache的版本为2.4.23，可通过<code>httpd -v</code>命令查看：</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/4.png" alt=""></p>
+<p>具体可参考P神的文章：<a href="https://www.leavesongs.com/PENETRATION/apache-cve-2017-15715-vulnerability.html" target="_blank" rel="noopener">《利用最新Apache解析漏洞（CVE-2017-15715）绕过上传黑名单》</a></p>
+<h5 id="htaccess解析漏洞"><a href="#htaccess解析漏洞" class="headerlink" title=".htaccess解析漏洞"></a>.htaccess解析漏洞</h5><p>.htaccess文件是Apache服务器中的一个配置文件，它负责相关目录下的网页配置。通过htaccess文件，可以帮我们实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许/阻止特定的用户或者目录的访问、禁止目录列表、配置默认文档等功能。</p>
+<p>在文件上传中若未限制上传.htaccess文件且开启了.htaccess，那么就可以在.htaccess文件中重新定义可被执行的文件类型。</p>
+<p>具体的在后面的小结中讲到。</p>
+<h5 id="案例参考-5"><a href="#案例参考-5" class="headerlink" title="案例参考"></a>案例参考</h5><p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x12-Pass-18-%E5%88%A9%E7%94%A8%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89-%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87">Upload Labs Pass-18 利用条件竞争+解析漏洞绕过</a></p>
+<p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x04-Pass-04-%E5%88%A9%E7%94%A8-htaccess%E7%BB%95%E8%BF%87">Upload Labs Pass-04 利用.htaccess绕过</a></p>
+<h4 id="Nginx解析漏洞"><a href="#Nginx解析漏洞" class="headerlink" title="Nginx解析漏洞"></a>Nginx解析漏洞</h4><h5 id="未知PHP文件解析漏洞"><a href="#未知PHP文件解析漏洞" class="headerlink" title="未知PHP文件解析漏洞"></a>未知PHP文件解析漏洞</h5><p>该漏洞同一与Nginx版本无关，属于用户配置不当造成的解析漏洞。</p>
+<p>解析：abc/def.php（其中abc、def都为任意文件名）</p>
+<p>描述：对任意文件名，在后面添加/abc.php的解析漏洞，如原本文件名是test.jpg则可以添加为test.jpg/x.php进行解析攻击。</p>
+<h5 id="00截断解析漏洞"><a href="#00截断解析漏洞" class="headerlink" title="%00截断解析漏洞"></a>%00截断解析漏洞</h5><p>对于低版本的Nginx（0.5.*, 0.6.*, 0.7 &lt;= 0.7.65, 0.8 &lt;= 0.8.37），可以在任意文件名后面添加%00.php进行解析攻击。</p>
+<p>如：1.jpg%00.php就会将前面1.jpg文件当成PHP文件进行解析执行。</p>
+<h4 id="IIS解析漏洞"><a href="#IIS解析漏洞" class="headerlink" title="IIS解析漏洞"></a>IIS解析漏洞</h4><h5 id="IIS-5-x-6-0解析漏洞"><a href="#IIS-5-x-6-0解析漏洞" class="headerlink" title="IIS 5.x/6.0解析漏洞"></a>IIS 5.x/6.0解析漏洞</h5><p>解析：test.asp/abc 或 test.asp;abc（其中abc为任意文件名）</p>
+<p>描述：IIS 5.x/6.0在解析asp格式的时候有两个解析漏洞，一个是如果目录名包含”.asp”字符串，那么这个目录下所有的文件都会按照asp去解析，另一个是只要文件名中含有”.asp;”会优先按asp来解析。</p>
+<h5 id="IIS-7-0-7-5解析漏洞"><a href="#IIS-7-0-7-5解析漏洞" class="headerlink" title="IIS 7.0/7.5解析漏洞"></a>IIS 7.0/7.5解析漏洞</h5><p>在默认Fast-CGI开启的情况下，IIS 7.0/7.5是对php解析时有一个类似于Nginx的解析漏洞，对任意文件名只要在URL 后面追加上字符串”/任意文件名.php”就会按照php的方式去解析。</p>
+<p>如上传一个图片马shell.jpg，访问shell.jpg/xx.php可成功触发WebShell。</p>
+<h3 id="文件包含解析"><a href="#文件包含解析" class="headerlink" title="文件包含解析"></a>文件包含解析</h3><p>这里指的是PHP的本地文件包含漏洞。</p>
+<p>前面说到的一些如利用图片马绕过的方法中，由于上传图片马本身就是个图像类型的文件，直接在浏览器访问时不能触发其中的恶意代码的。此时就需要结合文件包含漏洞来触发如图片马中的代码。</p>
+<p>简单地说，PHP文件包含漏洞的原理是：只要包含进来的文件，该文件中的内容都会被当成PHP代码来执行。</p>
+<p>PHP文件包含的几个函数：include、include_once、require、require_once。</p>
+<h4 id="案例参考-6"><a href="#案例参考-6" class="headerlink" title="案例参考"></a>案例参考</h4><p>看图片马那几个案例就ok。</p>
+<h3 id="htaccess解析"><a href="#htaccess解析" class="headerlink" title=".htaccess解析"></a>.htaccess解析</h3><p>.htaccess（Hypertext Access）文件，又称分布式配置文件，提供了针对目录改变配置的方法， 即在一个特定的文档目录中放置一个包含一个或多个指令的文件， 以作用于此目录及其所有子目录。作为用户，所能使用的命令受到限制。管理员可以通过Apache的AllowOverride指令来设置。</p>
+<p>.htaccess文件是Apache服务器中的一个配置文件，它负责相关目录下的网页配置。通过.htaccess文件，可以帮我们实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许/阻止特定的用户或者目录的访问、禁止目录列表、配置默认文档等功能。</p>
+<p>启用.htaccess，需要修改httpd.conf，启用AllowOverride，并可以用AllowOverride限制特定命令的使用，另外还需要加载mod_rewrite模块。</p>
+<p>即启用.htaccess文件的两个条件：</p>
+<ul>
+<li>在httpd.conf配置文件中启用AllowOverride：<code>AllowOverride All</code></li>
+<li>在httpd.conf配置文件中启用mod_rewrite模块：<code>LoadModule rewrite_module modules/mod_rewrite.so</code></li>
+</ul>
+<p>如果需要使用.htaccess以外的其他文件名，可以用AccessFileName指令来改变。例如，需要使用.config ，则可以在服务器配置文件中按以下方法配置：AccessFileName .config 。</p>
+<p>通常，在文件上传有严格的后缀名黑名单限制但除了.htaccess外，我们可以利用上传.htaccess文件修改上传文件所在目录的配置、令其解析任意后缀名文件为目标后缀名文件如php，从而绕过黑名单过滤。其中该上传的.htaccess文件内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SetHandler application/x-httpd-php</span><br><span class="line">或</span><br><span class="line">&lt;FilesMatch &quot;filename&quot;&gt;</span><br><span class="line">SetHandler application/x-httpd-php</span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="案例参考-7"><a href="#案例参考-7" class="headerlink" title="案例参考"></a>案例参考</h4><p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x04-Pass-04-%E5%88%A9%E7%94%A8-htaccess%E7%BB%95%E8%BF%87">Upload Labs Pass-04 利用.htaccess绕过</a></p>
+<h3 id="user-ini解析"><a href="#user-ini解析" class="headerlink" title=".user.ini解析"></a>.user.ini解析</h3><blockquote>
+<p>自 PHP 5.3.0 起，PHP 支持基于每个目录的 .htaccess 风格的 INI 文件。此类文件<em>仅</em>被 CGI／FastCGI SAPI 处理。此功能使得 PECL 的 htscanner 扩展作废。如果使用 Apache，则用 .htaccess 文件有同样效果。</p>
+<p>除了主 php.ini 之外，PHP 还会在每个目录下扫描 INI 文件，从被执行的 PHP 文件所在目录开始一直上升到 web 根目录（$_SERVER[‘DOCUMENT_ROOT’] 所指定的）。如果被执行的 PHP 文件在 web 根目录之外，则只扫描该目录。</p>
+<p>在 .user.ini 风格的 INI 文件中只有具有 <strong>PHP_INI_PERDIR</strong> 和 <strong>PHP_INI_USER</strong> 模式的 INI 设置可被识别。</p>
+<p>实际上，除了<code>PHP_INI_SYSTEM</code>以外的模式（包括PHP_INI_ALL）都是可以通过.user.ini来设置的。</p>
+<p>而且，和<code>php.ini</code>不同的是，<code>.user.ini</code>是一个能被动态加载的ini文件。也就是说我修改了<code>.user.ini</code>后，不需要重启服务器中间件，只需要等待<code>user_ini.cache_ttl</code>所设置的时间（默认为300秒），即可被重新加载。</p>
+</blockquote>
+<p>查看<code>PHP_INI_SYSTEM</code>可以发现，大多数敏感配置项包括<code>disable_functions</code>、<code>extension_dir</code>、<code>enable_dl</code>等都在其中，我们无法直接通过.user.ini来直接设置了。</p>
+<p>但是.user.ini可设置如下几项来实现构造后门：</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/5.png" alt=""></p>
+<p>这里只看auto_prepend_file项，在主文件解析之前会先解析该项设置的文件，效果和PHP文件包含一样。</p>
+<h4 id="案例参考-8"><a href="#案例参考-8" class="headerlink" title="案例参考"></a>案例参考</h4><p>下面看个例子，环境是Apache+PHP，注意是以Fast-CGI的形式启动PHP的：</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/10.png" alt=""></p>
+<p>在upload目录中本身就存在hello.php文件：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="string">"HelloWorld!"</span>;<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>正常访问时输出指定字符串内容：</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/6.png" alt=""></p>
+<p>现在上传1.jpg文件，内容为一句话木马：</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/7.png" alt=""></p>
+<p>接着，由于服务端未过滤.ini扩展名，我们上传.user.ini文件，内容如下，指定刚刚上传后门jpg文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auto_prepend_file=1.jpg</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/10/14/文件上传漏洞总结/8.png" alt=""></p>
+<p>此时再去访问hello.php，它已经加载1.jpg作为PHP文件执行了：</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/9.png" alt=""></p>
+<h2 id="0x07-条件竞争"><a href="#0x07-条件竞争" class="headerlink" title="0x07 条件竞争"></a>0x07 条件竞争</h2><p>当后台程序先将文件上传后再进行相应的检测处理时，会存在个时间差，导致条件竞争漏洞的存在。</p>
+<p>一般只能通过代码审计来发现此类问题。</p>
+<h3 id="绕过方法-5"><a href="#绕过方法-5" class="headerlink" title="绕过方法"></a>绕过方法</h3><p>通常，使用Burp重复发送上传报文或者自己编写脚本多线程发送上传报文，然后再浏览器中访问上传文件的页面，直至触发为止。</p>
+<p>其中脚本用hackhttp模块和多线程模块即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hackhttp</span><br><span class="line"><span class="keyword">from</span> multiprocessing.dummy <span class="keyword">import</span> Pool <span class="keyword">as</span> ThreadPool</span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://a.com/upload.php'</span></span><br><span class="line">raw = <span class="string">'''</span></span><br><span class="line"><span class="string">POST上传的请求报文'''</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upload</span><span class="params">(lists)</span>:</span></span><br><span class="line">	hh = hackhttp.hackhttp()</span><br><span class="line">	code,head,html,redirect_url,log = hh.http(url=url,raw=raw)</span><br><span class="line">	<span class="keyword">print</span> code</span><br><span class="line"></span><br><span class="line">pool = ThreadPool(<span class="number">10</span>)</span><br><span class="line">pool.map(upload, range(<span class="number">10000</span>))</span><br><span class="line">pool.close()</span><br><span class="line">pool.join()</span><br></pre></td></tr></table></figure>
+<h3 id="案例参考-9"><a href="#案例参考-9" class="headerlink" title="案例参考"></a>案例参考</h3><p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x11-Pass-17-%E5%88%A9%E7%94%A8%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E7%BB%95%E8%BF%87">Upload Labs Pass-17 利用条件竞争绕过</a></p>
+<p><a href="https://www.mi1k7ea.com/2019/10/05/upload-labs-WriteUp/#0x12-Pass-18-%E5%88%A9%E7%94%A8%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89-%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87">Upload Labs Pass-18 利用条件竞争+解析漏洞绕过</a></p>
+<h2 id="0x08-PUT上传漏洞"><a href="#0x08-PUT上传漏洞" class="headerlink" title="0x08 PUT上传漏洞"></a>0x08 PUT上传漏洞</h2><p>Web容器支持PUT、MOVE、COPY等不安全的HTTP方法，若权限配置不当、系统未禁用这些危险的HTTP方法时，攻击者就可以直接从客户端向服务器上传数据来取代指定文档的内容，即攻击者通过PUT、MOVE、COPY等HTTP方法上传恶意文件。</p>
+<p>该漏洞很简单，直接向目标站点的某些接口发送HTTP OPTIONS请求，若正常返回响应，则查看返回响应中允许哪些HTTP方法，若允许PUT、MOVE、COPY等其中的某些方法，则可以发送这些HTTP方法请求进行利用。</p>
+<p>具体的攻击利用参考网上的文章即可：<a href="https://www.4hou.com/technology/12885.html" target="_blank" rel="noopener">HTTP PUT方法利用的几种方式</a></p>
+<p>防御方法很多，比如Tomcat容器的防御是在web.xml中设置如下，这样就能禁用PUT、DELETE、HEAD、OPTIONS、TRACE等危险的HTTP方法了：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">version</span>=<span class="string">"2.4"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">security-constraint</span>&gt;</span>  </span><br><span class="line">  <span class="tag">&lt;<span class="name">web-resource-collection</span>&gt;</span>  </span><br><span class="line">  <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">http-method</span>&gt;</span>PUT<span class="tag">&lt;/<span class="name">http-method</span>&gt;</span>  </span><br><span class="line">		<span class="tag">&lt;<span class="name">http-method</span>&gt;</span>DELETE<span class="tag">&lt;/<span class="name">http-method</span>&gt;</span>  </span><br><span class="line">	    <span class="tag">&lt;<span class="name">http-method</span>&gt;</span>HEAD<span class="tag">&lt;/<span class="name">http-method</span>&gt;</span>  </span><br><span class="line">	    <span class="tag">&lt;<span class="name">http-method</span>&gt;</span>OPTIONS<span class="tag">&lt;/<span class="name">http-method</span>&gt;</span>  </span><br><span class="line">	    <span class="tag">&lt;<span class="name">http-method</span>&gt;</span>TRACE<span class="tag">&lt;/<span class="name">http-method</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;/<span class="name">web-resource-collection</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">auth-constraint</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;/<span class="name">auth-constraint</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">security-constraint</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">login-config</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">auth-method</span>&gt;</span>BASIC<span class="tag">&lt;/<span class="name">auth-method</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">login-config</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="0x09-文件上传攻击框架"><a href="#0x09-文件上传攻击框架" class="headerlink" title="0x09 文件上传攻击框架"></a>0x09 文件上传攻击框架</h2><p>先看下前辈总结的整个文件上传攻击框架的核心图：</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/11.png" alt=""></p>
+<p>在此基础上，我将自己的理解和新绕过方法都整合到一个新的文件上传攻击框架：</p>
+<p><img src="/2019/10/14/文件上传漏洞总结/12.png" alt=""></p>
+<h2 id="0x0A-参考"><a href="#0x0A-参考" class="headerlink" title="0x0A 参考"></a>0x0A 参考</h2><p><a href="http://www.owasp.org.cn/OWASP_Training/Upload_Attack_Framework.pdf" target="_blank" rel="noopener">Upload Attack Framework</a></p>
+
+    </div>
+
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-概述"><span class="toc-text">0x00 概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-客户端-JavaScript检测"><span class="toc-text">0x01 客户端-JavaScript检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检测方法"><span class="toc-text">检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#绕过方法"><span class="toc-text">绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例参考"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-服务端-MIME类型检测"><span class="toc-text">0x02 服务端-MIME类型检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检测方法-1"><span class="toc-text">检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#绕过方法-1"><span class="toc-text">绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例参考-1"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-服务端-目录路径检测"><span class="toc-text">0x03 服务端-目录路径检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检测方法-2"><span class="toc-text">检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#绕过方法-2"><span class="toc-text">绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例参考-2"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-服务端-文件扩展名检测"><span class="toc-text">0x04 服务端-文件扩展名检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检测方法-3"><span class="toc-text">检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#绕过方法-3"><span class="toc-text">绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例参考-3"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-服务端-文件内容检测"><span class="toc-text">0x05 服务端-文件内容检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检测方法-4"><span class="toc-text">检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#绕过方法-4"><span class="toc-text">绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例参考-4"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-解析漏洞"><span class="toc-text">0x06 解析漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Web应用程序解析漏洞"><span class="toc-text">Web应用程序解析漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Apache解析漏洞"><span class="toc-text">Apache解析漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#未知扩展名解析漏洞"><span class="toc-text">未知扩展名解析漏洞</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#换行解析漏洞（CVE-2017-15715）"><span class="toc-text">换行解析漏洞（CVE-2017-15715）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#htaccess解析漏洞"><span class="toc-text">.htaccess解析漏洞</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#案例参考-5"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Nginx解析漏洞"><span class="toc-text">Nginx解析漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#未知PHP文件解析漏洞"><span class="toc-text">未知PHP文件解析漏洞</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#00截断解析漏洞"><span class="toc-text">%00截断解析漏洞</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IIS解析漏洞"><span class="toc-text">IIS解析漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#IIS-5-x-6-0解析漏洞"><span class="toc-text">IIS 5.x/6.0解析漏洞</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#IIS-7-0-7-5解析漏洞"><span class="toc-text">IIS 7.0/7.5解析漏洞</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件包含解析"><span class="toc-text">文件包含解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#案例参考-6"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#htaccess解析"><span class="toc-text">.htaccess解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#案例参考-7"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#user-ini解析"><span class="toc-text">.user.ini解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#案例参考-8"><span class="toc-text">案例参考</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-条件竞争"><span class="toc-text">0x07 条件竞争</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#绕过方法-5"><span class="toc-text">绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例参考-9"><span class="toc-text">案例参考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-PUT上传漏洞"><span class="toc-text">0x08 PUT上传漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x09-文件上传攻击框架"><span class="toc-text">0x09 文件上传攻击框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0A-参考"><span class="toc-text">0x0A 参考</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+
+<div class="share" style="width: 100%;">
+  <img src="" alt="" style="margin: auto; display: block;"/>
+
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">test</div>
+  
+</div>
+
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2019/10/05/upload-labs-WriteUp/" rel="next" title="Upload-Labs WriteUp">
+          Upload-Labs WriteUp
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2019/10/20/InCTF-2019-PHP三题复现/" rel="prev" title="InCTF 2019 PHP+1,+1.5,+2.5三题复现">
+            InCTF 2019 PHP+1,+1.5,+2.5三题复现
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <span>Copyright &copy; Mi1k7ea</span>  |  
+        <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv"></span> 次</span>
+    </div>
+</footer>
+
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+  
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+</body>
+</html>

