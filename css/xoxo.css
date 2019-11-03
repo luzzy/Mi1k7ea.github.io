@@ -221,7 +221,7 @@ body {
 }
 @media screen and (min-width: 1280px) {
   .nav-container .home-menu {
-    max-width: 880px;
+    max-width: 2880px;
   }
 }
 .nav-container .home-menu .pure-menu-heading {
@@ -240,8 +240,8 @@ body {
   }
 }
 .nav-container .home-menu .pure-menu-heading .avatar {
-  width: 40px;
-  height: 40px;
+  width: 65px;
+  height: 65px;
   background: #efefef;
   border-radius: 20px;
   border-style: none;
@@ -431,8 +431,8 @@ body {
     position: fixed;
     margin-left: -15px;
     max-height: calc(100vh - 150px);
-    width: 200px;
-    top: 25%;
+    width: 250px;
+    top: 15%;
     font-size: 12px;
     padding: 10px;
     overflow-y: auto;
@@ -461,7 +461,7 @@ body {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  width: 180px;
+  width: 230px;
 }
 .post-container .toc-container .toc-article .toc .toc-item.toc-level-4 {
   color: #444;

