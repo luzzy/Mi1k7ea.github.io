@@ -11,7 +11,7 @@
   <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
   
   
-    <meta name="keywords" content="Cyber Security">
+    <meta name="keywords" content="Web安全,Java,">
   
 
   
@@ -21,7 +21,7 @@
   
   <link rel="icon" type="image/x-icon" href="/kanxi.jpg">
   
-  <title> [ Mi1k7ea ]Wiki</title>
+  <title>Fastjson系列五——高版本JDK绕过及检测与防御 [ Mi1k7ea ]</title>
   
     <!-- stylesheets list from config.yml -->
     
@@ -322,80 +322,102 @@
 
   <div class="container" id="content-outer">
     <div class="inner" id="content-inner">
-      
-
-  <div class="recent-posts">
-    
-
-      <article class="recent-post-item">
-        <a class="title" href="/2019/01/01/Python安全小工具之反编译pyc文件/"><h2>Python安全小工具之反编译pyc文件</h2></a>
-        <div class="post-meta">
-          
-          <time class="time" datetime="2018-12-31T17:01:01.000Z">
-            2019-01-01
-          </time>
-          
-          <span class="slash">/</span>
-          
-          <ul class="index-tag-list"><li class="index-tag-list-item"><a class="index-tag-list-link" href="/tags/Python/">Python</a></li><li class="index-tag-list-item"><a class="index-tag-list-link" href="/tags/安全开发/">安全开发</a></li></ul>
-          
-
-        </div>
-
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        Fastjson系列五——高版本JDK绕过及检测与防御
+      </h1>
+      <span>
         
-        <a class="more" href="/2019/01/01/Python安全小工具之反编译pyc文件/"> 阅读全文〉</a>
-      </article>
-    
-
-      <article class="recent-post-item">
-        <a class="title" href="/2019/01/01/通过DVWA学习DOM型XSS/"><h2>DVWA之DOM型XSS</h2></a>
-        <div class="post-meta">
-          
-          <time class="time" datetime="2018-12-31T17:01:01.000Z">
-            2019-01-01
-          </time>
-          
-          <span class="slash">/</span>
-          
-          <ul class="index-tag-list"><li class="index-tag-list-item"><a class="index-tag-list-link" href="/tags/Web安全/">Web安全</a></li><li class="index-tag-list-item"><a class="index-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
-          
-
-        </div>
-
+        <time class="time" datetime="2019-11-13T13:44:51.000Z">
+        2019-11-13
+      </time>
         
-        <a class="more" href="/2019/01/01/通过DVWA学习DOM型XSS/"> 阅读全文〉</a>
-      </article>
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <h2 id="0x01-高版本JDK绕过"><a href="#0x01-高版本JDK绕过" class="headerlink" title="0x01 高版本JDK绕过"></a>0x01 高版本JDK绕过</h2><p>由之前利用的PoC知道，利用范围最广的PoC是基于com.sun.rowset.JdbcRowSetImpl的利用链的，而这种利用方式是基于JNDI注入漏洞的，是需要我们有RMI服务或LDAP服务。</p>
+<p>这样就会导致一个限制的问题，即JNDI注入漏洞利用的限制问题——JDK版本。</p>
+<p>由之前的分析知道，JDK对于JNDI注入漏洞在不同版本有着不同的防御措施：</p>
+<ul>
+<li>JDK 6u45、7u21之后：java.rmi.server.useCodebaseOnly的默认值被设置为true。当该值为true时，将禁用自动加载远程类文件，仅从CLASSPATH和当前JVM的java.rmi.server.codebase指定路径加载类文件。使用这个属性来防止客户端VM从其他Codebase地址上动态加载类，增加了RMI ClassLoader的安全性。</li>
+<li>JDK 6u141、7u131、8u121之后：增加了com.sun.jndi.rmi.object.trustURLCodebase选项，默认为false，禁止RMI和CORBA协议使用远程codebase的选项，因此RMI和CORBA在以上的JDK版本上已经无法触发该漏洞，但依然可以通过指定URI为LDAP协议来进行JNDI注入攻击。</li>
+<li>JDK 6u211、7u201、8u191之后：增加了com.sun.jndi.ldap.object.trustURLCodebase选项，默认为false，禁止LDAP协议使用远程codebase的选项，把LDAP协议的攻击途径也给禁了。</li>
+</ul>
+<p>因此，相比之下，我们在Fastjson反序列化漏洞的基于com.sun.rowset.JdbcRowSetImpl的利用链上，更倾向于使用LDAP服务来实现攻击利用，因为其对于JDK的适用范围更广。</p>
+<p>但是如果目标环境的JDK版本在6u211、7u201、8u191之后，我们是不是就没有办法绕过了呢？</p>
+<p>当然是有的，KINGX大佬已经写：<a href="https://kingx.me/Restrictions-and-Bypass-of-JNDI-Manipulations-RCE.html" target="_blank" rel="noopener">如何绕过高版本JDK的限制进行JNDI注入利用</a></p>
+<p>主要是有两种方式：</p>
+<ul>
+<li>利用本地Class作为Reference Factory</li>
+<li>利用LDAP返回序列化数据，触发本地Gadget</li>
+</ul>
+<p>这一块有时间我再补充下。。。</p>
+<h2 id="0x02-检测方法"><a href="#0x02-检测方法" class="headerlink" title="0x02 检测方法"></a>0x02 检测方法</h2><p>全局搜索是否使用到了Fastjson，若使用了则进一步排查是否为漏洞版本号即1.2.22-1.2.47，若是则可能存在反序列化漏洞的风险，需进一步排查。</p>
+<p>全局搜索如下关键代码，若存在则进一步排查参数是否外部可控：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line">JSON.parse(</span><br><span class="line">JSON.parseObject(</span><br></pre></td></tr></table></figure>
+<h2 id="0x03-防御方法"><a href="#0x03-防御方法" class="headerlink" title="0x03 防御方法"></a>0x03 防御方法</h2><p>升级到最新版的Fastjson。</p>
+
+    </div>
+
+  </article>
+  <div class="toc-container">
     
-
-      <article class="recent-post-item">
-        <a class="title" href="/2019/01/01/cPickle反序列化漏洞/"><h2>Python cPickle反序列化漏洞</h2></a>
-        <div class="post-meta">
-          
-          <time class="time" datetime="2018-12-31T17:01:01.000Z">
-            2019-01-01
-          </time>
-          
-          <span class="slash">/</span>
-          
-          <ul class="index-tag-list"><li class="index-tag-list-item"><a class="index-tag-list-link" href="/tags/Python/">Python</a></li><li class="index-tag-list-item"><a class="index-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
-          
-
-        </div>
-
-        
-        <a class="more" href="/2019/01/01/cPickle反序列化漏洞/"> 阅读全文〉</a>
-      </article>
-    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-高版本JDK绕过"><span class="toc-text">0x01 高版本JDK绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-检测方法"><span class="toc-text">0x02 检测方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-防御方法"><span class="toc-text">0x03 防御方法</span></a></li></ol>
   </div>
 
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+
+<div class="share" style="width: 100%;">
+  <img src="" alt="" style="margin: auto; display: block;"/>
+
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">test</div>
+  
+</div>
+
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/" rel="next" title="Fastjson系列四——1.2.25-1.2.47反序列化漏洞（无需开启AutoType）">
+          Fastjson系列四——1.2.25-1.2.47反序列化漏洞（无需开启AutoType）
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+      </div>
+    </div>
+  
 
 
     </div>
 
-    
-      <nav class="page-nav text-center">
-          <a class="extend prev" rel="prev" href="/page/10/">〈</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span>
-      </nav>
     
 
   </div>
