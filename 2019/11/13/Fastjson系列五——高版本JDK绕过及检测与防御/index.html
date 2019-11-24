@@ -1,355 +1,503 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-
 <head><meta name="generator" content="Hexo 3.9.0">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#202020">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-  
-  
-    <meta name="keywords" content="Web安全,Java,">
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
 
-  
-    <meta name="description" content="d2VsY29tZSB0byBteSBibG9n">
-  
-  
-  
-  <link rel="icon" type="image/x-icon" href="/kanxi.jpg">
-  
-  <title>Fastjson系列五——高版本JDK绕过及检测与防御 [ Mi1k7ea ]</title>
-  
-    <!-- stylesheets list from config.yml -->
     
-      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+      <link rel="icon" href="/favicon.ico">
     
-      <link rel="stylesheet" href="/css/xoxo.css">
+
+    <title>
+        
+          Fastjson系列五——高版本JDK绕过及检测与防御 - Mi1k7ea
+        
+    </title>
+
+    <!-- Spectre.css framework -->
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+
+    <!-- Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC" rel="stylesheet">
+    <!-- Noto Sans SC -->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC" rel="stylesheet">
+    <!-- Noto Sans -->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+
+    <!-- theme css & js -->
+    <link rel="stylesheet" href="/css/book.css">
+    <script src="/js/book.js"></script>
+
+    <!-- tocbot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
     
-  
+    <!-- katex -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zooming/2.1.1/zooming.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const zooming = new Zooming()
+    zooming.listen('img')
+})
+</script>
+
 </head>
 
-
 <body>
-  <div class="nav-container">
-    <nav class="home-menu pure-menu pure-menu-horizontal">
-  <a class="pure-menu-heading" href="/">
-    
-      <img class="avatar" src="/j.jpg">
-    
-    <span class="title" style="text-transform:none">Mi1k7ea</span>
-  </a>
 
-  <ul class="pure-menu-list clearfix">
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="post" class="pure-menu-link">文章</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/archives" style="color:#202020;" class="pure-menu-link">归档</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories" style="color:#202020;" class="pure-menu-link">分类</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/tags" style="color:#202020;" class="pure-menu-link">标签</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="Web安全" class="pure-menu-link">Web安全</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/Web安全基础/" style="color:#202020;" class="pure-menu-link">Web安全基础&amp;Tricks</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Web安全之机器学习</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/WriteUp-Web/" style="color:#202020;" class="pure-menu-link">WriteUp Web</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="PHP" class="pure-menu-link">PHP</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/PHP/" style="color:#202020;" class="pure-menu-link">PHP安全</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">CMS</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="Java" class="pure-menu-link">Java</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/Java/" style="color:#202020;" class="pure-menu-link">Java安全</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Struts2</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="https://www.mi1k7ea.com/categories/Java/Spring/" style="color:#202020;" class="pure-menu-link">Spring</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">SpringCloud</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="Python" class="pure-menu-link">Python</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/Python/" style="color:#202020;" class="pure-menu-link">Python安全</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="https://www.mi1k7ea.com/categories/Python/Python安全开发/" style="color:#202020;" class="pure-menu-link">Python安全开发</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">爬虫</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Django</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="JavaScript" class="pure-menu-link">JavaScript</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/JavaScript/" style="color:#202020;" class="pure-menu-link">JavaScript安全</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Node.js</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="GO" class="pure-menu-link">GO</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">GO安全</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="二进制安全" class="pure-menu-link">二进制安全</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/二进制基础/" style="color:#202020;" class="pure-menu-link">二进制基础</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/C-C/" style="color:#202020;" class="pure-menu-link">C/C++</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Fuzzing</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/Pwn/" style="color:#202020;" class="pure-menu-link">Pwn</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/WriteUp-Pwn/" style="color:#202020;" class="pure-menu-link">WriteUp Pwn</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/categories/WriteUp-Reverse/" style="color:#202020;" class="pure-menu-link">WriteUp Reverse</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="渗透测试" class="pure-menu-link">渗透测试</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">基础&amp;Tricks</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Kali</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Metasploit</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">内网渗透</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">提权</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">免杀</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">工具</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="OS" class="pure-menu-link">OS</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Windows</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/404" style="color:#202020;" class="pure-menu-link">Linux</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-          
-            
-              <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            
-              <a href="#" id="about" class="pure-menu-link">关于</a>
-              <ul class="pure-menu-children">
-              
-                  
-                    <li class="pure-menu-item"><a href="/about" style="color:#202020;" class="pure-menu-link">Mi1k7ea</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="https://blog.csdn.net/ski_12" style="color:#202020;" class="pure-menu-link">CSDN博客</a></li>
-                  
-              
-                  
-                    <li class="pure-menu-item"><a href="/atom.xml" style="color:#202020;" class="pure-menu-link">订阅</a></li>
-                  
-              
-              </ul>
-            </li>
-          
-      
-  </ul>
-   
-</nav>
+<div class="container">
+  <div class="book-container">
+    <div class="columns">
+      <div class="column col-2 hide-lg">
+        <div class="book-sidebar">
+  <h4 class="site-meta">
+    <a href="/">Mi1k7ea</a>
+  </h4>
+  <div class="sidebar-content">
+    <ul>
+<li><strong>Web安全</strong><ul>
+<li>Web安全基础&amp;Tricks<ul>
+<li><a href="/2019/10/14/文件上传漏洞总结/">文件上传攻击框架</a></li>
+<li><a href="/2019/10/04/CSWSH漏洞总结/">CSWSH漏洞总结</a></li>
+<li><a href="/2019/09/28/SSI注入漏洞总结/">SSI注入漏洞总结</a></li>
+<li><a href="/2019/08/20/JSONP跨域漏洞总结/">JSONP跨域漏洞总结</a></li>
+<li><a href="/2019/08/18/CORS跨域漏洞总结/">CORS跨域漏洞总结</a></li>
+<li><a href="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/">利用HTML注入劫持标签Bypass CSP</a></li>
+<li><a href="/2019/08/11/NoSQL注入之MongoDB/">NoSQL注入之MongoDB</a></li>
+<li><a href="/2019/08/10/Flash安全总结/">Flash安全总结</a></li>
+<li><a href="/2019/08/05/利用Flash进行Json-CSRF攻击/">利用Flash进行Json CSRF攻击</a></li>
+<li><a href="/2019/07/31/SWFUpload-swf的Flash型XSS分析/">SWFUpload.swf的Flash型XSS分析</a></li>
+<li><a href="/2019/07/30/ZeroClipboard-swf的Flash型XSS分析/">ZeroClipboard.swf的Flash型XSS分析</a></li>
+<li><a href="/2019/07/28/Flash型CSRF总结/">Flash型CSRF总结</a></li>
+<li><a href="/2019/07/21/Flash型XSS小结/">Flash型XSS总结</a></li>
+<li><a href="/2019/06/30/XSS从弹框到RCE/">XSS从弹框到RCE（IE）</a></li>
+<li><a href="/2019/06/30/命令注入Bypass技巧小结/">命令注入Bypass技巧小结</a></li>
+<li><a href="/2019/06/25/浅析DOM型XSS/">浅析DOM型XSS</a></li>
+<li><a href="/2019/03/22/图片XSS小结/">图片XSS小结</a></li>
+<li><a href="/2019/02/24/CSP策略及绕过技巧小结/">CSP策略及绕过技巧小结</a></li>
+<li><a href="/2019/02/19/一些加载XSS-Payload的标签/">一些加载XSS Payload的标签</a></li>
+<li><a href="/2019/02/16/个人XSS-payload收集/">个人XSS payload收集</a></li>
+<li><a href="/2019/01/30/常见Web漏洞类型/">常见Web漏洞类型总结</a></li>
+<li><a href="/2019/01/01/Sqli-labs-writeup/">Sqli-labs Less1-20</a></li>
+<li><a href="/2019/01/01/SQL注入写WebShell方式小结/">SQL注入写WebShell方式小结</a></li>
+</ul>
+</li>
+<li>Web安全之机器学习</li>
+<li>WriteUp Web<ul>
+<li><a href="/2019/10/20/InCTF-2019-PHP三题复现/">InCTF 2019 PHP+1,+1.5,+2.5三题复现</a></li>
+<li><a href="/2019/10/05/upload-labs-WriteUp/">Upload-Labs WriteUp</a></li>
+<li><a href="/2019/09/28/bWAPP之Cross-Origin-Resource-Sharing-AJAX/">bWAPP之Cross-Origin Resource Sharing (AJAX)</a></li>
+<li><a href="/2019/07/02/DVWA之JavaScript攻击/">DVWA之JavaScript攻击</a></li>
+<li><a href="/2019/06/27/一道Bypass正则过滤的反序列化漏洞题目/">一道Bypass正则过滤的反序列化漏洞题目</a></li>
+<li><a href="/2019/06/27/从一道CTF题看如何利用本地DTD文件实现XXE攻击/">从一道CTF题看如何通过本地DTD文件利用XXE实现回显</a></li>
+<li><a href="/2019/03/31/0CTF-Web-writeup/">0CTF Web writeup</a></li>
+<li><a href="/2019/03/29/Securinets-CTF-Web-writeup/">Securinets CTF Web writeup</a></li>
+<li><a href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/">Teaser CONFidence CTF Web writeup</a></li>
+<li><a href="/2019/03/17/SpEL注入之javacon/">SpEL注入之javacon</a></li>
+<li><a href="/2019/03/13/AeroCTF-writeupup之board-tracking-system/">AeroCTF writeupup之board tracking system</a></li>
+<li><a href="/2019/03/09/TAMUctf-Web-writeup/">TAMUctf Web writeup</a></li>
+<li><a href="/2019/02/21/一道绕过CSP的XSS题目/">一道绕过CSP的XSS题目</a></li>
+<li><a href="/2019/02/15/XSS闯关之xss-haozi-me/">XSS闯关之xss.haozi.me</a></li>
+<li><a href="/2019/01/01/通过DVWA学习DOM型XSS/">DVWA之DOM型XSS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Java</strong><ul>
+<li>Java安全<ul>
+<li><a href="http://localhost:4000/2019/11/24/Jackson系列七——其他Gadgets/" target="_blank" rel="noopener">Jackson系列七——其他Gadgets与检测防御</a></li>
+<li><a href="http://localhost:4000/2019/11/24/Jackson系列六——CVE-2019-12814（基于JDOM-XSLTransformer利用链）/" target="_blank" rel="noopener">Jackson系列六——CVE-2019-12814（基于JDOM XSLTransformer利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/22/Jackson系列五——CVE-2019-12384（基于logback利用链）/" target="_blank" rel="noopener">Jackson系列五——CVE-2019-12384（基于logback利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/19/Jackson系列四——CVE-2019-12086（基于MiniAdmin利用链）/" target="_blank" rel="noopener">Jackson系列四——CVE-2019-12086（基于MiniAdmin利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/17/Jackson系列三—CVE-2017-1748（基于ClassPathXmlApplicationContext利用链）/" target="_blank" rel="noopener">Jackson系列三——CVE-2017-17485（基于ClassPathXmlApplicationContext利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/16/Jackson系列二——CVE-2017-7525（基于TemplatesImpl利用链）/" target="_blank" rel="noopener">Jackson系列二——CVE-2017-7525（基于TemplatesImpl利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/13/Jackson系列一——反序列化漏洞基本原理/" target="_blank" rel="noopener">Jackson系列一——反序列化漏洞基本原理</a></li>
+<li><a href="http://localhost:4000/2019/11/13/Fastjson系列五——高版本JDK绕过及检测与防御/" target="_blank" rel="noopener">Fastjson系列五——高版本JDK绕过及检测与防御</a></li>
+<li><a href="http://localhost:4000/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/" target="_blank" rel="noopener">Fastjson系列四——1.2.25-1.2.47反序列化漏洞（无需开启AutoType）</a></li>
+<li><a href="http://localhost:4000/2019/11/10/Fastjson系列三——历史版本补丁绕过（需开启AutoType）/" target="_blank" rel="noopener">Fastjson系列三——历史版本补丁绕过（需开启AutoType）</a></li>
+<li><a href="http://localhost:4000/2019/11/07/Fastjson系列二——1-2-22-1-2-24反序列化漏洞/" target="_blank" rel="noopener">Fastjson系列二——1.2.22-1.2.24反序列化漏洞</a></li>
+<li><a href="http://localhost:4000/2019/11/03/Fastjson系列一——反序列化漏洞基本原理/" target="_blank" rel="noopener">Fastjson系列一——反序列化漏洞基本原理</a></li>
+<li><a href="http://localhost:4000/2019/10/21/XStream反序列化漏洞/" target="_blank" rel="noopener">Java XStream反序列化漏洞</a></li>
+<li><a href="http://localhost:4000/2019/09/15/浅析JNDI注入/" target="_blank" rel="noopener">浅析JNDI注入</a></li>
+<li><a href="http://localhost:4000/2019/09/01/Java-RMI原理与使用/" target="_blank" rel="noopener">Java RMI原理与使用</a></li>
+<li><a href="http://localhost:4000/2019/06/09/探讨XXE防御之setFeature设置/" target="_blank" rel="noopener">探讨XXE防御之setFeature设置</a></li>
+<li><a href="http://localhost:4000/2019/05/26/XML注入之SAXBuilder/" target="_blank" rel="noopener">XML注入之SAXBuilder</a></li>
+<li><a href="http://localhost:4000/2019/05/26/XML注入之SAXParser/" target="_blank" rel="noopener">XML注入之SAXParser</a></li>
+<li><a href="http://localhost:4000/2019/05/24/XML注入之SAXReader/" target="_blank" rel="noopener">XML注入之SAXReader</a></li>
+<li><a href="http://localhost:4000/2019/02/13/XML注入之DocumentBuilder/" target="_blank" rel="noopener">XML注入之DocumentBuilder与XXE攻击防御</a></li>
+<li><a href="http://localhost:4000/2019/02/06/Java反序列化漏洞/" target="_blank" rel="noopener">Java反序列化漏洞</a></li>
+<li><a href="http://localhost:4000/2019/02/03/Java序列化和反序列化机制/" target="_blank" rel="noopener">Java序列化和反序列化机制</a></li>
+<li><a href="http://localhost:4000/2019/02/01/Java动态代理机制/" target="_blank" rel="noopener">Java动态代理机制</a></li>
+<li><a href="http://localhost:4000/2019/02/01/Java反射机制/" target="_blank" rel="noopener">Java反射机制</a></li>
+<li><a href="http://localhost:4000/2019/01/01/XMLDecoder反序列化漏洞/" target="_blank" rel="noopener">Java XMLDecoder反序列化漏洞</a></li>
+</ul>
+</li>
+<li>Struts2</li>
+<li>Spring<ul>
+<li><a href="/2019/09/02/由JNDI注入导致的Spring-Framework反序列化漏洞/">由JNDI注入引发的Spring Framework反序列化漏洞</a></li>
+<li><a href="/2019/04/05/Spring-Data-Rest之cve-2017-8046分析/">浅析Spring Data Rest之cve-2017-8046</a></li>
+</ul>
+</li>
+<li>SpringCloud</li>
+</ul>
+</li>
+<li><strong>PHP</strong><ul>
+<li>PHP安全<ul>
+<li><a href="/2019/08/25/浅谈PHP-FPM安全/">浅谈PHP-FPM安全</a></li>
+<li><a href="/2019/08/03/从蚁剑插件看利用PHP-FPM绕过disable-functions/">从蚁剑插件看利用PHP-FPM绕过disable_functions</a></li>
+<li><a href="/2019/07/20/浅谈几种Bypass-open-basedir的方法/">浅谈几种Bypass open_basedir的方法</a></li>
+<li><a href="/2019/07/16/PHP中mail-函数安全问题与防御/">PHP中mail()函数安全问题与防御</a></li>
+<li><a href="/2019/07/04/浅谈escapeshellarg与参数注入/">浅谈escapeshellarg逃逸与参数注入</a></li>
+<li><a href="/2019/07/02/浅析preg-replace与preg-match/">浅析preg_replace与preg_match</a></li>
+<li><a href="/2019/06/21/PHP弱类型小结/">PHP弱类型及相关函数Bypass小结</a></li>
+<li><a href="/2019/06/20/PHP变量覆盖漏洞/">PHP变量覆盖漏洞小结</a></li>
+<li><a href="/2019/06/09/巧用get-defined-functions隐藏WebShell/">巧用get_defined_functions隐藏WebShell</a></li>
+<li><a href="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/">从RCTF nextphp看PHP7.4的FFI绕过disable_functions</a></li>
+<li><a href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/">浅谈几种Bypass disable_functions的方法</a></li>
+<li><a href="/2019/05/04/PHP对象注入之pop链构造/">PHP对象注入之pop链构造</a></li>
+<li><a href="/2019/04/21/PHP-session反序列化漏洞/">PHP session反序列化漏洞</a></li>
+<li><a href="/2019/01/31/PHP伪协议/">PHP伪协议</a></li>
+<li><a href="/2019/01/01/phar反序列化漏洞/">phar反序列化漏洞</a></li>
+<li><a href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/">Windows下的一种PHP隐藏后门姿势</a></li>
+<li><a href="/2019/01/01/PHP反序列化漏洞/">PHP unserialize反序列化漏洞</a></li>
+<li><a href="/2019/01/01/PHP内存型木马/">PHP内存型木马</a></li>
+</ul>
+</li>
+<li>CMS</li>
+</ul>
+</li>
+<li><strong>Python</strong><ul>
+<li>Python安全<ul>
+<li><a href="/2019/06/02/浅析Python-Flask-SSTI/">浅析Python Flask SSTI</a></li>
+<li><a href="/2019/05/31/Python沙箱逃逸小结/">Python沙箱逃逸小结</a></li>
+<li><a href="/2019/01/01/PyYAML反序列化漏洞/">Python PyYAML反序列化漏洞</a></li>
+<li><a href="/2019/01/01/cPickle反序列化漏洞/">Python cPickle反序列化漏洞</a></li>
+</ul>
+</li>
+<li>安全开发<ul>
+<li><a href="/2019/06/30/AWD文件监控脚本/">AWD文件监控脚本</a></li>
+<li><a href="/2019/01/01/Python安全小工具之反编译pyc文件/">Python安全小工具之反编译pyc文件</a></li>
+</ul>
+</li>
+<li>爬虫</li>
+<li>Django</li>
+</ul>
+</li>
+<li><strong>JavaScript</strong><ul>
+<li>JavaScript安全<ul>
+<li><a href="/2019/10/20/浅析JavaScript原型链污染攻击/">浅析JavaScript原型链污染攻击</a></li>
+</ul>
+</li>
+<li>NodeJS</li>
+<li>AngularJS</li>
+</ul>
+</li>
+<li><strong>GO</strong><ul>
+<li>GO安全</li>
+</ul>
+</li>
+<li><strong>二进制安全</strong><ul>
+<li>二进制基础<ul>
+<li><a href="/2019/05/24/GOT表-PLT表与动态链接/">ELF动态链接,PLT和GOT</a></li>
+<li><a href="/2019/04/27/堆基础/">堆基础</a></li>
+<li><a href="/2019/04/15/ELF二进制格式/">ELF二进制格式</a></li>
+<li><a href="/2019/03/03/栈及栈帧/">栈基础</a></li>
+<li><a href="/2019/02/09/ELF安全防御机制小结/">ELF安全防御机制小结</a></li>
+<li><a href="/2019/01/28/IA-32寄存器/">IA-32（Intel Architecture 32位）寄存器</a></li>
+<li><a href="/2019/01/01/Linux环境与相关工具/">Linux环境与相关工具</a></li>
+</ul>
+</li>
+<li>C/C++<ul>
+<li><a href="/2019/03/24/C编写实现Linux反弹shell/">C编写实现Linux反弹shell</a></li>
+</ul>
+</li>
+<li>逆向工程</li>
+<li>Fuzzing</li>
+<li>Pwn<ul>
+<li><a href="/2019/04/20/花式栈溢出之stack-pivoting/">花式栈溢出之stack pivoting</a></li>
+<li><a href="/2019/04/12/中级ROP之ret2csu/">栈溢出之ret2csu</a></li>
+<li><a href="/2019/04/09/蒸米ROP学习笔记/">蒸米32位及64位ROP笔记</a></li>
+<li><a href="/2019/04/07/pwntools笔记/">pwntools笔记</a></li>
+<li><a href="/2019/03/23/花式栈溢出之Stack-smash/">花式栈溢出之Stack smash</a></li>
+<li><a href="/2019/03/05/栈溢出之ret2libc/">栈溢出之ret2libc</a></li>
+<li><a href="/2019/03/03/栈溢出之ret2syscall/">栈溢出之ret2syscall</a></li>
+<li><a href="/2019/03/03/栈溢出之ret2shellcode/">栈溢出之ret2shellcode</a></li>
+<li><a href="/2019/03/03/ROP之ret2text/">ROP基础及栈溢出之ret2text</a></li>
+<li><a href="/2019/03/03/栈溢出基本原理/">栈溢出基本原理</a></li>
+</ul>
+</li>
+<li>WriteUp Pwn<ul>
+<li><a href="/2019/03/08/TAMUctf-Pwn-writeup/">TAMUctf Pwn writeup</a></li>
+</ul>
+</li>
+<li>WriteUp Reverse<ul>
+<li><a href="/2019/01/01/HITB_Binary_100_writeup/">HITB Binary 100 writeup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>渗透测试</strong><ul>
+<li>基础&amp;Tricks</li>
+<li>Kali</li>
+<li>Metasploit</li>
+<li>内网渗透</li>
+<li>提权</li>
+<li>免杀</li>
+<li>工具</li>
+</ul>
+</li>
+<li><strong>OS</strong><ul>
+<li>Windows</li>
+<li>Linux</li>
+</ul>
+</li>
+</ul>
 
   </div>
+</div>
 
-  <div class="container" id="content-outer">
-    <div class="inner" id="content-inner">
-      <div class="post-container">
-  <article class="post" id="post">
-    <header class="post-header text-center">
-      <h1 class="title">
-        Fastjson系列五——高版本JDK绕过及检测与防御
-      </h1>
-      <span>
-        
-        <time class="time" datetime="2019-11-13T13:44:51.000Z">
-        2019-11-13
-      </time>
-        
-      </span>
-      <span class="slash">/</span>
-      <span class="post-meta">
-      <span class="post-tags">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web安全/">Web安全</a></li></ul>
-      </span>
-    </span>
-      <span class="slash">/</span>
-      <span class="read">
-      <span id="busuanzi_value_page_pv"></span> 点击
-    </span>
-      <span class="slash">/</span>
-    </header>
+<script src="/js/book-sidebar.js"></script>
 
-    <div class="post-content">
-      <h2 id="0x01-高版本JDK绕过"><a href="#0x01-高版本JDK绕过" class="headerlink" title="0x01 高版本JDK绕过"></a>0x01 高版本JDK绕过</h2><p>由之前利用的PoC知道，利用范围最广的PoC是基于com.sun.rowset.JdbcRowSetImpl的利用链的，而这种利用方式是基于JNDI注入漏洞的，是需要我们有RMI服务或LDAP服务。</p>
+<script>
+collapse_sidebar(2)
+highlight_tab()
+show_sidebar()
+</script>
+      </div>
+
+      <div class="column col-8 col-lg-12">
+        <div class="book-content">
+          <div class="book-navbar">
+  <header class="navbar">
+  <section class="navbar-section">
+    <img class="navbar-icon" src="/favicon.ico">
+  </section>
+  <section class="navbar-center">
+    Mi1k7ea
+  </section>
+  <section class="navbar-section">
+    <label class="accordion-header c-hand" for="accordion-sidebar">
+      <i class="icon icon-menu"></i>
+    </label>
+  </section>
+</header>
+
+<div class="accordion">
+  <input type="checkbox" id="accordion-sidebar" name="accordion-checkbox" hidden>
+  <div class="accordion-body">
+    <ul>
+<li><strong>Web安全</strong><ul>
+<li>Web安全基础&amp;Tricks<ul>
+<li><a href="/2019/10/14/文件上传漏洞总结/">文件上传攻击框架</a></li>
+<li><a href="/2019/10/04/CSWSH漏洞总结/">CSWSH漏洞总结</a></li>
+<li><a href="/2019/09/28/SSI注入漏洞总结/">SSI注入漏洞总结</a></li>
+<li><a href="/2019/08/20/JSONP跨域漏洞总结/">JSONP跨域漏洞总结</a></li>
+<li><a href="/2019/08/18/CORS跨域漏洞总结/">CORS跨域漏洞总结</a></li>
+<li><a href="/2019/08/18/利用HTML注入劫持标签Bypass-CSP/">利用HTML注入劫持标签Bypass CSP</a></li>
+<li><a href="/2019/08/11/NoSQL注入之MongoDB/">NoSQL注入之MongoDB</a></li>
+<li><a href="/2019/08/10/Flash安全总结/">Flash安全总结</a></li>
+<li><a href="/2019/08/05/利用Flash进行Json-CSRF攻击/">利用Flash进行Json CSRF攻击</a></li>
+<li><a href="/2019/07/31/SWFUpload-swf的Flash型XSS分析/">SWFUpload.swf的Flash型XSS分析</a></li>
+<li><a href="/2019/07/30/ZeroClipboard-swf的Flash型XSS分析/">ZeroClipboard.swf的Flash型XSS分析</a></li>
+<li><a href="/2019/07/28/Flash型CSRF总结/">Flash型CSRF总结</a></li>
+<li><a href="/2019/07/21/Flash型XSS小结/">Flash型XSS总结</a></li>
+<li><a href="/2019/06/30/XSS从弹框到RCE/">XSS从弹框到RCE（IE）</a></li>
+<li><a href="/2019/06/30/命令注入Bypass技巧小结/">命令注入Bypass技巧小结</a></li>
+<li><a href="/2019/06/25/浅析DOM型XSS/">浅析DOM型XSS</a></li>
+<li><a href="/2019/03/22/图片XSS小结/">图片XSS小结</a></li>
+<li><a href="/2019/02/24/CSP策略及绕过技巧小结/">CSP策略及绕过技巧小结</a></li>
+<li><a href="/2019/02/19/一些加载XSS-Payload的标签/">一些加载XSS Payload的标签</a></li>
+<li><a href="/2019/02/16/个人XSS-payload收集/">个人XSS payload收集</a></li>
+<li><a href="/2019/01/30/常见Web漏洞类型/">常见Web漏洞类型总结</a></li>
+<li><a href="/2019/01/01/Sqli-labs-writeup/">Sqli-labs Less1-20</a></li>
+<li><a href="/2019/01/01/SQL注入写WebShell方式小结/">SQL注入写WebShell方式小结</a></li>
+</ul>
+</li>
+<li>Web安全之机器学习</li>
+<li>WriteUp Web<ul>
+<li><a href="/2019/10/20/InCTF-2019-PHP三题复现/">InCTF 2019 PHP+1,+1.5,+2.5三题复现</a></li>
+<li><a href="/2019/10/05/upload-labs-WriteUp/">Upload-Labs WriteUp</a></li>
+<li><a href="/2019/09/28/bWAPP之Cross-Origin-Resource-Sharing-AJAX/">bWAPP之Cross-Origin Resource Sharing (AJAX)</a></li>
+<li><a href="/2019/07/02/DVWA之JavaScript攻击/">DVWA之JavaScript攻击</a></li>
+<li><a href="/2019/06/27/一道Bypass正则过滤的反序列化漏洞题目/">一道Bypass正则过滤的反序列化漏洞题目</a></li>
+<li><a href="/2019/06/27/从一道CTF题看如何利用本地DTD文件实现XXE攻击/">从一道CTF题看如何通过本地DTD文件利用XXE实现回显</a></li>
+<li><a href="/2019/03/31/0CTF-Web-writeup/">0CTF Web writeup</a></li>
+<li><a href="/2019/03/29/Securinets-CTF-Web-writeup/">Securinets CTF Web writeup</a></li>
+<li><a href="/2019/03/21/Teaser-CONFidence-CTF-Web-writeup/">Teaser CONFidence CTF Web writeup</a></li>
+<li><a href="/2019/03/17/SpEL注入之javacon/">SpEL注入之javacon</a></li>
+<li><a href="/2019/03/13/AeroCTF-writeupup之board-tracking-system/">AeroCTF writeupup之board tracking system</a></li>
+<li><a href="/2019/03/09/TAMUctf-Web-writeup/">TAMUctf Web writeup</a></li>
+<li><a href="/2019/02/21/一道绕过CSP的XSS题目/">一道绕过CSP的XSS题目</a></li>
+<li><a href="/2019/02/15/XSS闯关之xss-haozi-me/">XSS闯关之xss.haozi.me</a></li>
+<li><a href="/2019/01/01/通过DVWA学习DOM型XSS/">DVWA之DOM型XSS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Java</strong><ul>
+<li>Java安全<ul>
+<li><a href="http://localhost:4000/2019/11/24/Jackson系列七——其他Gadgets/" target="_blank" rel="noopener">Jackson系列七——其他Gadgets与检测防御</a></li>
+<li><a href="http://localhost:4000/2019/11/24/Jackson系列六——CVE-2019-12814（基于JDOM-XSLTransformer利用链）/" target="_blank" rel="noopener">Jackson系列六——CVE-2019-12814（基于JDOM XSLTransformer利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/22/Jackson系列五——CVE-2019-12384（基于logback利用链）/" target="_blank" rel="noopener">Jackson系列五——CVE-2019-12384（基于logback利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/19/Jackson系列四——CVE-2019-12086（基于MiniAdmin利用链）/" target="_blank" rel="noopener">Jackson系列四——CVE-2019-12086（基于MiniAdmin利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/17/Jackson系列三—CVE-2017-1748（基于ClassPathXmlApplicationContext利用链）/" target="_blank" rel="noopener">Jackson系列三——CVE-2017-17485（基于ClassPathXmlApplicationContext利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/16/Jackson系列二——CVE-2017-7525（基于TemplatesImpl利用链）/" target="_blank" rel="noopener">Jackson系列二——CVE-2017-7525（基于TemplatesImpl利用链）</a></li>
+<li><a href="http://localhost:4000/2019/11/13/Jackson系列一——反序列化漏洞基本原理/" target="_blank" rel="noopener">Jackson系列一——反序列化漏洞基本原理</a></li>
+<li><a href="http://localhost:4000/2019/11/13/Fastjson系列五——高版本JDK绕过及检测与防御/" target="_blank" rel="noopener">Fastjson系列五——高版本JDK绕过及检测与防御</a></li>
+<li><a href="http://localhost:4000/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/" target="_blank" rel="noopener">Fastjson系列四——1.2.25-1.2.47反序列化漏洞（无需开启AutoType）</a></li>
+<li><a href="http://localhost:4000/2019/11/10/Fastjson系列三——历史版本补丁绕过（需开启AutoType）/" target="_blank" rel="noopener">Fastjson系列三——历史版本补丁绕过（需开启AutoType）</a></li>
+<li><a href="http://localhost:4000/2019/11/07/Fastjson系列二——1-2-22-1-2-24反序列化漏洞/" target="_blank" rel="noopener">Fastjson系列二——1.2.22-1.2.24反序列化漏洞</a></li>
+<li><a href="http://localhost:4000/2019/11/03/Fastjson系列一——反序列化漏洞基本原理/" target="_blank" rel="noopener">Fastjson系列一——反序列化漏洞基本原理</a></li>
+<li><a href="http://localhost:4000/2019/10/21/XStream反序列化漏洞/" target="_blank" rel="noopener">Java XStream反序列化漏洞</a></li>
+<li><a href="http://localhost:4000/2019/09/15/浅析JNDI注入/" target="_blank" rel="noopener">浅析JNDI注入</a></li>
+<li><a href="http://localhost:4000/2019/09/01/Java-RMI原理与使用/" target="_blank" rel="noopener">Java RMI原理与使用</a></li>
+<li><a href="http://localhost:4000/2019/06/09/探讨XXE防御之setFeature设置/" target="_blank" rel="noopener">探讨XXE防御之setFeature设置</a></li>
+<li><a href="http://localhost:4000/2019/05/26/XML注入之SAXBuilder/" target="_blank" rel="noopener">XML注入之SAXBuilder</a></li>
+<li><a href="http://localhost:4000/2019/05/26/XML注入之SAXParser/" target="_blank" rel="noopener">XML注入之SAXParser</a></li>
+<li><a href="http://localhost:4000/2019/05/24/XML注入之SAXReader/" target="_blank" rel="noopener">XML注入之SAXReader</a></li>
+<li><a href="http://localhost:4000/2019/02/13/XML注入之DocumentBuilder/" target="_blank" rel="noopener">XML注入之DocumentBuilder与XXE攻击防御</a></li>
+<li><a href="http://localhost:4000/2019/02/06/Java反序列化漏洞/" target="_blank" rel="noopener">Java反序列化漏洞</a></li>
+<li><a href="http://localhost:4000/2019/02/03/Java序列化和反序列化机制/" target="_blank" rel="noopener">Java序列化和反序列化机制</a></li>
+<li><a href="http://localhost:4000/2019/02/01/Java动态代理机制/" target="_blank" rel="noopener">Java动态代理机制</a></li>
+<li><a href="http://localhost:4000/2019/02/01/Java反射机制/" target="_blank" rel="noopener">Java反射机制</a></li>
+<li><a href="http://localhost:4000/2019/01/01/XMLDecoder反序列化漏洞/" target="_blank" rel="noopener">Java XMLDecoder反序列化漏洞</a></li>
+</ul>
+</li>
+<li>Struts2</li>
+<li>Spring<ul>
+<li><a href="/2019/09/02/由JNDI注入导致的Spring-Framework反序列化漏洞/">由JNDI注入引发的Spring Framework反序列化漏洞</a></li>
+<li><a href="/2019/04/05/Spring-Data-Rest之cve-2017-8046分析/">浅析Spring Data Rest之cve-2017-8046</a></li>
+</ul>
+</li>
+<li>SpringCloud</li>
+</ul>
+</li>
+<li><strong>PHP</strong><ul>
+<li>PHP安全<ul>
+<li><a href="/2019/08/25/浅谈PHP-FPM安全/">浅谈PHP-FPM安全</a></li>
+<li><a href="/2019/08/03/从蚁剑插件看利用PHP-FPM绕过disable-functions/">从蚁剑插件看利用PHP-FPM绕过disable_functions</a></li>
+<li><a href="/2019/07/20/浅谈几种Bypass-open-basedir的方法/">浅谈几种Bypass open_basedir的方法</a></li>
+<li><a href="/2019/07/16/PHP中mail-函数安全问题与防御/">PHP中mail()函数安全问题与防御</a></li>
+<li><a href="/2019/07/04/浅谈escapeshellarg与参数注入/">浅谈escapeshellarg逃逸与参数注入</a></li>
+<li><a href="/2019/07/02/浅析preg-replace与preg-match/">浅析preg_replace与preg_match</a></li>
+<li><a href="/2019/06/21/PHP弱类型小结/">PHP弱类型及相关函数Bypass小结</a></li>
+<li><a href="/2019/06/20/PHP变量覆盖漏洞/">PHP变量覆盖漏洞小结</a></li>
+<li><a href="/2019/06/09/巧用get-defined-functions隐藏WebShell/">巧用get_defined_functions隐藏WebShell</a></li>
+<li><a href="/2019/06/07/从一道题看PHP7-4的FFI绕过disable-functions/">从RCTF nextphp看PHP7.4的FFI绕过disable_functions</a></li>
+<li><a href="/2019/06/02/浅谈几种Bypass-disable-functions的方法/">浅谈几种Bypass disable_functions的方法</a></li>
+<li><a href="/2019/05/04/PHP对象注入之pop链构造/">PHP对象注入之pop链构造</a></li>
+<li><a href="/2019/04/21/PHP-session反序列化漏洞/">PHP session反序列化漏洞</a></li>
+<li><a href="/2019/01/31/PHP伪协议/">PHP伪协议</a></li>
+<li><a href="/2019/01/01/phar反序列化漏洞/">phar反序列化漏洞</a></li>
+<li><a href="/2019/01/01/Windows下的一种PHP隐蔽后门姿势/">Windows下的一种PHP隐藏后门姿势</a></li>
+<li><a href="/2019/01/01/PHP反序列化漏洞/">PHP unserialize反序列化漏洞</a></li>
+<li><a href="/2019/01/01/PHP内存型木马/">PHP内存型木马</a></li>
+</ul>
+</li>
+<li>CMS</li>
+</ul>
+</li>
+<li><strong>Python</strong><ul>
+<li>Python安全<ul>
+<li><a href="/2019/06/02/浅析Python-Flask-SSTI/">浅析Python Flask SSTI</a></li>
+<li><a href="/2019/05/31/Python沙箱逃逸小结/">Python沙箱逃逸小结</a></li>
+<li><a href="/2019/01/01/PyYAML反序列化漏洞/">Python PyYAML反序列化漏洞</a></li>
+<li><a href="/2019/01/01/cPickle反序列化漏洞/">Python cPickle反序列化漏洞</a></li>
+</ul>
+</li>
+<li>安全开发<ul>
+<li><a href="/2019/06/30/AWD文件监控脚本/">AWD文件监控脚本</a></li>
+<li><a href="/2019/01/01/Python安全小工具之反编译pyc文件/">Python安全小工具之反编译pyc文件</a></li>
+</ul>
+</li>
+<li>爬虫</li>
+<li>Django</li>
+</ul>
+</li>
+<li><strong>JavaScript</strong><ul>
+<li>JavaScript安全<ul>
+<li><a href="/2019/10/20/浅析JavaScript原型链污染攻击/">浅析JavaScript原型链污染攻击</a></li>
+</ul>
+</li>
+<li>NodeJS</li>
+<li>AngularJS</li>
+</ul>
+</li>
+<li><strong>GO</strong><ul>
+<li>GO安全</li>
+</ul>
+</li>
+<li><strong>二进制安全</strong><ul>
+<li>二进制基础<ul>
+<li><a href="/2019/05/24/GOT表-PLT表与动态链接/">ELF动态链接,PLT和GOT</a></li>
+<li><a href="/2019/04/27/堆基础/">堆基础</a></li>
+<li><a href="/2019/04/15/ELF二进制格式/">ELF二进制格式</a></li>
+<li><a href="/2019/03/03/栈及栈帧/">栈基础</a></li>
+<li><a href="/2019/02/09/ELF安全防御机制小结/">ELF安全防御机制小结</a></li>
+<li><a href="/2019/01/28/IA-32寄存器/">IA-32（Intel Architecture 32位）寄存器</a></li>
+<li><a href="/2019/01/01/Linux环境与相关工具/">Linux环境与相关工具</a></li>
+</ul>
+</li>
+<li>C/C++<ul>
+<li><a href="/2019/03/24/C编写实现Linux反弹shell/">C编写实现Linux反弹shell</a></li>
+</ul>
+</li>
+<li>逆向工程</li>
+<li>Fuzzing</li>
+<li>Pwn<ul>
+<li><a href="/2019/04/20/花式栈溢出之stack-pivoting/">花式栈溢出之stack pivoting</a></li>
+<li><a href="/2019/04/12/中级ROP之ret2csu/">栈溢出之ret2csu</a></li>
+<li><a href="/2019/04/09/蒸米ROP学习笔记/">蒸米32位及64位ROP笔记</a></li>
+<li><a href="/2019/04/07/pwntools笔记/">pwntools笔记</a></li>
+<li><a href="/2019/03/23/花式栈溢出之Stack-smash/">花式栈溢出之Stack smash</a></li>
+<li><a href="/2019/03/05/栈溢出之ret2libc/">栈溢出之ret2libc</a></li>
+<li><a href="/2019/03/03/栈溢出之ret2syscall/">栈溢出之ret2syscall</a></li>
+<li><a href="/2019/03/03/栈溢出之ret2shellcode/">栈溢出之ret2shellcode</a></li>
+<li><a href="/2019/03/03/ROP之ret2text/">ROP基础及栈溢出之ret2text</a></li>
+<li><a href="/2019/03/03/栈溢出基本原理/">栈溢出基本原理</a></li>
+</ul>
+</li>
+<li>WriteUp Pwn<ul>
+<li><a href="/2019/03/08/TAMUctf-Pwn-writeup/">TAMUctf Pwn writeup</a></li>
+</ul>
+</li>
+<li>WriteUp Reverse<ul>
+<li><a href="/2019/01/01/HITB_Binary_100_writeup/">HITB Binary 100 writeup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>渗透测试</strong><ul>
+<li>基础&amp;Tricks</li>
+<li>Kali</li>
+<li>Metasploit</li>
+<li>内网渗透</li>
+<li>提权</li>
+<li>免杀</li>
+<li>工具</li>
+</ul>
+</li>
+<li><strong>OS</strong><ul>
+<li>Windows</li>
+<li>Linux</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</div>
+</div>
+
+<div class="book-post">
+  <h2 id="0x01-高版本JDK绕过"><a href="#0x01-高版本JDK绕过" class="headerlink" title="0x01 高版本JDK绕过"></a>0x01 高版本JDK绕过</h2><p>由之前利用的PoC知道，利用范围最广的PoC是基于com.sun.rowset.JdbcRowSetImpl的利用链的，而这种利用方式是基于JNDI注入漏洞的，是需要我们有RMI服务或LDAP服务。</p>
 <p>这样就会导致一个限制的问题，即JNDI注入漏洞利用的限制问题——JDK版本。</p>
 <p>由之前的分析知道，JDK对于JNDI注入漏洞在不同版本有着不同的防御措施：</p>
 <ul>
@@ -371,215 +519,89 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line">JSON.parse(</span><br><span class="line">JSON.parseObject(</span><br></pre></td></tr></table></figure>
 <h2 id="0x03-防御方法"><a href="#0x03-防御方法" class="headerlink" title="0x03 防御方法"></a>0x03 防御方法</h2><p>升级到最新版的Fastjson。</p>
 
-    </div>
-
-  </article>
-  <div class="toc-container">
-    
-  <div id="toc" class="toc-article">
-    <strong class="toc-title">目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-高版本JDK绕过"><span class="toc-text">0x01 高版本JDK绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-检测方法"><span class="toc-text">0x02 检测方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-防御方法"><span class="toc-text">0x03 防御方法</span></a></li></ol>
-  </div>
-
-
-  </div>
-</div>
-<div class="copyright">
-    <span>本作品采用</span>
-    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
-    <span>进行许可。 转载时请注明原文链接。</span>
 </div>
 
-<div class="share" style="width: 100%;">
-  <img src="" alt="" style="margin: auto; display: block;"/>
-
-  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">test</div>
-  
-</div>
+<br>
+<div><center>
+  <span>Copyright &copy; Mi1k7ea</span>  |  <span id="busuanzi_container_site_uv">本站总访问量 <span id="busuanzi_value_site_uv"></span> 次</span>
+</center></div>
 
 
-  
-    <div class="post-nav">
-      <div class="post-nav-item post-nav-next">
-        
-          <span>〈 </span>
-          <a href="/2019/11/11/Fastjson系列四——1-2-25-1-2-47反序列化漏洞（无需开启AutoType）/" rel="next" title="Fastjson系列四——1.2.25-1.2.47反序列化漏洞（无需开启AutoType）">
-          Fastjson系列四——1.2.25-1.2.47反序列化漏洞（无需开启AutoType）
-          </a>
-        
-      </div>
-  
-      <div class="post-nav-item post-nav-prev">
-          
-          <a href="/2019/11/13/Jackson系列一——反序列化漏洞基本原理/" rel="prev" title="Jackson系列一——反序列化漏洞基本原理">
-            Jackson系列一——反序列化漏洞基本原理
-          </a>
-          <span>〉</span>
-        
-      </div>
-    </div>
-  
-
-
-    </div>
-
+  <div class="book-comments">
     
 
+
+
+
   </div>
-  <footer class="footer text-center">
-    <div id="bottom-inner">
-        <span>Copyright &copy; Mi1k7ea</span>  |  
-        <span id="busuanzi_container_site_uv">本站总访问量 <span id="busuanzi_value_site_uv"></span> 次</span>
+
+
+<script src="/js/book-post.js"></script>
+        </div>
+      </div>
+
+      <div class="column col-2 hide-lg">
+        <div class="book-toc">
+  <div class="book-tocbot">
+  </div>
+  <div class="book-tocbot-menu">
+    <a class="book-toc-expand" onclick="expand_toc()">Expand all</a>
+    <a onclick="go_top()">Back to top</a>
+    <a onclick="go_bottom()">Go to bottom</a>
+  </div>
+</div>
+
+<script>
+tocbot.init({
+  tocSelector: '.book-tocbot',
+  contentSelector: '.book-post',
+  headingSelector: 'h1, h2, h3, h4, h5',
+  collapseDepth: 2,
+  orderedList: false,
+  scrollSmooth: false,
+});
+
+function expand_toc(){
+  var b = document.querySelector(".book-toc-expand");
+  tocbot.init({
+    tocSelector: '.book-tocbot',
+    contentSelector: '.book-post',
+    headingSelector: 'h1, h2, h3, h4, h5',
+    collapseDepth: 6,
+    orderedList: false,
+    scrollSmooth: false,
+  });
+  b.setAttribute("onclick", "collapse_toc()");
+  b.innerHTML = "Collapse all"
+}
+
+function collapse_toc(){
+  var b = document.querySelector(".book-toc-expand");
+  tocbot.init({
+    tocSelector: '.book-tocbot',
+    contentSelector: '.book-post',
+    headingSelector: 'h1, h2, h3, h4, h5',
+    collapseDepth: 2,
+    orderedList: false,
+    scrollSmooth: false,
+  });
+  b.setAttribute("onclick", "expand_toc()");
+  b.innerHTML = "Expand all"
+}
+
+function go_top() {
+  window.scrollTo(0, 0);
+}
+
+function go_bottom() {
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+</script>
+      </div>
     </div>
-</footer>
-
-  
-
-<script>
-  (function(window, document, undefined) {
-
-    var timer = null;
-
-    function returnTop() {
-      cancelAnimationFrame(timer);
-      timer = requestAnimationFrame(function fn() {
-        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
-        if (oTop > 0) {
-          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
-          timer = requestAnimationFrame(fn);
-        } else {
-          cancelAnimationFrame(timer);
-        }
-      });
-    }
-
-    var hearts = [];
-    window.requestAnimationFrame = (function() {
-      return window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function(callback) {
-          setTimeout(callback, 1000 / 60);
-        }
-    })();
-    init();
-
-    function init() {
-      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
-      attachEvent();
-      gameloop();
-      addMenuEvent();
-    }
-
-    function gameloop() {
-      for (var i = 0; i < hearts.length; i++) {
-        if (hearts[i].alpha <= 0) {
-          document.body.removeChild(hearts[i].el);
-          hearts.splice(i, 1);
-          continue;
-        }
-        hearts[i].y--;
-        hearts[i].scale += 0.004;
-        hearts[i].alpha -= 0.013;
-        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
-      }
-      requestAnimationFrame(gameloop);
-    }
-
-    /**
-     * 给logo设置点击事件
-     * 
-     * - 回到顶部
-     * - 出现爱心
-     */
-    function attachEvent() {
-      var old = typeof window.onclick === "function" && window.onclick;
-      var logo = document.getElementById("logo");
-      if (logo) {
-        logo.onclick = function(event) {
-          returnTop();
-          old && old();
-          createHeart(event);
-        }
-      }
-      
-    }
-
-    function createHeart(event) {
-      var d = document.createElement("div");
-      d.className = "heart";
-      hearts.push({
-        el: d,
-        x: event.clientX - 5,
-        y: event.clientY - 5,
-        scale: 1,
-        alpha: 1,
-        color: randomColor()
-      });
-      document.body.appendChild(d);
-    }
-
-    function css(css) {
-      var style = document.createElement("style");
-      style.type = "text/css";
-      try {
-        style.appendChild(document.createTextNode(css));
-      } catch (ex) {
-        style.styleSheet.cssText = css;
-      }
-      document.getElementsByTagName('head')[0].appendChild(style);
-    }
-
-    function randomColor() {
-      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
-      return "#F44336";
-    }
-
-    function addMenuEvent() {
-      var menu = document.getElementById('menu-main-post');
-      if (menu) {
-        var toc = document.getElementById('toc');
-        if (toc) {
-          menu.onclick = function() {
-            if (toc) {
-              if (toc.style.display == 'block') {
-                toc.style.display = 'none';
-              } else {
-                toc.style.display = 'block';
-              }
-            }
-          };
-        } else {
-          menu.style.display = 'none';
-        }
-      }
-    }
-
-  })(window, document);
-</script>
-
-  
-
-
-
-  
-<script>
-  (function(){
-      var bp = document.createElement('script');
-      var curProtocol = window.location.protocol.split(':')[0];
-      if (curProtocol === 'https') {
-          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-      }
-      else {
-          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-      }
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(bp, s);
-  })();
-</script>
-
+  </div>
+</div>
 
 </body>
 </html>
