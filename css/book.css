@@ -206,6 +206,9 @@ img {
   display: flex;
   align-items: flex-start; }
 
+.book-sidebar .accordion input:checked ~ .accordion-body {
+  max-height: none; }
+
 .book-sidebar .collapse-span {
   word-break: break-all;
   white-space: nowrap;
