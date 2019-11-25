@@ -12,7 +12,7 @@
 
     <title>
         
-          SWFUpload.swf的Flash型XSS分析 - Mi1k7ea
+          （转）Java项目中常见jar包的说明 - Mi1k7ea
         
     </title>
 
@@ -501,29 +501,513 @@ show_sidebar()
 </div>
 
 <div class="book-post">
-  <h2 id="0x01-SWFUpload简介"><a href="#0x01-SWFUpload简介" class="headerlink" title="0x01 SWFUpload简介"></a>0x01 SWFUpload简介</h2><p>SWFUpload是一个客户端文件上传工具，最初由Vinterwebb.se开发，它通过整合Flash与JavaScript技术为Web开发者提供了一个具有丰富功能继而超越传统标签的文件上传模式。</p>
-<p>SWFUpload是在国内网站中使用得比较普遍的Flash插件。</p>
-<h2 id="0x02-Flash-XSS"><a href="#0x02-Flash-XSS" class="headerlink" title="0x02 Flash XSS"></a>0x02 Flash XSS</h2><p>当SWFUpload的版本&lt;= 时，会存在Flash XSS漏洞。</p>
-<p>漏洞版本下载地址：<a href="https://github.com/JoyChou93/FlashXss/tree/master/swfupload" target="_blank" rel="noopener">https://github.com/JoyChou93/FlashXss/tree/master/swfupload</a></p>
-<p>将文件下载下来后，反编译得到as源代码，可以看到脚本是有三个，这里先关注SWFUpload的代码：</p>
-<p><img src="/2019/07/31/SWFUpload-swf的Flash型XSS分析/1.png" alt=""></p>
-<p>SWFUpload的代码量略大，这里直接搜索外部参数输入的关键字，找到对应的代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public function SWFUpload()</span><br><span class="line">      &#123;</span><br><span class="line">         ...</span><br><span class="line">         this.movieName = root.loaderInfo.parameters.movieName;</span><br><span class="line">         this.flashReady_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].flashReady&quot;;</span><br><span class="line">         this.fileDialogStart_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileDialogStart&quot;;</span><br><span class="line">         this.fileQueued_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileQueued&quot;;</span><br><span class="line">         this.fileQueueError_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileQueueError&quot;;</span><br><span class="line">         this.fileDialogComplete_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].fileDialogComplete&quot;;</span><br><span class="line">         this.uploadStart_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadStart&quot;;</span><br><span class="line">         this.uploadProgress_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadProgress&quot;;</span><br><span class="line">         this.uploadError_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadError&quot;;</span><br><span class="line">         this.uploadSuccess_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadSuccess&quot;;</span><br><span class="line">         this.uploadComplete_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].uploadComplete&quot;;</span><br><span class="line">         this.debug_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].debug&quot;;</span><br><span class="line">         this.testExternalInterface_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].testExternalInterface&quot;;</span><br><span class="line">         this.cleanUp_Callback = &quot;SWFUpload.instances[\&quot;&quot; + this.movieName + &quot;\&quot;].cleanUp&quot;;</span><br><span class="line">         this.uploadURL = root.loaderInfo.parameters.uploadURL;</span><br><span class="line">         this.filePostName = root.loaderInfo.parameters.filePostName;</span><br><span class="line">         this.fileTypes = root.loaderInfo.parameters.fileTypes;</span><br><span class="line">         this.fileTypesDescription = root.loaderInfo.parameters.fileTypesDescription + &quot; (&quot; + this.fileTypes + &quot;)&quot;;</span><br><span class="line">         this.loadPostParams(root.loaderInfo.parameters.params);</span><br></pre></td></tr></table></figure>
-<p>这里看到好几个变量都是外界可控的，有一个很特别，就是movieName变量，它会被拼接到很多名为xx_Callback的变量值中。我们就跟踪下第一个名为flashReady_Callback变量看看是不是可调用的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if(ExternalCall.Bool(this.testExternalInterface_Callback))</span><br><span class="line">&#123;</span><br><span class="line">	ExternalCall.Simple(this.flashReady_Callback);</span><br><span class="line">	this.hasCalledFlashReady = true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，在后面的代码中会作为ExternalCall.Simple()函数的唯一参数传入调用。</p>
-<p>而ExternalCall.Simple()函数的定义是在另一个名为ExternalCall脚本中，我们到其中搜索看看：</p>
-<p><img src="/2019/07/31/SWFUpload-swf的Flash型XSS分析/2.png" alt=""></p>
-<p>bingo，是ExternalInterface.call()函数，且是第一个参数外部可控，妥妥的Flash XSS漏洞。</p>
-<p>理下思路，存在AS3形式的loaderInfo.parameters来传入外部参数movieName，且存在ExternalInterface.call()函数的第一个参数外部可控，结合导致Flash XSS。</p>
-<p>至于其他几个拼接的变量也是一样的分析。</p>
-<p>这里结合ExternalInterface.call()函数的第一个参数的payload的形式，稍微修改下来闭合前面拼接的格式即可：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?movieName=&quot;])&#125;catch(e)&#123;alert(&apos;mi1k7ea&apos;)&#125;;//</span><br></pre></td></tr></table></figure>
-<p>接着就是不停地弹框了：</p>
-<p><img src="/2019/07/31/SWFUpload-swf的Flash型XSS分析/3.png" alt=""></p>
-<p>在IE下调试，可以看到底层被恶意构造输入注入的执行的JS代码：</p>
-<p><img src="/2019/07/31/SWFUpload-swf的Flash型XSS分析/4.png" alt=""></p>
-<h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2><p><a href="https://www.freebuf.com/sectool/108568.html" target="_blank" rel="noopener">Flash XSS检测脚本的简单实现</a></p>
+  <p>转自：<a href="https://blog.csdn.net/superdog007/article/details/50697831" target="_blank" rel="noopener">https://blog.csdn.net/superdog007/article/details/50697831</a></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Jar包</th>
+<th style="text-align:left">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">axis.jar</td>
+<td style="text-align:left">SOAP引擎包</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-discovery-0.2.jar</td>
+<td style="text-align:left">用来发现、查找和实现可插入式接口，提供一些一般类实例化、单件的生命周期管理的常用方法.</td>
+</tr>
+<tr>
+<td style="text-align:left">jaxrpc.jar</td>
+<td style="text-align:left">Axis运行所需要的组件包</td>
+</tr>
+<tr>
+<td style="text-align:left">saaj.jar</td>
+<td style="text-align:left">创建到端点的点到点连接的方法、创建并处理SOAP消息和附件的方法，以及接收和处理SOAP错误的方法.</td>
+</tr>
+<tr>
+<td style="text-align:left">wsdl4j-1.5.1.jar</td>
+<td style="text-align:left">Axis运行所需要的组件包</td>
+</tr>
+<tr>
+<td style="text-align:left">activation.jar</td>
+<td style="text-align:left">JAF框架的jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">annotations-api.jar</td>
+<td style="text-align:left">使用注解所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">ant.jar</td>
+<td style="text-align:left">用于自动化调用程序完成项目的编译，打包，测试等</td>
+</tr>
+<tr>
+<td style="text-align:left">aopalliance-1.0.jar</td>
+<td style="text-align:left">支持Spring</td>
+</tr>
+<tr>
+<td style="text-align:left">asm-2.2.3.jar</td>
+<td style="text-align:left">ASM字节码库</td>
+</tr>
+<tr>
+<td style="text-align:left">asm-commons-2.2.3.jar</td>
+<td style="text-align:left">ASM字节码库</td>
+</tr>
+<tr>
+<td style="text-align:left">asm-util-2.2.3.jar</td>
+<td style="text-align:left">Java字节码操纵和分析框架</td>
+</tr>
+<tr>
+<td style="text-align:left">aspectjrt.jar</td>
+<td style="text-align:left">处理事务和AOP所需的包</td>
+</tr>
+<tr>
+<td style="text-align:left">aspectjweaver.jar</td>
+<td style="text-align:left">处理事务和AOP所需的包</td>
+</tr>
+<tr>
+<td style="text-align:left">axiom-api-1.2.7.jar</td>
+<td style="text-align:left">Axis</td>
+</tr>
+<tr>
+<td style="text-align:left">axiom-impl-1.2.7.jar</td>
+<td style="text-align:left">Axis</td>
+</tr>
+<tr>
+<td style="text-align:left">bcprov-jdk15-140.jar</td>
+<td style="text-align:left">基于java1.5</td>
+</tr>
+<tr>
+<td style="text-align:left">bfmclientmodel.jar</td>
+<td style="text-align:left">使用WebSphere所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">bpcclientcore.jar</td>
+<td style="text-align:left">使用WebSphere所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">bpe137650.jar</td>
+<td style="text-align:left">提供远程访问BPE容器的实现。</td>
+</tr>
+<tr>
+<td style="text-align:left">bsh-2.0b4.jar</td>
+<td style="text-align:left">解决负载逻辑运算</td>
+</tr>
+<tr>
+<td style="text-align:left">c3p0-0.9.0.jar</td>
+<td style="text-align:left">开放源代码的JDBC连接池</td>
+</tr>
+<tr>
+<td style="text-align:left">cglib-nodep-2.1_3.jar</td>
+<td style="text-align:left">Spring中自动代理所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">cobertura.jar</td>
+<td style="text-align:left">测量测试覆盖率</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-beanutils-1.7.0.jar</td>
+<td style="text-align:left">动态的获取/设值Java</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-chain-1.1.jar</td>
+<td style="text-align:left">实现责任链设计模式的Java</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-codec-1.3.jar</td>
+<td style="text-align:left">用来处理常用的编码方法的工具类包，例如DES、SHA1、MD5、Base64等等</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-collections-3.1.jar</td>
+<td style="text-align:left">对标准java</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-collections.jar</td>
+<td style="text-align:left">对标准java</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-digester-1.8.jar</td>
+<td style="text-align:left">用于处理struts-config.xml配置文件</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-fileupload-1.1.1.jar</td>
+<td style="text-align:left">struts上传文件</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-httpclient-3.1.jar</td>
+<td style="text-align:left">用来简化HTTP客户端与服务器端进行各种通信编程实现</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-io-1.1.jar</td>
+<td style="text-align:left">针对java.io.InputStream和Reader进行了扩展</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-lang-2.4.jar</td>
+<td style="text-align:left">对java.lang.*的扩展</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-logging-1.1.1.jar</td>
+<td style="text-align:left">日志包</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-pool-1.3.jar</td>
+<td style="text-align:left">实现对象池化框架</td>
+</tr>
+<tr>
+<td style="text-align:left">commons-validator-1.3.1.jar</td>
+<td style="text-align:left">用来把验证规则程序提取出来，以供重复使用</td>
+</tr>
+<tr>
+<td style="text-align:left">db2jcc.jar</td>
+<td style="text-align:left">java连接DB2所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">db2jcc_license_cu.jar</td>
+<td style="text-align:left">java连接DB2所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">dom4j-1.6.1.jar</td>
+<td style="text-align:left">解析XML</td>
+</tr>
+<tr>
+<td style="text-align:left">ehcache-1.2.4.jar</td>
+<td style="text-align:left">hibernate的二级缓存如果用ehcache的时候需要此jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">emf.jar</td>
+<td style="text-align:left">基于Eclipse的模型框架</td>
+</tr>
+<tr>
+<td style="text-align:left">ezmorph-1.0.6.jar</td>
+<td style="text-align:left">使用JSON所需的jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">FastInfoset-1.2.2.jar</td>
+<td style="text-align:left">使用WebService所需的jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">freemarker-2.3.8.jar</td>
+<td style="text-align:left">Strus2支持的一种表现层框架</td>
+</tr>
+<tr>
+<td style="text-align:left">geronimo-activation_1.1_spec-1.0.2.jar</td>
+<td style="text-align:left">Apache</td>
+</tr>
+<tr>
+<td style="text-align:left">geronimo-annotation_1.0_spec-1.1.1.jar</td>
+<td style="text-align:left">Apache</td>
+</tr>
+<tr>
+<td style="text-align:left">geronimo-javamail_1.4_spec-1.3.jar</td>
+<td style="text-align:left">Apache</td>
+</tr>
+<tr>
+<td style="text-align:left">geronimo-jaxws_2.1_spec-1.0.jar</td>
+<td style="text-align:left">Apache</td>
+</tr>
+<tr>
+<td style="text-align:left">geronimo-jms_1.1_spec-1.1.1.jar</td>
+<td style="text-align:left">Apache</td>
+</tr>
+<tr>
+<td style="text-align:left">geronimo-servlet_2.5_spec-1.2.jar</td>
+<td style="text-align:left">Apache</td>
+</tr>
+<tr>
+<td style="text-align:left">geronimo-stax-api_1.0_spec-1.0.1.jar</td>
+<td style="text-align:left">Apache</td>
+</tr>
+<tr>
+<td style="text-align:left">hibernate3.jar</td>
+<td style="text-align:left">Hibernate3的核心jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">htmclientmodel.jar</td>
+<td style="text-align:left">使用WebSphere所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">jakarta-oro.jar</td>
+<td style="text-align:left">一套文本处理工具，提供per15.0兼容的表达式，AWK-like表达式，Glob表达式。</td>
+</tr>
+<tr>
+<td style="text-align:left">javassist.jar</td>
+<td style="text-align:left">Javassist</td>
+</tr>
+<tr>
+<td style="text-align:left">jaxb-api-2.1.jar</td>
+<td style="text-align:left">使用WebService所需的jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">jaxb-impl-2.1.7.jar</td>
+<td style="text-align:left">使用CXF所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">jaxb-xjc-2.1.7.jar</td>
+<td style="text-align:left">使用CXF所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">jaxen-1.1.1.jar</td>
+<td style="text-align:left">解析XML</td>
+</tr>
+<tr>
+<td style="text-align:left">jcifs-1.2.22.jar</td>
+<td style="text-align:left">实现单点登陆</td>
+</tr>
+<tr>
+<td style="text-align:left">jdom2-1.0.jar</td>
+<td style="text-align:left">解析XML</td>
+</tr>
+<tr>
+<td style="text-align:left">jdom-1.0.jar</td>
+<td style="text-align:left">解析XML</td>
+</tr>
+<tr>
+<td style="text-align:left">jettison-1.0.1.jar</td>
+<td style="text-align:left">使用CXF所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">jetty-6.1.9.jar</td>
+<td style="text-align:left">Jetty</td>
+</tr>
+<tr>
+<td style="text-align:left">jetty-util-6.1.9.jar</td>
+<td style="text-align:left">Jetty</td>
+</tr>
+<tr>
+<td style="text-align:left">jra-1.0-alpha-4.jar</td>
+<td style="text-align:left">使用CXF所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">js-1.6R7.jar</td>
+<td style="text-align:left">使用CXF所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">json-lib-2.2.3-jdk13.jar</td>
+<td style="text-align:left">使用JSON所需的jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">jsonplugin-0.25.jar</td>
+<td style="text-align:left">strus2的JSON插件</td>
+</tr>
+<tr>
+<td style="text-align:left">jsr311-api-0.8.jar</td>
+<td style="text-align:left">使用CXF所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">jstl.jar</td>
+<td style="text-align:left">JSTL标签库</td>
+</tr>
+<tr>
+<td style="text-align:left">jta.jar</td>
+<td style="text-align:left">标准的</td>
+</tr>
+<tr>
+<td style="text-align:left">junit.jar</td>
+<td style="text-align:left">用于单元测试</td>
+</tr>
+<tr>
+<td style="text-align:left">jxl.jar</td>
+<td style="text-align:left">通过java操作excel表格的工具类库</td>
+</tr>
+<tr>
+<td style="text-align:left">ldap.jar</td>
+<td style="text-align:left">JNDI目录服务和LDAO服务器所需的jar</td>
+</tr>
+<tr>
+<td style="text-align:left">ldapbp.jar</td>
+<td style="text-align:left">JNDI目录服务和LDAO服务器所需的jar</td>
+</tr>
+<tr>
+<td style="text-align:left">log4j-1.2.15.jar</td>
+<td style="text-align:left">提供日志功能</td>
+</tr>
+<tr>
+<td style="text-align:left">mail.jar</td>
+<td style="text-align:left">java发送邮件jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">neethi-2.0.4.jar</td>
+<td style="text-align:left">使用CXF所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">odmg-3.0.jar</td>
+<td style="text-align:left">ODMG是一个ORM的规范，Hibernate实现了ODMG规范，这是一个核心的库</td>
+</tr>
+<tr>
+<td style="text-align:left">gnl-2.6.11.jar</td>
+<td style="text-align:left">struts2中OGNL语言</td>
+</tr>
+<tr>
+<td style="text-align:left">ojdbc14.jar</td>
+<td style="text-align:left">Oracle数据库驱动包</td>
+</tr>
+<tr>
+<td style="text-align:left">opensaml-1.1.jar</td>
+<td style="text-align:left">使用CXF所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">oro-2.0.8.jar</td>
+<td style="text-align:left">Validator框架所需的jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">oscache-2.1.jar</td>
+<td style="text-align:left">Java</td>
+</tr>
+<tr>
+<td style="text-align:left">poi-3.1-FINAL-20080629.jar</td>
+<td style="text-align:left">操作exce所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">poi-contrib-3.1-FINAL-20080629.jar</td>
+<td style="text-align:left">操作exce所需jar包</td>
+</tr>
+<tr>
+<td style="text-align:left">poi-ooxml-3.6-20091214.jar</td>
+<td style="text-align:left">提供对office的word、excel、visio及ppt的操作</td>
+</tr>
+<tr>
+<td style="text-align:left">poi-ooxml-schemas-3.6-20091214.jar</td>
+<td style="text-align:left">提供对office的word、excel、visio及ppt的操作</td>
+</tr>
+<tr>
+<td style="text-align:left">poi-scratchpad-3.1-FINAL-20080629.jar</td>
+<td style="text-align:left">提供对office的word、excel、visio及ppt的操作</td>
+</tr>
+<tr>
+<td style="text-align:left">processCommon.jar</td>
+<td style="text-align:left">IBM</td>
+</tr>
+<tr>
+<td style="text-align:left">ProcessCommonLibrary.jar</td>
+<td style="text-align:left">IBM</td>
+</tr>
+<tr>
+<td style="text-align:left">processIdentity.jar</td>
+<td style="text-align:left">IBM</td>
+</tr>
+<tr>
+<td style="text-align:left">ProcessInformation.jar</td>
+<td style="text-align:left">进程监视软件包</td>
+</tr>
+<tr>
+<td style="text-align:left">proxool-0.9.1.jar</td>
+<td style="text-align:left">数据库连接池</td>
+</tr>
+<tr>
+<td style="text-align:left">proxool-cglib.jar</td>
+<td style="text-align:left">数据库连接池</td>
+</tr>
+<tr>
+<td style="text-align:left">quartz-1.6.0.jar</td>
+<td style="text-align:left">开源作业调度框架</td>
+</tr>
+<tr>
+<td style="text-align:left">saaj-api-1.3.jar</td>
+<td style="text-align:left">使用axis所需的jar</td>
+</tr>
+<tr>
+<td style="text-align:left">saaj-impl-1.3.2.jar</td>
+<td style="text-align:left">使用axis所需的jar</td>
+</tr>
+<tr>
+<td style="text-align:left">serializer-2.7.1.jar</td>
+<td style="text-align:left">XML序列化</td>
+</tr>
+<tr>
+<td style="text-align:left">slf4j-jdk14-1.5.6.jar</td>
+<td style="text-align:left">整合各种日志框架的工具</td>
+</tr>
+<tr>
+<td style="text-align:left">spring208.jar</td>
+<td style="text-align:left">spring核心框架</td>
+</tr>
+<tr>
+<td style="text-align:left">spring-ldap-1.2-RC1.jar</td>
+<td style="text-align:left">spring下LDAP</td>
+</tr>
+<tr>
+<td style="text-align:left">spring-mock.jar</td>
+<td style="text-align:left">spring的测试框架</td>
+</tr>
+<tr>
+<td style="text-align:left">standard.jar</td>
+<td style="text-align:left">使用JSTL标签库所需的jar</td>
+</tr>
+<tr>
+<td style="text-align:left">stax-api-1.0.1.jar</td>
+<td style="text-align:left">解析XML</td>
+</tr>
+<tr>
+<td style="text-align:left">struts2-core-2.0.14.jar</td>
+<td style="text-align:left">struts2核心jar</td>
+</tr>
+<tr>
+<td style="text-align:left">struts2-spring-plugin-2.0.6.jar</td>
+<td style="text-align:left">struts2整合Spring所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">taglibs-datetime.jar</td>
+<td style="text-align:left">Apache开源组织提供标签库，用于格式化日期。</td>
+</tr>
+<tr>
+<td style="text-align:left">taglibs-mailer.jar</td>
+<td style="text-align:left">用于发送邮件</td>
+</tr>
+<tr>
+<td style="text-align:left">taglibs-string.jar</td>
+<td style="text-align:left">Apache开源组织提供标签库，用于对String的操作。</td>
+</tr>
+<tr>
+<td style="text-align:left">task137650.jar</td>
+<td style="text-align:left">Portal技术在SOA系统集成应用中实现所需的jar</td>
+</tr>
+<tr>
+<td style="text-align:left">utility.jar</td>
+<td style="text-align:left">Apache开源组织提供标签库</td>
+</tr>
+<tr>
+<td style="text-align:left">velocity-1.5.jar</td>
+<td style="text-align:left">一个免费的开源模板框架</td>
+</tr>
+<tr>
+<td style="text-align:left">wsdl4j-1.6.2.jar</td>
+<td style="text-align:left">用来解析服务的WSDl文件</td>
+</tr>
+<tr>
+<td style="text-align:left">wss4j-1.5.4.jar</td>
+<td style="text-align:left">创建CXF所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">wss4j-1.5.4.jar</td>
+<td style="text-align:left">创建CXF所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">wstx-asl-3.2.6.jar</td>
+<td style="text-align:left">创建CXF所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">xbean-spring-2.8.jar</td>
+<td style="text-align:left">使用xfire所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">xerces-2.6.2.jar</td>
+<td style="text-align:left">XML解析器</td>
+</tr>
+<tr>
+<td style="text-align:left">xfire-all-1.2.6.jar</td>
+<td style="text-align:left">用于实现WebService</td>
+</tr>
+<tr>
+<td style="text-align:left">XmlSchema-1.1.jar</td>
+<td style="text-align:left">使用xfire所需jar</td>
+</tr>
+<tr>
+<td style="text-align:left">xwork-2.0.7.jar</td>
+<td style="text-align:left">WebWork核心jar</td>
+</tr>
+</tbody>
+</table>
 
 </div>
 
