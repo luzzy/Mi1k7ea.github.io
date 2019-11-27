@@ -251,7 +251,10 @@ document.addEventListener('DOMContentLoaded', function () {
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -484,7 +487,10 @@ show_sidebar()
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -499,6 +505,15 @@ show_sidebar()
   </div>
 </div>
 </div>
+
+<header class="post-header text-center">
+	<h1 class="title">
+		XML注入之DocumentBuilder与XXE攻击防御
+	</h1>
+	<span class="read">
+		阅读量 <span id="busuanzi_value_page_pv"></span>
+	</span>
+</header><br>
 
 <div class="book-post">
   <h2 id="0x01-何为DocumentBuilder"><a href="#0x01-何为DocumentBuilder" class="headerlink" title="0x01 何为DocumentBuilder"></a>0x01 何为DocumentBuilder</h2><p>DocumentBuilder是Java中常用的XML文档解析工具，是基于 DOM（Document Object Model，文档对象模型）的解析方式，把整个XML文档加载到内存并转化成DOM树，因此应用程序可以随机访问DOM树的任何数据。因此其优点是灵活性强、速度快； 缺点是消耗资源比较多。</p>

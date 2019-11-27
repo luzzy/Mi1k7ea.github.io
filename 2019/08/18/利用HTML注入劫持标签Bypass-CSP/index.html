@@ -251,7 +251,10 @@ document.addEventListener('DOMContentLoaded', function () {
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -484,7 +487,10 @@ show_sidebar()
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -499,6 +505,15 @@ show_sidebar()
   </div>
 </div>
 </div>
+
+<header class="post-header text-center">
+	<h1 class="title">
+		利用HTML注入劫持标签Bypass CSP
+	</h1>
+	<span class="read">
+		阅读量 <span id="busuanzi_value_page_pv"></span>
+	</span>
+</header><br>
 
 <div class="book-post">
   <h2 id="0x01-以往劫持方法的局限性"><a href="#0x01-以往劫持方法的局限性" class="headerlink" title="0x01 以往劫持方法的局限性"></a>0x01 以往劫持方法的局限性</h2><p>在之前的一篇博文<a href="https://www.mi1k7ea.com/2019/02/21/一道绕过CSP的XSS题目/">《一道绕过CSP的XSS题目》</a>中提到了一种绕过CSP的方法，就是利用JS的特性，通过劫持指定id的标签来实现注入的JS代码能执行。但是这种方法的局限性是十分明显的——<strong>即进行劫持注入的地方必须在被劫持的标签的前面</strong>，因为浏览器只会从上至下地解析标签，当页面中存在多个相同id的标签的时，浏览器只会解析第一个标签，如果我们注入的位置在后面，那么将无法成功劫持到该标签。</p>

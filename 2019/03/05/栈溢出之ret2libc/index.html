@@ -251,7 +251,10 @@ document.addEventListener('DOMContentLoaded', function () {
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -484,7 +487,10 @@ show_sidebar()
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -499,6 +505,15 @@ show_sidebar()
   </div>
 </div>
 </div>
+
+<header class="post-header text-center">
+	<h1 class="title">
+		栈溢出之ret2libc
+	</h1>
+	<span class="read">
+		阅读量 <span id="busuanzi_value_page_pv"></span>
+	</span>
+</header><br>
 
 <div class="book-post">
   <h2 id="ret2libc原理"><a href="#ret2libc原理" class="headerlink" title="ret2libc原理"></a>ret2libc原理</h2><p>ret2libc，即控制执行 libc 中的函数，通常是返回至某个函数的 plt 处或者函数的具体位置 (即函数对应的 got 表项的内容)。一般情况下，我们会选择执行 system(“/bin/sh”)，故而此时我们需要知道 system 函数的地址。</p>

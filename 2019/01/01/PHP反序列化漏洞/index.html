@@ -251,7 +251,10 @@ document.addEventListener('DOMContentLoaded', function () {
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -484,7 +487,10 @@ show_sidebar()
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -499,6 +505,15 @@ show_sidebar()
   </div>
 </div>
 </div>
+
+<header class="post-header text-center">
+	<h1 class="title">
+		PHP unserialize反序列化漏洞
+	</h1>
+	<span class="read">
+		阅读量 <span id="busuanzi_value_page_pv"></span>
+	</span>
+</header><br>
 
 <div class="book-post">
   <h2 id="PHP的序列化与反序列化"><a href="#PHP的序列化与反序列化" class="headerlink" title="PHP的序列化与反序列化"></a>PHP的序列化与反序列化</h2><p>通常我们定义了一个类的对象，其中保存了一些属性值，为了方便下次可以继续使用在这个对象或者在其他的文件中可以使用该对象，于是就可以调用serialize()函数将该对象序列化为字符串的形式，将该字符串保存起来，等到需要使用该对象时只需将该字符串传过去并调用unserialize()函数对其反序列化即可。</p>

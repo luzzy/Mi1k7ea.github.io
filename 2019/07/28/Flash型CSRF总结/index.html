@@ -251,7 +251,10 @@ document.addEventListener('DOMContentLoaded', function () {
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -484,7 +487,10 @@ show_sidebar()
 <li>Kali</li>
 <li>Metasploit</li>
 <li>内网渗透</li>
-<li>提权</li>
+<li>提权<ul>
+<li><a href="/2019/11/27/关于本地提权的学习笔记（一）：Administrator提权到System">关于本地提权的学习笔记（一）：Administrator提权到System</a></li>
+</ul>
+</li>
 <li>免杀</li>
 <li>工具</li>
 </ul>
@@ -499,6 +505,15 @@ show_sidebar()
   </div>
 </div>
 </div>
+
+<header class="post-header text-center">
+	<h1 class="title">
+		Flash型CSRF总结
+	</h1>
+	<span class="read">
+		阅读量 <span id="busuanzi_value_page_pv"></span>
+	</span>
+</header><br>
 
 <div class="book-post">
   <h2 id="0x01-基本原理"><a href="#0x01-基本原理" class="headerlink" title="0x01 基本原理"></a>0x01 基本原理</h2><p>Flash功能丰富，我们可以使用其API来向任意站点发送请求，而且发送的请求会继承当前浏览器的会话。换句话说，我们可以利用Flash而非JavaScript来控制浏览器向目标URL发送请求，从而实现Flash CSRF攻击。</p>
